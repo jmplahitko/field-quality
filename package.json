@@ -1,0 +1,21 @@
+{
+  "name": "field-quality",
+  "version": "0.1.0",
+  "description": "Validation Library",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmplahitko/field-quality.git"
+  },
+  "private": true,
+  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "devDependencies": {
+    "jshint": "^2.9.5",
+    "typescript": "2.6.2"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -p . --watch"
+  }
+}
