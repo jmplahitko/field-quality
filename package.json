@@ -11,6 +11,7 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "devDependencies": {
+    "@types/node": "^8.5.1",
     "jshint": "^2.9.5",
     "typescript": "2.6.2"
   },
