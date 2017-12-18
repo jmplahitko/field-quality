@@ -133,4 +133,25 @@ export class Model implements IValidatable {
 	public toJSON(): string {
 		return JSON.stringify(this.toObject());
 	}
+
+	public validate(): IValidationResult {
+		if (this._rule) {
+			return this._rule.validate(this);
+		} else {
+			let validity = [];
+			let messages: TMessages = {};
+			for (let fieldName in this._fields) {
+				let result = this._fields[fieldName].validate();
+				validity.push(result.isValid);
+				messages[fieldName] = result.messages[fieldName];
+			}
+
+			this._messages = messages;
+			this._isValid = !validity.includes(false);
+			let result = new ValidationResult(this);
+			this.setValidity(result);
+
+			return result;
+		}
+	}
 }

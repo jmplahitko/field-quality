@@ -108,5 +108,24 @@ class Model {
     toJSON() {
         return JSON.stringify(this.toObject());
     }
+    validate() {
+        if (this._rule) {
+            return this._rule.validate(this);
+        }
+        else {
+            let validity = [];
+            let messages = {};
+            for (let fieldName in this._fields) {
+                let result = this._fields[fieldName].validate();
+                validity.push(result.isValid);
+                messages[fieldName] = result.messages[fieldName];
+            }
+            this._messages = messages;
+            this._isValid = !validity.includes(false);
+            let result = new ValidationResult_1.ValidationResult(this);
+            this.setValidity(result);
+            return result;
+        }
+    }
 }
 exports.Model = Model;

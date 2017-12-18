@@ -30,4 +30,5 @@ export declare class Model implements IValidatable {
         [key: string]: any;
     };
     toJSON(): string;
+    validate(): IValidationResult;
 }
