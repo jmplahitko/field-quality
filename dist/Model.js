@@ -5,27 +5,39 @@ const Rule_1 = require("./Rule");
 class Model {
     constructor(entity) {
         this._isValid = true;
-        this._fields = {};
         this._messages = {};
+        this._fields = {};
         this._rules = {};
         this.define(this);
-        for (let prop in entity) {
-            if (entity.hasOwnProperty(prop)) {
-                const field = new Field_1.Field(prop);
-                const propValue = entity[prop];
-                this._fields[prop] = field;
-                if (!this._rules[prop]) {
-                    this._rules[prop] = this.ruleFor(prop);
-                }
-                this.set(prop, propValue);
-            }
+        if (entity) {
+            this.make(entity);
         }
+    }
+    get value() {
+        return this.toObject();
     }
     get isValid() {
         return this._isValid;
     }
     get messages() {
         return this._messages;
+    }
+    make(entity) {
+        for (let prop in entity) {
+            if (entity.hasOwnProperty(prop)) {
+                const propValue = entity[prop];
+                const rule = this._rules[prop] || this.ruleFor(prop).using(new Rule_1.Rule(prop));
+                if (rule.entity) {
+                    let Entity = rule.entity;
+                    this._fields[prop] = new Entity(propValue);
+                }
+                else {
+                    this._fields[prop] = new Field_1.Field(prop);
+                }
+                this.set({ [prop]: propValue });
+            }
+        }
+        return this;
     }
     define(model) {
         console.warn('define not implemented');
@@ -39,18 +51,36 @@ class Model {
         let field = this._fields[fieldName];
         return field;
     }
-    set(fieldName, value) {
-        let field = this._fields[fieldName];
-        let rule = this._rules[fieldName];
-        field.value = value;
-        let result = rule.validate(field);
-        this._messages[fieldName] = result.messages[fieldName];
-        if (!result.isValid) {
-            this._isValid = false;
+    set(value) {
+        for (let fieldName in value) {
+            if (value.hasOwnProperty(fieldName)) {
+                let field = this._fields[fieldName];
+                let rule = this._rules[fieldName];
+                field.set(value[fieldName]);
+                let result = rule.validate(field);
+                this._messages[fieldName] = result.messages[fieldName];
+                // TODO: Clean this garbage up
+                let isValid = true;
+                for (let fieldName in this._fields) {
+                    if (!this._fields[fieldName].isValid) {
+                        isValid = false;
+                        break;
+                    }
+                }
+                this._isValid = isValid;
+            }
         }
-        return field;
+    }
+    setValidity(result) {
+        this._messages = result.isValid ? {} : result.messages;
+        this._isValid = result.isValid;
     }
     toObject() {
+        let target = {};
+        for (let fieldName in this._fields) {
+            target[fieldName] = this._fields[fieldName].value;
+        }
+        return target;
     }
     toJSON() {
         return '';

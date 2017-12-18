@@ -1,10 +1,14 @@
-import { Field } from './Field';
 import { Rule } from './Rule';
-export declare class Model {
+import { TValidationResult } from './abstract/TValidationResult';
+import { IValidatable } from './abstract/IValidatable';
+export declare class Model implements IValidatable {
     private _isValid;
-    private _fields;
     private _messages;
+    private _fields;
     private _rules;
+    readonly value: {
+        [key: string]: any;
+    };
     readonly isValid: boolean;
     readonly messages: {
         [fieldName: string]: Array<string>;
@@ -12,10 +16,18 @@ export declare class Model {
     constructor(entity: {
         [key: string]: any;
     });
+    protected make(entity: {
+        [key: string]: any;
+    }): Model;
     protected define(model: Model): void;
     protected ruleFor(fieldName: string): Rule;
-    get(fieldName: string): Field;
-    set(fieldName: string, value: any): Field;
-    toObject(): void;
+    get(fieldName: string): IValidatable;
+    set(value: {
+        [key: string]: any;
+    }): void;
+    setValidity(result: TValidationResult): void;
+    toObject(): {
+        [key: string]: any;
+    };
     toJSON(): string;
 }

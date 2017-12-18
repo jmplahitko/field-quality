@@ -1,5 +1,6 @@
 import { TValidationResult } from "./abstract/TValidationResult";
-export declare class Field {
+import { IValidatable } from "./abstract/IValidatable";
+export declare class Field implements IValidatable {
     name: string;
     private _currentValue;
     private _originalValue;
@@ -7,9 +8,12 @@ export declare class Field {
     private _isValid;
     private _messages;
     constructor(name: string, value?: any);
-    value: any;
+    readonly value: any;
     readonly isValid: boolean;
+    set(value: any): void;
     setValidity(result: TValidationResult): void;
-    readonly messages: Array<string>;
+    readonly messages: {
+        [fieldName: string]: Array<string>;
+    };
     rollback(): void;
 }
