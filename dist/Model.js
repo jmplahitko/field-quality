@@ -2,8 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Field_1 = require("./Field");
 const Rule_1 = require("./Rule");
+const ValidationResult_1 = require("./ValidationResult");
 class Model {
-    constructor(entity) {
+    constructor(entity, _rule) {
+        this._rule = _rule;
         this._isValid = true;
         this._messages = {};
         this._fields = {};
@@ -23,42 +25,22 @@ class Model {
         return this._messages;
     }
     make(entity) {
-        let validationResult = {
-            value: null,
-            isValid: true,
-            messages: {}
-        };
         for (let prop in entity) {
             if (entity.hasOwnProperty(prop)) {
                 const propValue = entity[prop];
                 const rule = this._rules[prop] || this.ruleFor(prop).using(new Rule_1.Rule(prop));
-                let result;
+                let field;
                 if (rule.entity) {
                     let Entity = rule.entity;
-                    let model = new Entity(propValue);
-                    this._fields[prop] = model;
-                    result = rule.validate(model);
+                    field = new Entity(propValue, rule);
                 }
                 else {
-                    let field = new Field_1.Field(prop, propValue);
-                    this._fields[prop] = field;
-                    result = rule.validate(field);
-                    // this.set({[prop]: propValue});
+                    field = new Field_1.Field(prop, rule, propValue);
                 }
-                validationResult.messages[prop] = result.messages[prop];
+                this._fields[prop] = field;
             }
         }
-        validationResult.value = this.value;
-        // TODO: Clean this garbage up
-        let isValid = true;
-        for (let fieldName in this._fields) {
-            if (!this._fields[fieldName].isValid) {
-                validationResult.isValid = false;
-                break;
-            }
-        }
-        this.setValidity(validationResult);
-        return this;
+        return this.validate();
     }
     define(model) {
         console.warn('define not implemented');
@@ -76,23 +58,12 @@ class Model {
         for (let fieldName in value) {
             if (value.hasOwnProperty(fieldName)) {
                 let field = this._fields[fieldName];
-                let rule = this._rules[fieldName];
                 if (field.value !== value) {
                     field.set(value[fieldName]);
                 }
-                let result = rule.validate(field);
-                this._messages[fieldName] = result.messages[fieldName];
-                // TODO: Clean this garbage up
-                let isValid = true;
-                for (let fieldName in this._fields) {
-                    if (!this._fields[fieldName].isValid) {
-                        isValid = false;
-                        break;
-                    }
-                }
-                this._isValid = isValid;
             }
         }
+        return this.validate();
     }
     setValidity(result) {
         this._messages = result.isValid ? {} : result.messages;

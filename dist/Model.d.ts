@@ -1,7 +1,9 @@
 import { Rule } from './Rule';
-import { TValidationResult } from './abstract/TValidationResult';
+import { IValidationResult } from './abstract/IValidationResult';
 import { IValidatable } from './abstract/IValidatable';
+import { TMessages } from './abstract/TMessages';
 export declare class Model implements IValidatable {
+    private _rule;
     private _isValid;
     private _messages;
     private _fields;
@@ -10,22 +12,20 @@ export declare class Model implements IValidatable {
         [key: string]: any;
     };
     readonly isValid: boolean;
-    readonly messages: {
-        [fieldName: string]: Array<string>;
-    };
+    readonly messages: TMessages;
     constructor(entity: {
         [key: string]: any;
-    });
+    }, _rule?: Rule | undefined);
     protected make(entity: {
         [key: string]: any;
-    }): Model;
+    }): IValidationResult;
     protected define(model: Model): void;
     protected ruleFor(fieldName: string): Rule;
     get(fieldName: string): IValidatable;
     set(value: {
         [key: string]: any;
-    }): void;
-    setValidity(result: TValidationResult): void;
+    }): IValidationResult;
+    setValidity(result: IValidationResult): void;
     toObject(): {
         [key: string]: any;
     };

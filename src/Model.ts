@@ -1,12 +1,14 @@
 import { Field } from './Field';
 import { Rule } from './Rule';
-import { TValidationResult } from './abstract/TValidationResult';
+import { IValidationResult } from './abstract/IValidationResult';
 import { TQualifier } from './abstract/TQualifier';
 import { IValidatable } from './abstract/IValidatable';
+import { TMessages } from './abstract/TMessages' ;
+import { ValidationResult } from './ValidationResult';
 
 export class Model implements IValidatable {
 	private _isValid: boolean = true;
-	private _messages: { [fieldName: string]: Array<string> } = {};
+	private _messages: TMessages = {};
 
 	private _fields: { [fieldName: string]: IValidatable } = {};
 	private _rules: { [ruleName: string]: Rule } = {};
@@ -19,59 +21,37 @@ export class Model implements IValidatable {
 		return this._isValid;
 	}
 
-	get messages(): { [fieldName: string]: Array<string> } {
+	get messages(): TMessages {
 		return this._messages;
 	}
 
-	constructor(entity: { [key: string]: any }) {
+	constructor(entity: { [key: string]: any }, private _rule?: Rule) {
 		this.define(this);
 		if (entity) {
 			this.make(entity);
 		}
 	}
 
-	protected make(entity: { [key: string]: any }): Model {
-		let validationResult: TValidationResult = {
-			value: null,
-			isValid: true,
-			messages: {}
-		};
-
+	protected make(entity: { [key: string]: any }): IValidationResult {
 		for (let prop in entity) {
 			if (entity.hasOwnProperty(prop)) {
 				const propValue = entity[prop];
 				const rule = this._rules[prop] || this.ruleFor(prop).using(new Rule(prop));
-				let result;
+
+				let field;
 
 				if (rule.entity) {
 					let Entity = rule.entity;
-					let model = new Entity(propValue);
-					this._fields[prop] = model;
-					result = rule.validate(model);
+					field = new Entity(propValue, rule);
 				} else {
-					let field = new Field(prop, propValue);
-					this._fields[prop] = field;
-					result = rule.validate(field);
-					// this.set({[prop]: propValue});
+					field = new Field(prop, rule, propValue);
 				}
 
-				validationResult.messages[prop] = result.messages[prop];
+				this._fields[prop] = field;
 			}
 		}
 
-		validationResult.value = this.value;
-		// TODO: Clean this garbage up
-		let isValid = true;
-		for (let fieldName in this._fields) {
-			if (!this._fields[fieldName].isValid) {
-				validationResult.isValid = false;
-				break;
-			}
-		}
-
-		this.setValidity(validationResult);
-
-		return this;
+		return this.validate();
 	}
 
 	protected define(model: Model) {
@@ -89,33 +69,21 @@ export class Model implements IValidatable {
 		return field;
 	}
 
-	public set(value: {[key: string]: any}) {
+	public set(value: {[key: string]: any}): IValidationResult {
 		for (let fieldName in value) {
 			if (value.hasOwnProperty(fieldName)) {
 				let field = this._fields[fieldName];
-				let rule = this._rules[fieldName];
 
 				if (field.value !== value) {
 					field.set(value[fieldName]);
 				}
-				let result = rule.validate(field);
-
-				this._messages[fieldName] = result.messages[fieldName];
-				// TODO: Clean this garbage up
-				let isValid = true;
-				for (let fieldName in this._fields) {
-					if (!this._fields[fieldName].isValid) {
-						isValid = false;
-						break;
-					}
-				}
-
-				this._isValid = isValid;
 			}
 		}
+
+		return this.validate();
 	}
 
-	public setValidity(result: TValidationResult): void {
+	public setValidity(result: IValidationResult): void {
 		this._messages = result.isValid ? {} : result.messages;
 		this._isValid = result.isValid;
 	}
