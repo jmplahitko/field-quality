@@ -38,16 +38,7 @@ class Rule {
         if (this._entity) {
             let Entity = this._entity;
             let testEntity = new Entity(field.value);
-            let result = {
-                value: field.value,
-                isValid: testEntity.isValid,
-                messages: { [this.name]: [] }
-            };
-            if (!result.isValid) {
-                for (let _fieldName in testEntity.messages) {
-                    testEntity.messages[_fieldName].forEach(message => result.messages[this.name].push(message));
-                }
-            }
+            let result = testEntity.validate();
             field.setValidity(result);
             return result;
         }

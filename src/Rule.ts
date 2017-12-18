@@ -1,22 +1,23 @@
 import { TQualifier } from './abstract/TQualifier';
 import { TQualifierMeta } from './abstract/TQualifierMeta';
 import { Field } from './Field';
-import { TValidationResult } from './abstract/TValidationResult';
 import { IValidatable } from './abstract/IValidatable';
 import { Model } from './Model';
+import { IValidationResult } from './abstract/IValidationResult';
+import { TModelConstructor } from './abstract/TModelConstructor';
 
 export class Rule {
 	private _qualifiers: Map<TQualifier, TQualifierMeta> = new Map();
 	private _rules: Array<Rule> = [];
-	private _entity: (new (entity: { [key: string]: any }) => Model)|null = null;
+	private _entity: TModelConstructor|null = null;
 
-	get entity(): (new (entity: { [key: string]: any }) => Model)|null {
+	get entity(): TModelConstructor|null {
 		return this._entity;
 	}
 
 	constructor(public name: string) {}
 
-	public as(entity: new (entity: { [key: string]: any }) => Model) {
+	public as(entity: TModelConstructor) {
 		this._entity = entity;
 	}
 
@@ -45,28 +46,16 @@ export class Rule {
 		};
 	}
 
-	public validate(field: IValidatable): TValidationResult {
+	public validate(field: IValidatable): IValidationResult {
 		if (this._entity) {
 			let Entity = this._entity;
 			let testEntity = new Entity(field.value);
-
-			let result: TValidationResult = {
-				value: field.value,
-				isValid: testEntity.isValid,
-				messages: { [this.name]: [] }
-			}
-
-			if (!result.isValid) {
-				for (let _fieldName in testEntity.messages) {
-					testEntity.messages[_fieldName].forEach(message => result.messages[this.name].push(message));
-				}
-			}
-
+			let result = testEntity.validate();
 			field.setValidity(result);
 
 			return result;
 		} else {
-			let result: TValidationResult = {
+			let result: IValidationResult = {
 				value: field.value,
 				isValid: true,
 				messages: { [this.name]: [] }
