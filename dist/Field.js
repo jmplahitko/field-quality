@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Field {
-    constructor(name, value) {
+    constructor(name, _rule, value) {
         this.name = name;
+        this._rule = _rule;
         this._currentValue = null;
         this._originalValue = null;
         this._previousValue = null;
@@ -32,6 +33,9 @@ class Field {
     rollback() {
         this._currentValue = this._originalValue;
         this._previousValue = null;
+    }
+    validate() {
+        return this._rule.validate(this);
     }
 }
 exports.Field = Field;

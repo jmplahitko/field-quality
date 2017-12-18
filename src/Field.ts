@@ -1,5 +1,6 @@
-import { TValidationResult } from "./abstract/TValidationResult";
+import { IValidationResult } from "./abstract/IValidationResult";
 import { IValidatable } from "./abstract/IValidatable";
+import { Rule } from "./Rule";
 
 export class Field implements IValidatable {
 	private _currentValue: any = null;
@@ -10,7 +11,7 @@ export class Field implements IValidatable {
 	private _isValid: boolean = true;
 	private _messages: { [fieldName: string]: Array<string> } = {};
 
-	constructor(public name: string, value?: any) {
+	constructor(public name: string, private _rule: Rule, value?: any) {
 		this._currentValue = value || null;
 		this._originalValue = value || null;
 	}
@@ -28,7 +29,7 @@ export class Field implements IValidatable {
 		this._currentValue = value;
 	}
 
-	public setValidity(result: TValidationResult): void {
+	public setValidity(result: IValidationResult): void {
 		this._messages = result.isValid ? {} : result.messages;
 		this._isValid = result.isValid;
 	}
@@ -40,5 +41,9 @@ export class Field implements IValidatable {
 	public rollback(): void {
 		this._currentValue = this._originalValue;
 		this._previousValue = null;
+	}
+
+	public validate(): IValidationResult {
+		return this._rule.validate(this);
 	}
 }
