@@ -5,10 +5,11 @@ import { IValidatable } from './abstract/IValidatable';
 import { Model } from './Model';
 import { IValidationResult } from './abstract/IValidationResult';
 import { TModelConstructor } from './abstract/TModelConstructor';
+import { TRuleCollection } from './abstract/TRuleCollection';
 
 export class Rule {
 	private _qualifiers: Map<TQualifier, TQualifierMeta> = new Map();
-	private _rules: Array<Rule> = [];
+	private _rules: TRuleCollection = {};
 	private _entity: TModelConstructor|null = null;
 
 	get entity(): TModelConstructor|null {
@@ -26,7 +27,7 @@ export class Rule {
 	}
 
 	public using(rule: Rule): Rule {
-		this._rules.push(rule);
+		this._rules[rule.name] = rule;
 		return this;
 	}
 
@@ -68,13 +69,14 @@ export class Rule {
 				}
 			}
 
-			this._rules.forEach(rule => {
+			for (let ruleName in this._rules) {
+				let rule = this._rules[ruleName];
 				let _result = rule.validate(field);
 				if (!_result.isValid) {
 					result.messages[rule.name] = _result.messages[rule.name];
 					result.isValid = false;
 				}
-			});
+			}
 
 			field.setValidity(result);
 

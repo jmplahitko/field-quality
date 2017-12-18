@@ -4,7 +4,7 @@ class Rule {
     constructor(name) {
         this.name = name;
         this._qualifiers = new Map();
-        this._rules = [];
+        this._rules = {};
         this._entity = null;
     }
     get entity() {
@@ -16,7 +16,7 @@ class Rule {
     asArrayOf() {
     }
     using(rule) {
-        this._rules.push(rule);
+        this._rules[rule.name] = rule;
         return this;
     }
     must(qualifier) {
@@ -54,13 +54,14 @@ class Rule {
                     result.isValid = false;
                 }
             }
-            this._rules.forEach(rule => {
+            for (let ruleName in this._rules) {
+                let rule = this._rules[ruleName];
                 let _result = rule.validate(field);
                 if (!_result.isValid) {
                     result.messages[rule.name] = _result.messages[rule.name];
                     result.isValid = false;
                 }
-            });
+            }
             field.setValidity(result);
             return result;
         }
