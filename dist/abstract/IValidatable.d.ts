@@ -1,4 +1,4 @@
-import { TValidationResult } from "./TValidationResult";
+import { IValidationResult } from "./IValidationResult";
 export interface IValidatable {
     isValid: boolean;
     messages: {
@@ -6,5 +6,6 @@ export interface IValidatable {
     };
     value: any;
     set(value: any): any;
-    setValidity(result: TValidationResult): void;
+    setValidity(result: IValidationResult): void;
+    validate(): IValidationResult;
 }
