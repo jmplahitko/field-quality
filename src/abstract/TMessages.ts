@@ -1,0 +1,1 @@
+export type TMessages = { [fieldName: string]: Array<string> };
