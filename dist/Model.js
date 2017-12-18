@@ -85,7 +85,7 @@ class Model {
         return target;
     }
     toJSON() {
-        return '';
+        return JSON.stringify(this.toObject());
     }
 }
 exports.Model = Model;

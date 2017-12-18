@@ -107,6 +107,6 @@ export class Model implements IValidatable {
 	}
 
 	public toJSON(): string {
-		return '';
+		return JSON.stringify(this.toObject());
 	}
 }
