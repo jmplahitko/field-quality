@@ -31,21 +31,45 @@ export class Model implements IValidatable {
 	}
 
 	protected make(entity: { [key: string]: any }): Model {
+		let validationResult: TValidationResult = {
+			value: null,
+			isValid: true,
+			messages: {}
+		};
+
 		for (let prop in entity) {
 			if (entity.hasOwnProperty(prop)) {
 				const propValue = entity[prop];
 				const rule = this._rules[prop] || this.ruleFor(prop).using(new Rule(prop));
+				let result;
 
 				if (rule.entity) {
 					let Entity = rule.entity;
-					this._fields[prop] = new Entity(propValue);
+					let model = new Entity(propValue);
+					this._fields[prop] = model;
+					result = rule.validate(model);
 				} else {
-					this._fields[prop] = new Field(prop);
+					let field = new Field(prop, propValue);
+					this._fields[prop] = field;
+					result = rule.validate(field);
+					// this.set({[prop]: propValue});
 				}
 
-				this.set({[prop]: propValue});
+				validationResult.messages[prop] = result.messages[prop];
 			}
 		}
+
+		validationResult.value = this.value;
+		// TODO: Clean this garbage up
+		let isValid = true;
+		for (let fieldName in this._fields) {
+			if (!this._fields[fieldName].isValid) {
+				validationResult.isValid = false;
+				break;
+			}
+		}
+
+		this.setValidity(validationResult);
 
 		return this;
 	}
@@ -72,7 +96,7 @@ export class Model implements IValidatable {
 				let rule = this._rules[fieldName];
 
 				if (field.value !== value) {
-				field.set(value[fieldName]);
+					field.set(value[fieldName]);
 				}
 				let result = rule.validate(field);
 
