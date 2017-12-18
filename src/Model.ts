@@ -71,7 +71,9 @@ export class Model implements IValidatable {
 				let field = this._fields[fieldName];
 				let rule = this._rules[fieldName];
 
+				if (field.value !== value) {
 				field.set(value[fieldName]);
+				}
 				let result = rule.validate(field);
 
 				this._messages[fieldName] = result.messages[fieldName];
