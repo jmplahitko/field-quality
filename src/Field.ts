@@ -1,6 +1,7 @@
 import { IValidationResult } from "./abstract/IValidationResult";
 import { IValidatable } from "./abstract/IValidatable";
 import { Rule } from "./Rule";
+import { TMessageCollection } from "./abstract/TMessageCollection";
 
 export class Field implements IValidatable {
 	private _currentValue: any = null;
@@ -9,7 +10,7 @@ export class Field implements IValidatable {
 
 	// happy or sad default?
 	private _isValid: boolean = true;
-	private _messages: { [fieldName: string]: Array<string> } = {};
+	private _messages: TMessageCollection = {};
 
 	constructor(public name: string, private _rule: Rule, value?: any) {
 		this._currentValue = value || null;
@@ -34,7 +35,7 @@ export class Field implements IValidatable {
 		this._isValid = result.isValid;
 	}
 
-	get messages(): { [fieldName: string]: Array<string> } {
+	get messages(): TMessageCollection {
 		return this._messages;
 	}
 

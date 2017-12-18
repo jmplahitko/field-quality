@@ -1,6 +1,6 @@
-import { TMessages } from "./TMessages";
+import { TMessageCollection } from "./TMessageCollection";
 export interface IValidationResult {
     value: any;
     isValid: boolean;
-    messages: TMessages;
+    messages: TMessageCollection;
 }

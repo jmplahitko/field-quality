@@ -3,15 +3,17 @@ import { Rule } from './Rule';
 import { IValidationResult } from './abstract/IValidationResult';
 import { TQualifier } from './abstract/TQualifier';
 import { IValidatable } from './abstract/IValidatable';
-import { TMessages } from './abstract/TMessages' ;
+import { TMessageCollection } from './abstract/TMessageCollection' ;
 import { ValidationResult } from './ValidationResult';
+import { TFieldCollection } from './abstract/TFieldCollection';
+import { TRuleCollection } from './abstract/TRuleCollection';
 
 export class Model implements IValidatable {
 	private _isValid: boolean = true;
-	private _messages: TMessages = {};
+	private _messages: TMessageCollection = {};
 
-	private _fields: { [fieldName: string]: IValidatable } = {};
-	private _rules: { [ruleName: string]: Rule } = {};
+	private _fields: TFieldCollection = {};
+	private _rules: TRuleCollection = {};
 
 	get value(): { [key: string]: any } {
 		return this.toObject();
@@ -21,7 +23,7 @@ export class Model implements IValidatable {
 		return this._isValid;
 	}
 
-	get messages(): TMessages {
+	get messages(): TMessageCollection {
 		return this._messages;
 	}
 
@@ -107,7 +109,7 @@ export class Model implements IValidatable {
 			return this._rule.validate(this);
 		} else {
 			let validity = [];
-			let messages: TMessages = {};
+			let messages: TMessageCollection = {};
 			for (let fieldName in this._fields) {
 				let result = this._fields[fieldName].validate();
 				validity.push(result.isValid);

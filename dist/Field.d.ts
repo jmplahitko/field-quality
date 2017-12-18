@@ -1,6 +1,7 @@
 import { IValidationResult } from "./abstract/IValidationResult";
 import { IValidatable } from "./abstract/IValidatable";
 import { Rule } from "./Rule";
+import { TMessageCollection } from "./abstract/TMessageCollection";
 export declare class Field implements IValidatable {
     name: string;
     private _rule;
@@ -14,9 +15,7 @@ export declare class Field implements IValidatable {
     readonly isValid: boolean;
     set(value: any): void;
     setValidity(result: IValidationResult): void;
-    readonly messages: {
-        [fieldName: string]: Array<string>;
-    };
+    readonly messages: TMessageCollection;
     rollback(): void;
     validate(): IValidationResult;
 }

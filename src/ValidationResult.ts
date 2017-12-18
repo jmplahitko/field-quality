@@ -1,5 +1,5 @@
 import { IValidatable } from "./abstract/IValidatable";
-import { TMessages } from "./abstract/TMessages";
+import { TMessageCollection } from "./abstract/TMessageCollection";
 import { IValidationResult } from "./abstract/IValidationResult";
 
 /**
@@ -7,7 +7,7 @@ import { IValidationResult } from "./abstract/IValidationResult";
  */
 export class ValidationResult implements IValidationResult {
 	public isValid: boolean = true;
-	public messages: TMessages = {};
+	public messages: TMessageCollection = {};
 	public value: any;
 
 	constructor(validatable: IValidatable) {
