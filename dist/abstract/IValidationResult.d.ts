@@ -1,6 +1,7 @@
-import { TMessageCollection } from "./TMessageCollection";
+import { TFieldErrorCollection } from "./TFieldErrorCollection";
+import { TModelErrorCollection } from "./TModelErrorCollection";
 export interface IValidationResult {
-    value: any;
+    errors: TFieldErrorCollection | TModelErrorCollection;
     isValid: boolean;
-    messages: TMessageCollection;
+    value: any;
 }

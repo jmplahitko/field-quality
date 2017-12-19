@@ -1,7 +1,7 @@
 export declare type TValidationResult = {
-    value: any;
-    isValid: boolean;
-    messages: {
-        [fieldName: string]: Array<string>;
+    errors: {
+        [name: string]: any;
     };
+    isValid: boolean;
+    value: any;
 };

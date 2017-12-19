@@ -1,34 +1,31 @@
 import { Rule } from './Rule';
-import { IValidationResult } from './abstract/IValidationResult';
 import { IValidatable } from './abstract/IValidatable';
-import { TMessageCollection } from './abstract/TMessageCollection';
+import { TValidationResult } from './abstract/TValidationResult';
 export declare class Model implements IValidatable {
     name: string;
     private _isValid;
-    private _messages;
+    private _errors;
     private _fields;
     private _rules;
     readonly value: {
         [key: string]: any;
     };
     readonly isValid: boolean;
-    readonly messages: TMessageCollection;
+    readonly errors: {};
     constructor(entity?: {
         [key: string]: any;
     });
     protected make(entity: {
         [key: string]: any;
-    }): IValidationResult;
+    }): TValidationResult;
     protected define(model: Model): void;
     protected ruleFor(fieldName: string): Rule;
     get(fieldName: string): IValidatable;
-    set(value: {
-        [key: string]: any;
-    }): IValidationResult;
-    setValidity(result: IValidationResult): void;
+    set(value: any): TValidationResult;
+    setValidity(result: TValidationResult): void;
     toObject(): {
         [key: string]: any;
     };
     toJSON(): string;
-    validate(): IValidationResult;
+    validate(): TValidationResult;
 }

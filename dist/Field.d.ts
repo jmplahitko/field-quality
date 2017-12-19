@@ -1,7 +1,7 @@
-import { IValidationResult } from "./abstract/IValidationResult";
 import { IValidatable } from "./abstract/IValidatable";
 import { Rule } from "./Rule";
-import { TMessageCollection } from "./abstract/TMessageCollection";
+import { TValidationResult } from "./abstract/TValidationResult";
+import { TErrorCollection } from "./abstract/TErrorCollection";
 export declare class Field implements IValidatable {
     name: string;
     private _rule;
@@ -9,13 +9,13 @@ export declare class Field implements IValidatable {
     private _originalValue;
     private _previousValue;
     private _isValid;
-    private _messages;
+    private _errors;
     constructor(name: string, _rule: Rule, value?: any);
     readonly value: any;
     readonly isValid: boolean;
-    set(value: any): IValidationResult;
-    setValidity(result: IValidationResult): void;
-    readonly messages: TMessageCollection;
+    set(value: any): TValidationResult;
+    setValidity(result: TValidationResult): void;
+    readonly errors: TErrorCollection;
     rollback(): void;
-    validate(): IValidationResult;
+    validate(): TValidationResult;
 }

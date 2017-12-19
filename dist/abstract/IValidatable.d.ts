@@ -1,12 +1,7 @@
-import { IValidationResult } from "./IValidationResult";
+import { TValidationResult } from "./TValidationResult";
 export interface IValidatable {
-    name: string;
-    isValid: boolean;
-    messages: {
-        [key: string]: Array<string>;
-    };
     value: any;
-    set(value: any): any;
-    setValidity(result: IValidationResult): void;
-    validate(): IValidationResult;
+    set(value: any): TValidationResult;
+    setValidity(result: TValidationResult): void;
+    validate(): TValidationResult;
 }

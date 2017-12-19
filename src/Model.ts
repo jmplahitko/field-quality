@@ -1,17 +1,15 @@
 import { Field } from './Field';
 import { Rule } from './Rule';
-import { IValidationResult } from './abstract/IValidationResult';
 import { TQualifier } from './abstract/TQualifier';
 import { IValidatable } from './abstract/IValidatable';
-import { TMessageCollection } from './abstract/TMessageCollection' ;
-import { ValidationResult } from './ValidationResult';
 import { TFieldCollection } from './abstract/TFieldCollection';
 import { TRuleCollection } from './abstract/TRuleCollection';
+import { TValidationResult } from './abstract/TValidationResult';
 
 export class Model implements IValidatable {
 	public name: string;
 	private _isValid: boolean = true;
-	private _messages: TMessageCollection = {};
+	private _errors = {};
 
 	private _fields: TFieldCollection = {};
 	private _rules: TRuleCollection = {};
@@ -24,8 +22,8 @@ export class Model implements IValidatable {
 		return this._isValid;
 	}
 
-	get messages(): TMessageCollection {
-		return this._messages;
+	get errors() {
+		return this._errors;
 	}
 
 	constructor(entity: { [key: string]: any } = {}) {
@@ -34,7 +32,7 @@ export class Model implements IValidatable {
 		this.make(entity);
 	}
 
-	protected make(entity: { [key: string]: any }): IValidationResult {
+	protected make(entity: { [key: string]: any }): TValidationResult {
 		for (let prop in entity) {
 			if (entity.hasOwnProperty(prop)) {
 				const propValue = entity[prop];
@@ -67,18 +65,18 @@ export class Model implements IValidatable {
 		console.warn('define not implemented');
 	}
 
-	protected ruleFor(fieldName: string) {
+	protected ruleFor(fieldName: string): Rule {
 		let rule = new Rule(fieldName);
 		this._rules[fieldName] = rule;
 		return rule
 	}
 
-	public get(fieldName: string): IValidatable {
+	public get(fieldName: string) {
 		let field = this._fields[fieldName];
 		return field;
 	}
 
-	public set(value: {[key: string]: any}): IValidationResult {
+	public set(value: any): TValidationResult {
 		for (let fieldName in value) {
 			if (value.hasOwnProperty(fieldName)) {
 				let field = this._fields[fieldName];
@@ -92,8 +90,8 @@ export class Model implements IValidatable {
 		return this.validate();
 	}
 
-	public setValidity(result: IValidationResult): void {
-		this._messages = result.isValid ? {} : result.messages;
+	public setValidity(result: TValidationResult): void {
+		this._errors = result.errors;
 		this._isValid = result.isValid;
 	}
 
@@ -111,21 +109,21 @@ export class Model implements IValidatable {
 		return JSON.stringify(this.toObject());
 	}
 
-	public validate(): IValidationResult {
+	public validate(): TValidationResult {
+		let errors: { [fieldName: string]: TValidationResult } = {};
 		let validity = [];
-		let messages: TMessageCollection = {};
 
 		for (let fieldName in this._fields) {
 			let _result = this._fields[fieldName].validate();
 			validity.push(_result.isValid);
-			messages[fieldName] = _result.messages[fieldName];
+			errors[fieldName] = _result;
 		}
 
-		let result = new ValidationResult({
+		let result = {
 			value: this.value,
 			isValid: !validity.includes(false),
-			messages
-		});
+			errors
+		};
 
 		this.setValidity(result);
 

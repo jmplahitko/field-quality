@@ -2,11 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Field_1 = require("./Field");
 const Rule_1 = require("./Rule");
-const ValidationResult_1 = require("./ValidationResult");
 class Model {
     constructor(entity = {}) {
         this._isValid = true;
-        this._messages = {};
+        this._errors = {};
         this._fields = {};
         this._rules = {};
         this.name = this.constructor.name.toLowerCase();
@@ -19,8 +18,8 @@ class Model {
     get isValid() {
         return this._isValid;
     }
-    get messages() {
-        return this._messages;
+    get errors() {
+        return this._errors;
     }
     make(entity) {
         for (let prop in entity) {
@@ -70,7 +69,7 @@ class Model {
         return this.validate();
     }
     setValidity(result) {
-        this._messages = result.isValid ? {} : result.messages;
+        this._errors = result.errors;
         this._isValid = result.isValid;
     }
     toObject() {
@@ -84,18 +83,18 @@ class Model {
         return JSON.stringify(this.toObject());
     }
     validate() {
+        let errors = {};
         let validity = [];
-        let messages = {};
         for (let fieldName in this._fields) {
             let _result = this._fields[fieldName].validate();
             validity.push(_result.isValid);
-            messages[fieldName] = _result.messages[fieldName];
+            errors[fieldName] = _result;
         }
-        let result = new ValidationResult_1.ValidationResult({
+        let result = {
             value: this.value,
             isValid: !validity.includes(false),
-            messages
-        });
+            errors
+        };
         this.setValidity(result);
         return result;
     }

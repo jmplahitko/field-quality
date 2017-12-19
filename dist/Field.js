@@ -9,7 +9,7 @@ class Field {
         this._previousValue = null;
         // happy or sad default?
         this._isValid = true;
-        this._messages = {};
+        this._errors = {};
         this._currentValue = value || null;
         this._originalValue = value || null;
     }
@@ -25,11 +25,11 @@ class Field {
         return this.validate();
     }
     setValidity(result) {
-        this._messages = result.isValid ? {} : result.messages;
+        this._errors = result.errors;
         this._isValid = result.isValid;
     }
-    get messages() {
-        return this._messages;
+    get errors() {
+        return this._errors;
     }
     rollback() {
         this._currentValue = this._originalValue;

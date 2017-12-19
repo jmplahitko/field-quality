@@ -1,7 +1,7 @@
-import { IValidationResult } from "./abstract/IValidationResult";
 import { IValidatable } from "./abstract/IValidatable";
 import { Rule } from "./Rule";
-import { TMessageCollection } from "./abstract/TMessageCollection";
+import { TValidationResult } from "./abstract/TValidationResult";
+import { TErrorCollection } from "./abstract/TErrorCollection";
 
 export class Field implements IValidatable {
 	private _currentValue: any = null;
@@ -10,7 +10,7 @@ export class Field implements IValidatable {
 
 	// happy or sad default?
 	private _isValid: boolean = true;
-	private _messages: TMessageCollection = {};
+	private _errors: TErrorCollection = {};
 
 	constructor(public name: string, private _rule: Rule, value?: any) {
 		this._currentValue = value || null;
@@ -25,19 +25,19 @@ export class Field implements IValidatable {
 		return this._isValid;
 	}
 
-	public set(value: any) {
+	public set(value: any): TValidationResult {
 		this._previousValue = this._currentValue;
 		this._currentValue = value;
 		return this.validate();
 	}
 
-	public setValidity(result: IValidationResult): void {
-		this._messages = result.isValid ? {} : result.messages;
+	public setValidity(result: TValidationResult): void {
+		this._errors = result.errors;
 		this._isValid = result.isValid;
 	}
 
-	get messages(): TMessageCollection {
-		return this._messages;
+	get errors(): TErrorCollection {
+		return this._errors;
 	}
 
 	public rollback(): void {
@@ -45,7 +45,7 @@ export class Field implements IValidatable {
 		this._previousValue = null;
 	}
 
-	public validate(): IValidationResult {
+	public validate(): TValidationResult {
 		let result = this._rule.validate(this);
 		this.setValidity(result);
 		return result;

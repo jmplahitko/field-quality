@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class ValidationResult {
     constructor(validatable) {
         this.isValid = true;
-        this.messages = {};
+        this.errors = {};
+        this.value = null;
+        this.errors = validatable.errors;
         this.isValid = validatable.isValid;
-        this.messages = validatable.messages;
         this.value = validatable.value;
     }
 }

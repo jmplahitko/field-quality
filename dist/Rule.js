@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ValidationResult_1 = require("./ValidationResult");
 class Rule {
     constructor(name) {
         this.name = name;
@@ -20,9 +19,12 @@ class Rule {
         this._rules[rule.name] = rule;
         return this;
     }
-    must(qualifier) {
+    must(qualifierName, qualifier) {
         let rule = this;
-        this._qualifiers.set(qualifier, { message: `${this.name} is invalid` });
+        this._qualifiers.set(qualifier, {
+            name: qualifierName,
+            message: `${this.name} is invalid.`
+        });
         return {
             must: rule.must.bind(this),
             withMessage(message) {
@@ -36,35 +38,31 @@ class Rule {
         };
     }
     validate(field) {
-        if (this._entity) {
-            return field.validate();
-            ;
+        let errors = {};
+        let validity = [];
+        for (let [qualifier, meta] of this._qualifiers) {
+            let isValid = qualifier(field.value);
+            if (!isValid) {
+                errors[meta.name] = meta.message;
+            }
+            validity.push(isValid);
         }
-        else {
-            let messages = { [this.name]: [] };
-            let validity = [];
-            for (let [qualifier, meta] of this._qualifiers) {
-                if (!qualifier(field.value)) {
-                    messages[this.name].push(meta.message);
-                    validity.push(false);
-                }
-                else {
-                    validity.push(true);
+        for (let ruleName in this._rules) {
+            let rule = this._rules[ruleName];
+            let _result = rule.validate(field);
+            if (!_result.isValid) {
+                for (let ruleNeme in _result.errors) {
+                    errors[ruleName] = _result.errors[ruleName];
                 }
             }
-            for (let ruleName in this._rules) {
-                let rule = this._rules[ruleName];
-                let _result = rule.validate(field);
-                messages[this.name] = _result.messages[rule.name];
-                validity.push(_result.isValid);
-            }
-            let result = new ValidationResult_1.ValidationResult({
-                value: field.value,
-                isValid: !validity.includes(false),
-                messages: messages
-            });
-            return result;
+            validity.push(_result.isValid);
         }
+        let result = {
+            value: field.value,
+            isValid: !validity.includes(false),
+            errors
+        };
+        return result;
     }
 }
 exports.Rule = Rule;

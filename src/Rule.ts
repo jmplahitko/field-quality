@@ -1,13 +1,12 @@
 import { TQualifier } from './abstract/TQualifier';
 import { TQualifierMeta } from './abstract/TQualifierMeta';
 import { Field } from './Field';
-import { IValidatable } from './abstract/IValidatable';
+// import { IValidatable } from './abstract/IValidatable';
 import { Model } from './Model';
-import { IValidationResult } from './abstract/IValidationResult';
 import { TModelConstructor } from './abstract/TModelConstructor';
 import { TRuleCollection } from './abstract/TRuleCollection';
-import { TMessageCollection } from './abstract/TMessageCollection';
-import { ValidationResult } from './ValidationResult';
+import { TValidationResult } from './abstract/TValidationResult';
+import { TErrorCollection } from './abstract/TErrorCollection';
 
 export class Rule {
 	private _qualifiers: Map<TQualifier, TQualifierMeta> = new Map();
@@ -33,9 +32,13 @@ export class Rule {
 		return this;
 	}
 
-	public must(qualifier: TQualifier) {
+	public must(qualifierName: string, qualifier: TQualifier) {
 		let rule = this;
-		this._qualifiers.set(qualifier, { message: `${this.name} is invalid` });
+		this._qualifiers.set(qualifier, {
+			name: qualifierName,
+			message: `${this.name} is invalid.`
+		});
+
 		return {
 			must: rule.must.bind(this),
 			withMessage(message: string): Rule {
@@ -49,36 +52,37 @@ export class Rule {
 		};
 	}
 
-	public validate(field: IValidatable): IValidationResult {
-		if (this._entity) {
-			return field.validate();;
-		} else {
-			let messages: TMessageCollection = { [this.name]: [] };
-			let validity = [];
+	public validate(field: Field): TValidationResult {
+		let errors: TErrorCollection = {};
+		let validity = [];
 
-			for (let [qualifier, meta] of this._qualifiers) {
-				if (!qualifier(field.value)) {
-					messages[this.name].push(meta.message);
-					validity.push(false);
-				} else {
-					validity.push(true);
+		for (let [qualifier, meta] of this._qualifiers) {
+			let isValid = qualifier(field.value)
+			if (!isValid) {
+				errors[meta.name] = meta.message;
+			}
+
+			validity.push(isValid);
+		}
+
+		for (let ruleName in this._rules) {
+			let rule = this._rules[ruleName];
+			let _result = rule.validate(field);
+			if (!_result.isValid) {
+				for (let ruleNeme in _result.errors) {
+					errors[ruleName] = _result.errors[ruleName];
 				}
 			}
 
-			for (let ruleName in this._rules) {
-				let rule = this._rules[ruleName];
-				let _result = rule.validate(field);
-				messages[this.name] = _result.messages[rule.name];
-				validity.push(_result.isValid);
-			}
-
-			let result = new ValidationResult({
-				value: field.value,
-				isValid: !validity.includes(false),
-				messages: messages
-			});
-
-			return result;
+			validity.push(_result.isValid);
 		}
+
+		let result = {
+			value: field.value,
+			isValid: !validity.includes(false),
+			errors
+		};
+
+		return result;
 	}
 }
