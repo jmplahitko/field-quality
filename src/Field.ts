@@ -45,6 +45,8 @@ export class Field implements IValidatable {
 	}
 
 	public validate(): IValidationResult {
-		return this._rule.validate(this);
+		let result = this._rule.validate(this);
+		this.setValidity(result);
+		return result;
 	}
 }

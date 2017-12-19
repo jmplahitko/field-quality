@@ -10,7 +10,7 @@ export class ValidationResult implements IValidationResult {
 	public messages: TMessageCollection = {};
 	public value: any;
 
-	constructor(validatable: IValidatable) {
+	constructor(validatable: IValidatable|IValidationResult) {
 		this.isValid = validatable.isValid;
 		this.messages = validatable.messages;
 		this.value = validatable.value;

@@ -8,5 +8,5 @@ export declare class ValidationResult implements IValidationResult {
     isValid: boolean;
     messages: TMessageCollection;
     value: any;
-    constructor(validatable: IValidatable);
+    constructor(validatable: IValidatable | IValidationResult);
 }

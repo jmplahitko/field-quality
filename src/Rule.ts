@@ -6,6 +6,8 @@ import { Model } from './Model';
 import { IValidationResult } from './abstract/IValidationResult';
 import { TModelConstructor } from './abstract/TModelConstructor';
 import { TRuleCollection } from './abstract/TRuleCollection';
+import { TMessageCollection } from './abstract/TMessageCollection';
+import { ValidationResult } from './ValidationResult';
 
 export class Rule {
 	private _qualifiers: Map<TQualifier, TQualifierMeta> = new Map();
@@ -52,24 +54,29 @@ export class Rule {
 			return field.validate();;
 		} else {
 			let messages: TMessageCollection = { [this.name]: [] };
+			let validity = [];
 
 			for (let [qualifier, meta] of this._qualifiers) {
 				if (!qualifier(field.value)) {
-					result.messages[this.name].push(meta.message);
-					result.isValid = false;
+					messages[this.name].push(meta.message);
+					validity.push(false);
+				} else {
+					validity.push(true);
 				}
 			}
 
 			for (let ruleName in this._rules) {
 				let rule = this._rules[ruleName];
 				let _result = rule.validate(field);
-				if (!_result.isValid) {
-					result.messages[rule.name] = _result.messages[rule.name];
-					result.isValid = false;
-				}
+				messages[this.name] = _result.messages[rule.name];
+				validity.push(_result.isValid);
 			}
 
-			field.setValidity(result);
+			let result = new ValidationResult({
+				value: field.value,
+				isValid: !validity.includes(false),
+				messages: messages
+			});
 
 			return result;
 		}

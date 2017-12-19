@@ -35,7 +35,9 @@ class Field {
         this._previousValue = null;
     }
     validate() {
-        return this._rule.validate(this);
+        let result = this._rule.validate(this);
+        this.setValidity(result);
+        return result;
     }
 }
 exports.Field = Field;

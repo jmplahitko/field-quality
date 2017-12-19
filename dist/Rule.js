@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const ValidationResult_1 = require("./ValidationResult");
 class Rule {
     constructor(name) {
         this.name = name;
@@ -40,26 +41,28 @@ class Rule {
             ;
         }
         else {
-            let result = {
-                value: field.value,
-                isValid: true,
-                messages: { [this.name]: [] }
-            };
+            let messages = { [this.name]: [] };
+            let validity = [];
             for (let [qualifier, meta] of this._qualifiers) {
                 if (!qualifier(field.value)) {
-                    result.messages[this.name].push(meta.message);
-                    result.isValid = false;
+                    messages[this.name].push(meta.message);
+                    validity.push(false);
+                }
+                else {
+                    validity.push(true);
                 }
             }
             for (let ruleName in this._rules) {
                 let rule = this._rules[ruleName];
                 let _result = rule.validate(field);
-                if (!_result.isValid) {
-                    result.messages[rule.name] = _result.messages[rule.name];
-                    result.isValid = false;
-                }
+                messages[this.name] = _result.messages[rule.name];
+                validity.push(_result.isValid);
             }
-            field.setValidity(result);
+            let result = new ValidationResult_1.ValidationResult({
+                value: field.value,
+                isValid: !validity.includes(false),
+                messages: messages
+            });
             return result;
         }
     }
