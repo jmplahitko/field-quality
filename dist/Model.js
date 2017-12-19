@@ -86,9 +86,12 @@ class Model {
         let errors = {};
         let validity = [];
         for (let fieldName in this._fields) {
-            let _result = this._fields[fieldName].validate();
+            let _field = this._fields[fieldName];
+            let _result = _field.validate();
+            if (!_result.isValid) {
+                errors[fieldName] = _result;
+            }
             validity.push(_result.isValid);
-            errors[fieldName] = _result;
         }
         let result = {
             value: this.value,
