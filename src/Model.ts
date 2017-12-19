@@ -31,8 +31,8 @@ export class Model implements IValidatable {
 	constructor(entity: { [key: string]: any } = {}) {
 		this.name = this.constructor.name.toLowerCase();
 		this.define(this);
-			this.make(entity);
-		}
+		this.make(entity);
+	}
 
 	protected make(entity: { [key: string]: any }): IValidationResult {
 		for (let prop in entity) {
@@ -50,6 +50,13 @@ export class Model implements IValidatable {
 				}
 
 				this._fields[prop] = field;
+			}
+		}
+
+		// If a rule is defined, and has no field at this point, seed the field as null
+		for (let ruleName in this._rules) {
+			if (!(ruleName in this._fields)) {
+				this._fields[ruleName] = new Field(ruleName, this._rules[ruleName], null);
 			}
 		}
 

@@ -11,8 +11,8 @@ class Model {
         this._rules = {};
         this.name = this.constructor.name.toLowerCase();
         this.define(this);
-            this.make(entity);
-        }
+        this.make(entity);
+    }
     get value() {
         return this.toObject();
     }
@@ -36,6 +36,12 @@ class Model {
                     field = new Field_1.Field(prop, rule, propValue);
                 }
                 this._fields[prop] = field;
+            }
+        }
+        // If a rule is defined, and has no field at this point, seed the field as null
+        for (let ruleName in this._rules) {
+            if (!(ruleName in this._fields)) {
+                this._fields[ruleName] = new Field_1.Field(ruleName, this._rules[ruleName], null);
             }
         }
         return this.validate();
