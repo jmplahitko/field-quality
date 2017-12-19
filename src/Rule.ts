@@ -49,18 +49,9 @@ export class Rule {
 
 	public validate(field: IValidatable): IValidationResult {
 		if (this._entity) {
-			let Entity = this._entity;
-			let testEntity = new Entity(field.value);
-			let result = testEntity.validate();
-			field.setValidity(result);
-
-			return result;
+			return field.validate();;
 		} else {
-			let result: IValidationResult = {
-				value: field.value,
-				isValid: true,
-				messages: { [this.name]: [] }
-			};
+			let messages: TMessageCollection = { [this.name]: [] };
 
 			for (let [qualifier, meta] of this._qualifiers) {
 				if (!qualifier(field.value)) {

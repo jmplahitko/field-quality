@@ -2,6 +2,7 @@ import { Field } from "../Field";
 import { IValidationResult } from "./IValidationResult";
 
 export interface IValidatable {
+	name: string;
 	isValid: boolean;
 	messages: {[key: string]: Array<string>},
 	value: any,

@@ -36,11 +36,8 @@ class Rule {
     }
     validate(field) {
         if (this._entity) {
-            let Entity = this._entity;
-            let testEntity = new Entity(field.value);
-            let result = testEntity.validate();
-            field.setValidity(result);
-            return result;
+            return field.validate();
+            ;
         }
         else {
             let result = {

@@ -4,17 +4,15 @@ const Field_1 = require("./Field");
 const Rule_1 = require("./Rule");
 const ValidationResult_1 = require("./ValidationResult");
 class Model {
-    constructor(entity, _rule) {
-        this._rule = _rule;
+    constructor(entity = {}) {
         this._isValid = true;
         this._messages = {};
         this._fields = {};
         this._rules = {};
+        this.name = this.constructor.name.toLowerCase();
         this.define(this);
-        if (entity) {
             this.make(entity);
         }
-    }
     get value() {
         return this.toObject();
     }
@@ -32,7 +30,7 @@ class Model {
                 let field;
                 if (rule.entity) {
                     let Entity = rule.entity;
-                    field = new Entity(propValue, rule);
+                    field = new Entity(propValue);
                 }
                 else {
                     field = new Field_1.Field(prop, rule, propValue);
@@ -80,23 +78,20 @@ class Model {
         return JSON.stringify(this.toObject());
     }
     validate() {
-        if (this._rule) {
-            return this._rule.validate(this);
+        let validity = [];
+        let messages = {};
+        for (let fieldName in this._fields) {
+            let _result = this._fields[fieldName].validate();
+            validity.push(_result.isValid);
+            messages[fieldName] = _result.messages[fieldName];
         }
-        else {
-            let validity = [];
-            let messages = {};
-            for (let fieldName in this._fields) {
-                let result = this._fields[fieldName].validate();
-                validity.push(result.isValid);
-                messages[fieldName] = result.messages[fieldName];
-            }
-            this._messages = messages;
-            this._isValid = !validity.includes(false);
-            let result = new ValidationResult_1.ValidationResult(this);
-            this.setValidity(result);
-            return result;
-        }
+        let result = new ValidationResult_1.ValidationResult({
+            value: this.value,
+            isValid: !validity.includes(false),
+            messages
+        });
+        this.setValidity(result);
+        return result;
     }
 }
 exports.Model = Model;

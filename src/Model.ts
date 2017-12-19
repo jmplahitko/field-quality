@@ -9,6 +9,7 @@ import { TFieldCollection } from './abstract/TFieldCollection';
 import { TRuleCollection } from './abstract/TRuleCollection';
 
 export class Model implements IValidatable {
+	public name: string;
 	private _isValid: boolean = true;
 	private _messages: TMessageCollection = {};
 
@@ -27,12 +28,11 @@ export class Model implements IValidatable {
 		return this._messages;
 	}
 
-	constructor(entity: { [key: string]: any }, private _rule?: Rule) {
+	constructor(entity: { [key: string]: any } = {}) {
+		this.name = this.constructor.name.toLowerCase();
 		this.define(this);
-		if (entity) {
 			this.make(entity);
 		}
-	}
 
 	protected make(entity: { [key: string]: any }): IValidationResult {
 		for (let prop in entity) {
@@ -44,7 +44,7 @@ export class Model implements IValidatable {
 
 				if (rule.entity) {
 					let Entity = rule.entity;
-					field = new Entity(propValue, rule);
+					field = new Entity(propValue);
 				} else {
 					field = new Field(prop, rule, propValue);
 				}
@@ -105,23 +105,23 @@ export class Model implements IValidatable {
 	}
 
 	public validate(): IValidationResult {
-		if (this._rule) {
-			return this._rule.validate(this);
-		} else {
-			let validity = [];
-			let messages: TMessageCollection = {};
-			for (let fieldName in this._fields) {
-				let result = this._fields[fieldName].validate();
-				validity.push(result.isValid);
-				messages[fieldName] = result.messages[fieldName];
-			}
+		let validity = [];
+		let messages: TMessageCollection = {};
 
-			this._messages = messages;
-			this._isValid = !validity.includes(false);
-			let result = new ValidationResult(this);
-			this.setValidity(result);
-
-			return result;
+		for (let fieldName in this._fields) {
+			let _result = this._fields[fieldName].validate();
+			validity.push(_result.isValid);
+			messages[fieldName] = _result.messages[fieldName];
 		}
+
+		let result = new ValidationResult({
+			value: this.value,
+			isValid: !validity.includes(false),
+			messages
+		});
+
+		this.setValidity(result);
+
+		return result;
 	}
 }

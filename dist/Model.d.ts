@@ -3,7 +3,7 @@ import { IValidationResult } from './abstract/IValidationResult';
 import { IValidatable } from './abstract/IValidatable';
 import { TMessageCollection } from './abstract/TMessageCollection';
 export declare class Model implements IValidatable {
-    private _rule;
+    name: string;
     private _isValid;
     private _messages;
     private _fields;
@@ -13,9 +13,9 @@ export declare class Model implements IValidatable {
     };
     readonly isValid: boolean;
     readonly messages: TMessageCollection;
-    constructor(entity: {
+    constructor(entity?: {
         [key: string]: any;
-    }, _rule?: Rule | undefined);
+    });
     protected make(entity: {
         [key: string]: any;
     }): IValidationResult;
