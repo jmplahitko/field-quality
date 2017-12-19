@@ -28,6 +28,7 @@ export class Field implements IValidatable {
 	public set(value: any) {
 		this._previousValue = this._currentValue;
 		this._currentValue = value;
+		return this.validate();
 	}
 
 	public setValidity(result: IValidationResult): void {

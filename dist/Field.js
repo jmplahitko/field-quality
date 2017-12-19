@@ -22,6 +22,7 @@ class Field {
     set(value) {
         this._previousValue = this._currentValue;
         this._currentValue = value;
+        return this.validate();
     }
     setValidity(result) {
         this._messages = result.isValid ? {} : result.messages;

@@ -13,7 +13,7 @@ export declare class Field implements IValidatable {
     constructor(name: string, _rule: Rule, value?: any);
     readonly value: any;
     readonly isValid: boolean;
-    set(value: any): void;
+    set(value: any): IValidationResult;
     setValidity(result: IValidationResult): void;
     readonly messages: TMessageCollection;
     rollback(): void;
