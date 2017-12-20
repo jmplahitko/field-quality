@@ -66,7 +66,7 @@ class Model {
     set(fieldNameOrValue, value) {
         if (typeof fieldNameOrValue === 'string') {
             let fieldName = fieldNameOrValue;
-            let field = this.get(fieldName);
+            let field = this.get(fieldNameOrValue);
             if (field) {
                 if (field.value !== value) {
                     field.set(value);
@@ -78,12 +78,16 @@ class Model {
         }
         else {
             value = fieldNameOrValue;
-            for (let fieldName in this._fields) {
-                if (this._fields.hasOwnProperty(fieldName)) {
-                    let _field = this._fields[fieldName];
-                    let _value = value[fieldName];
-                    if (_field.value !== _value) {
-                        _field.set(_value === undefined ? null : _value);
+            for (let fieldName in value) {
+                if (value.hasOwnProperty(fieldName)) {
+                    let field = this.get(fieldName);
+                    if (field) {
+                        if (field.value !== value) {
+                            field.set(value[fieldName]);
+                        }
+                    }
+                    else {
+                        throw new ReferenceError(`Cannot set value of ${fieldName}, the Field is undefined.`);
                     }
                 }
             }
