@@ -1,7 +1,6 @@
 import { TQualifier } from './abstract/TQualifier';
 import { TQualifierMeta } from './abstract/TQualifierMeta';
 import { Field } from './Field';
-// import { IValidatable } from './abstract/IValidatable';
 import { Model } from './Model';
 import { TModelConstructor } from './abstract/TModelConstructor';
 import { TRuleCollection } from './abstract/TRuleCollection';

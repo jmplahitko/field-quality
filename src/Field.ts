@@ -17,12 +17,20 @@ export class Field implements IValidatable {
 		this._originalValue = value || null;
 	}
 
-	get value() {
-		return this._currentValue;
+	get errors(): TErrorCollection {
+		return this._errors;
 	}
 
 	get isValid(): boolean {
 		return this._isValid;
+	}
+
+	get value(): any {
+		return this._currentValue;
+	}
+
+	public get() {
+		return this.value;
 	}
 
 	public set(value: any): TValidationResult {

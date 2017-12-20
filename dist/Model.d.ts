@@ -20,12 +20,10 @@ export declare class Model implements IValidatable {
     }): TValidationResult;
     protected define(model: Model): void;
     protected ruleFor(fieldName: string): Rule;
-    get(fieldName: string): IValidatable;
+    get(fieldName: string): any;
     set(value: any): TValidationResult;
     setValidity(result: TValidationResult): void;
-    toObject(): {
-        [key: string]: any;
-    };
+    toObject(): Object;
     toJSON(): string;
     validate(): TValidationResult;
 }

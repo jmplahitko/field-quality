@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Field_1 = require("./Field");
 const Rule_1 = require("./Rule");
+const split_1 = require("./utils/split");
 class Model {
     constructor(entity = {}) {
         this._isValid = true;
@@ -54,7 +55,12 @@ class Model {
         return rule;
     }
     get(fieldName) {
-        let field = this._fields[fieldName];
+        let fields = fieldName.split('.');
+        let [head, tail] = split_1.default(fields, 1);
+        let field = this._fields[head[0]];
+        if (field && tail.length) {
+            return field.get(tail.join('.'));
+        }
         return field;
     }
     set(value) {

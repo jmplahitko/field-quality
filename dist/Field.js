@@ -13,11 +13,17 @@ class Field {
         this._currentValue = value || null;
         this._originalValue = value || null;
     }
-    get value() {
-        return this._currentValue;
+    get errors() {
+        return this._errors;
     }
     get isValid() {
         return this._isValid;
+    }
+    get value() {
+        return this._currentValue;
+    }
+    get() {
+        return this.value;
     }
     set(value) {
         this._previousValue = this._currentValue;
@@ -27,9 +33,6 @@ class Field {
     setValidity(result) {
         this._errors = result.errors;
         this._isValid = result.isValid;
-    }
-    get errors() {
-        return this._errors;
     }
     rollback() {
         this._currentValue = this._originalValue;

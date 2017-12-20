@@ -11,8 +11,10 @@ export declare class Field implements IValidatable {
     private _isValid;
     private _errors;
     constructor(name: string, _rule: Rule, value?: any);
-    readonly value: any;
+    readonly errors: TErrorCollection;
     readonly isValid: boolean;
+    readonly value: any;
+    get(): any;
     set(value: any): TValidationResult;
     setValidity(result: TValidationResult): void;
     rollback(): TValidationResult;

@@ -5,6 +5,7 @@ import { IValidatable } from './abstract/IValidatable';
 import { TFieldCollection } from './abstract/TFieldCollection';
 import { TRuleCollection } from './abstract/TRuleCollection';
 import { TValidationResult } from './abstract/TValidationResult';
+import split from './utils/split';
 
 export class Model implements IValidatable {
 	public name: string;
@@ -72,7 +73,15 @@ export class Model implements IValidatable {
 	}
 
 	public get(fieldName: string) {
-		let field = this._fields[fieldName];
+		let fields = fieldName.split('.');
+		let [head, tail] = split(fields, 1);
+
+		let field = this._fields[head[0]];
+
+		if (field && tail.length) {
+			return field.get(tail.join('.'));
+		}
+
 		return field;
 	}
 
@@ -95,7 +104,7 @@ export class Model implements IValidatable {
 		this._isValid = result.isValid;
 	}
 
-	public toObject() {
+	public toObject(): Object {
 		let target: {[key:string]: any} = {};
 
 		for (let fieldName in this._fields) {
