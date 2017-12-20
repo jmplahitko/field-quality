@@ -36,13 +36,10 @@ export class Field implements IValidatable {
 		this._isValid = result.isValid;
 	}
 
-	get errors(): TErrorCollection {
-		return this._errors;
-	}
-
-	public rollback(): void {
+	public rollback(): TValidationResult {
 		this._currentValue = this._originalValue;
 		this._previousValue = null;
+		return this.validate();
 	}
 
 	public validate(): TValidationResult {

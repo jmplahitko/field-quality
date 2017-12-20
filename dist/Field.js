@@ -34,6 +34,7 @@ class Field {
     rollback() {
         this._currentValue = this._originalValue;
         this._previousValue = null;
+        return this.validate();
     }
     validate() {
         let result = this._rule.validate(this);

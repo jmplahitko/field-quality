@@ -15,7 +15,6 @@ export declare class Field implements IValidatable {
     readonly isValid: boolean;
     set(value: any): TValidationResult;
     setValidity(result: TValidationResult): void;
-    readonly errors: TErrorCollection;
-    rollback(): void;
+    rollback(): TValidationResult;
     validate(): TValidationResult;
 }
