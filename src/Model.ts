@@ -85,13 +85,26 @@ export class Model implements IValidatable {
 		return field;
 	}
 
-	public set(value: any): TValidationResult {
-		for (let fieldName in value) {
-			if (value.hasOwnProperty(fieldName)) {
-				let field = this._fields[fieldName];
-
+	public set(fieldNameOrValue: any, value?: any): TValidationResult {
+		if (typeof fieldNameOrValue === 'string') {
+			let fieldName = fieldNameOrValue;
+			let field = this.get(fieldName);
+			if (field) {
 				if (field.value !== value) {
-					field.set(value[fieldName]);
+					field.set(value);
+				}
+			}	else {
+				throw new ReferenceError(`Cannot set value of ${fieldName}, the Field is undefined.`);
+			}
+		} else {
+			value = fieldNameOrValue;
+			for (let fieldName in this._fields) {
+				if (this._fields.hasOwnProperty(fieldName)) {
+					let _field = this._fields[fieldName];
+					let _value = value[fieldName];
+					if (_field.value !== _value) {
+						_field.set(_value === undefined ? null: _value);
+					}
 				}
 			}
 		}

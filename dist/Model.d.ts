@@ -21,7 +21,7 @@ export declare class Model implements IValidatable {
     protected define(model: Model): void;
     protected ruleFor(fieldName: string): Rule;
     get(fieldName: string): any;
-    set(value: any): TValidationResult;
+    set(fieldNameOrValue: any, value?: any): TValidationResult;
     setValidity(result: TValidationResult): void;
     toObject(): Object;
     toJSON(): string;
