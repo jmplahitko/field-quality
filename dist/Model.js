@@ -33,7 +33,7 @@ class Model {
                     field = new Entity(propValue);
                 }
                 else {
-                    field = new Field_1.Field(prop, rule, propValue);
+                    field = new Field_1.Field(prop, this, rule, propValue);
                 }
                 this._fields[prop] = field;
             }
@@ -41,7 +41,7 @@ class Model {
         // If a rule is defined, and has no field at this point, seed the field as null
         for (let ruleName in this._rules) {
             if (!(ruleName in this._fields)) {
-                this._fields[ruleName] = new Field_1.Field(ruleName, this._rules[ruleName], null);
+                this._fields[ruleName] = new Field_1.Field(ruleName, this, this._rules[ruleName], null);
             }
         }
         return this.validate();
