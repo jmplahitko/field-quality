@@ -1,3 +1,3 @@
-import { IValidatable } from "./IValidatable";
+import { IValidatable } from './IValidatable';
 
 export type TFieldCollection = { [fieldName: string]: IValidatable };

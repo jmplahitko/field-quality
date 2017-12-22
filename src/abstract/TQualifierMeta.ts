@@ -1,4 +1,4 @@
 export type TQualifierMeta = {
-	name: string,
-	message: string
-}
+	name: string;
+	message: string;
+};

@@ -1,4 +1,4 @@
-import { TValidationResult } from "./TValidationResult";
+import { TValidationResult } from './TValidationResult';
 export interface IValidatable {
     value: any;
     get(fieldName?: string): any;

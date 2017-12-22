@@ -69,7 +69,7 @@ export class Model implements IValidatable {
 	protected ruleFor(fieldName: string): Rule {
 		let rule = new Rule(fieldName);
 		this._rules[fieldName] = rule;
-		return rule
+		return rule;
 	}
 
 	public get(fieldName: string) {
@@ -93,7 +93,7 @@ export class Model implements IValidatable {
 				if (field.value !== value) {
 					field.set(value);
 				}
-			}	else {
+			} else {
 				throw new ReferenceError(`Cannot set value of ${fieldName}, the Field is undefined.`);
 			}
 		} else {
@@ -105,7 +105,7 @@ export class Model implements IValidatable {
 						if (field.value !== value) {
 							field.set(value[fieldName]);
 						}
-					}	else {
+					} else {
 						throw new ReferenceError(`Cannot set value of ${fieldName}, the Field is undefined.`);
 					}
 				}
@@ -121,7 +121,7 @@ export class Model implements IValidatable {
 	}
 
 	public toObject(): Object {
-		let target: {[key:string]: any} = {};
+		let target: { [key: string]: any } = {};
 
 		for (let fieldName in this._fields) {
 			target[fieldName] = this._fields[fieldName].value;

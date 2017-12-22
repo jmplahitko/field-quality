@@ -1,7 +1,7 @@
-import { IValidatable } from "./abstract/IValidatable";
-import { Rule } from "./Rule";
-import { TValidationResult } from "./abstract/TValidationResult";
-import { TErrorCollection } from "./abstract/TErrorCollection";
+import { IValidatable } from './abstract/IValidatable';
+import { TValidationResult } from './abstract/TValidationResult';
+import { TErrorCollection } from './abstract/TErrorCollection';
+import { Rule } from './Rule';
 export declare class Field implements IValidatable {
     name: string;
     private _rule;
