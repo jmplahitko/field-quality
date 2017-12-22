@@ -1,4 +1,4 @@
-import { quality } from './utils/quality';
+import { quality } from './quality';
 
 export namespace qualifiers {
 	export function notNull(value: any) {

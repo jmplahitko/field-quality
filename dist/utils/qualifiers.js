@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const quality_1 = require("./utils/quality");
+const quality_1 = require("./quality");
 var qualifiers;
 (function (qualifiers) {
     function notNull(value) {

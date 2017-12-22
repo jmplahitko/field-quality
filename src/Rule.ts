@@ -9,7 +9,7 @@ import { TErrorCollection } from './abstract/TErrorCollection';
 import { TQualifierCollection } from './abstract/TQualifierCollection';
 
 import { simpleFluentInterfaceFor } from './utils/simpleFluentIntefaceFor';
-import { qualifiers } from './qualifiers';
+import { qualifiers } from './utils/qualifiers';
 import { Field } from './Field';
 const { notEmpty, notNull } = qualifiers;
 

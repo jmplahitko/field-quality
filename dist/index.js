@@ -4,3 +4,7 @@ var Model_1 = require("./Model");
 exports.Model = Model_1.Model;
 var Rule_1 = require("./Rule");
 exports.Rule = Rule_1.Rule;
+var quality_1 = require("./utils/quality");
+exports.quality = quality_1.quality;
+var qualifiers_1 = require("./utils/qualifiers");
+exports.qualifiers = qualifiers_1.qualifiers;
