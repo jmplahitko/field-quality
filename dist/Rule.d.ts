@@ -1,20 +1,24 @@
+import { ISimpleFluentInterface } from './abstract/ISimpleFluentInterface';
 import { TQualifier } from './abstract/TQualifier';
 import { TModelConstructor } from './abstract/TModelConstructor';
 import { TValidationResult } from './abstract/TValidationResult';
-import { IValidatable } from './abstract/IValidatable';
+import { TQualifierCollection } from './abstract/TQualifierCollection';
+import { Field } from './Field';
 export declare class Rule {
     name: string;
     private _qualifiers;
     private _rules;
     private _entity;
+    private _stopOnFirstFailure;
     readonly entity: TModelConstructor | null;
+    readonly qualifiers: TQualifierCollection;
     constructor(name: string);
     as(entity: TModelConstructor): void;
     asArrayOf(): void;
+    notNull(): ISimpleFluentInterface;
+    notEmpty(): ISimpleFluentInterface;
+    must(qualifier: TQualifier): ISimpleFluentInterface;
+    stopOnFirstFailure(): void;
     using(rule: Rule): Rule;
-    must(qualifier: TQualifier): {
-        must: any;
-        withMessage(message: string): Rule;
-    };
-    validate(field: IValidatable): TValidationResult;
+    validate(field: Field): TValidationResult;
 }
