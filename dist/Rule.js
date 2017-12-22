@@ -55,15 +55,19 @@ class Rule {
         this._rules[rule.name] = rule;
         return this;
     }
+    // TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
     validate(field) {
         let errors = {};
         let validity = [];
+        // Check qualifiers first
         for (let [qualifier, meta] of this._qualifiers) {
+            // We check for a precondition to exist for a qualifier before calling it
             if (!meta.precondition || meta.precondition(field.parent)) {
                 let isValid = qualifier(field.value);
                 if (!isValid) {
                     validity.push(isValid);
                     errors[meta.name] = meta.message;
+                    // Short-circuit if we have to stopOnFirstFailure
                     if (this._stopOnFirstFailure) {
                         return {
                             value: field.value,
@@ -83,9 +87,20 @@ class Rule {
             if (!_result.isValid) {
                 for (let ruleNeme in _result.errors) {
                     errors[ruleName] = _result.errors[ruleName];
+                    validity.push(_result.isValid);
+                }
+                // TODO: We have some duplication here. Need to find a better solution.
+                if (this._stopOnFirstFailure) {
+                    return {
+                        value: field.value,
+                        isValid: false,
+                        errors
+                    };
                 }
             }
-            validity.push(_result.isValid);
+            else {
+                validity.push(_result.isValid);
+            }
         }
         return {
             value: field.value,
