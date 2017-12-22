@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const simpleFluentIntefaceFor_1 = require("./utils/simpleFluentIntefaceFor");
 const qualifiers_1 = require("./utils/qualifiers");
-const { notEmpty, notNull } = qualifiers_1.qualifiers;
+const { length, match, notEmpty, notNull } = qualifiers_1.qualifiers;
 class Rule {
     constructor(name) {
         this.name = name;
@@ -21,8 +21,25 @@ class Rule {
         this._entity = entity;
     }
     asArrayOf() { }
+    length(num1, num2) {
+        let beBetween = length(num1, num2);
+        this._qualifiers.set(beBetween, {
+            name: `beBetween${num1}and${num2}`,
+            message: `${this.name} must be between ${num1} and ${num2}`,
+            precondition: null
+        });
+        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
+    }
+    match(rx) {
+        let matchRx = match(rx);
+        this._qualifiers.set(matchRx, {
+            name: matchRx.name,
+            message: `${this.name} is an invalid format.`,
+            precondition: null
+        });
+        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, matchRx);
+    }
     notNull() {
-        let rule = this;
         this._qualifiers.set(notNull, {
             name: notNull.name,
             message: `${this.name} cannot be null.`,
@@ -31,7 +48,6 @@ class Rule {
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, notNull);
     }
     notEmpty() {
-        let rule = this;
         this._qualifiers.set(notEmpty, {
             name: notEmpty.name,
             message: `${this.name} cannot be empty.`,
@@ -40,7 +56,6 @@ class Rule {
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, notEmpty);
     }
     must(qualifier) {
-        let rule = this;
         this._qualifiers.set(qualifier, {
             name: qualifier.name,
             message: `${this.name} is invalid.`,

@@ -4,6 +4,8 @@ import { ISimpleFluentInterface } from "../abstract/ISimpleFluentInterface";
 
 export function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifier) {
 	return {
+		length: rule.length.bind(rule),
+		match: rule.match.bind(rule),
 		must: rule.must.bind(rule),
 		notNull: rule.notNull.bind(rule),
 		notEmpty: rule.notEmpty.bind(rule),

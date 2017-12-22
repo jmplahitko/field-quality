@@ -11,7 +11,8 @@ import { TQualifierCollection } from './abstract/TQualifierCollection';
 import { simpleFluentInterfaceFor } from './utils/simpleFluentIntefaceFor';
 import { qualifiers } from './utils/qualifiers';
 import { Field } from './Field';
-const { notEmpty, notNull } = qualifiers;
+import { Readable } from 'stream';
+const { length, match, notEmpty, notNull } = qualifiers;
 
 export class Rule {
 	private _qualifiers: TQualifierCollection = new Map();
@@ -35,8 +36,29 @@ export class Rule {
 
 	public asArrayOf() {}
 
+	public length(num1: number, num2: number): ISimpleFluentInterface {
+		let beBetween = length(num1, num2);
+		this._qualifiers.set(beBetween, {
+			name: `beBetween${num1}and${num2}`,
+			message: `${this.name} must be between ${num1} and ${num2}`,
+			precondition: null
+		});
+
+		return simpleFluentInterfaceFor(this, beBetween);
+	}
+
+	public match(rx: RegExp): ISimpleFluentInterface {
+		let matchRx = match(rx);
+		this._qualifiers.set(matchRx, {
+			name: matchRx.name,
+			message: `${this.name} is an invalid format.`,
+			precondition: null
+		});
+
+		return simpleFluentInterfaceFor(this, matchRx);
+	}
+
 	public notNull(): ISimpleFluentInterface {
-		let rule = this;
 		this._qualifiers.set(notNull, {
 			name: notNull.name,
 			message: `${this.name} cannot be null.`,
@@ -47,7 +69,6 @@ export class Rule {
 	}
 
 	public notEmpty(): ISimpleFluentInterface {
-		let rule = this;
 		this._qualifiers.set(notEmpty, {
 			name: notEmpty.name,
 			message: `${this.name} cannot be empty.`,
@@ -58,7 +79,6 @@ export class Rule {
 	}
 
 	public must(qualifier: TQualifier): ISimpleFluentInterface {
-		let rule = this;
 		this._qualifiers.set(qualifier, {
 			name: qualifier.name,
 			message: `${this.name} is invalid.`,

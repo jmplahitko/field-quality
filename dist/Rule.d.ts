@@ -15,6 +15,8 @@ export declare class Rule {
     constructor(name: string);
     as(entity: TModelConstructor): void;
     asArrayOf(): void;
+    length(num1: number, num2: number): ISimpleFluentInterface;
+    match(rx: RegExp): ISimpleFluentInterface;
     notNull(): ISimpleFluentInterface;
     notEmpty(): ISimpleFluentInterface;
     must(qualifier: TQualifier): ISimpleFluentInterface;
