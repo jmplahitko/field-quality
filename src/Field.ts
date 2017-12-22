@@ -3,17 +3,17 @@ import { TValidationResult } from './abstract/TValidationResult';
 import { TErrorCollection } from './abstract/TErrorCollection';
 
 import { Rule } from './Rule';
+import { Model } from './Model';
 
 export class Field implements IValidatable {
 	private _currentValue: any = null;
 	private _originalValue: any = null;
 	private _previousValue: any = null;
 
-	// happy or sad default?
 	private _isValid: boolean = true;
 	private _errors: TErrorCollection = {};
 
-	constructor(public name: string, private _rule: Rule, value?: any) {
+	constructor(public name: string, private _parent: Model, private _rule: Rule, value?: any) {
 		this._currentValue = value || null;
 		this._originalValue = value || null;
 	}
@@ -28,6 +28,10 @@ export class Field implements IValidatable {
 
 	get value(): any {
 		return this._currentValue;
+	}
+
+	get parent(): any {
+		return this._parent.value;
 	}
 
 	public get() {

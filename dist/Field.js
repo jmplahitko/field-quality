@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Field {
-    constructor(name, _rule, value) {
+    constructor(name, _parent, _rule, value) {
         this.name = name;
+        this._parent = _parent;
         this._rule = _rule;
         this._currentValue = null;
         this._originalValue = null;
         this._previousValue = null;
-        // happy or sad default?
         this._isValid = true;
         this._errors = {};
         this._currentValue = value || null;
@@ -21,6 +21,9 @@ class Field {
     }
     get value() {
         return this._currentValue;
+    }
+    get parent() {
+        return this._parent.value;
     }
     get() {
         return this.value;
