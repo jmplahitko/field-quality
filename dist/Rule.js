@@ -13,16 +13,15 @@ class Rule {
     as(entity) {
         this._entity = entity;
     }
-    asArrayOf() {
-    }
+    asArrayOf() { }
     using(rule) {
         this._rules[rule.name] = rule;
         return this;
     }
-    must(qualifierName, qualifier) {
+    must(qualifier) {
         let rule = this;
         this._qualifiers.set(qualifier, {
-            name: qualifierName,
+            name: qualifier.name,
             message: `${this.name} is invalid.`
         });
         return {

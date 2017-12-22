@@ -1,7 +1,7 @@
 import { TQualifier } from './abstract/TQualifier';
-import { Field } from './Field';
 import { TModelConstructor } from './abstract/TModelConstructor';
 import { TValidationResult } from './abstract/TValidationResult';
+import { IValidatable } from './abstract/IValidatable';
 export declare class Rule {
     name: string;
     private _qualifiers;
@@ -12,9 +12,9 @@ export declare class Rule {
     as(entity: TModelConstructor): void;
     asArrayOf(): void;
     using(rule: Rule): Rule;
-    must(qualifierName: string, qualifier: TQualifier): {
+    must(qualifier: TQualifier): {
         must: any;
         withMessage(message: string): Rule;
     };
-    validate(field: Field): TValidationResult;
+    validate(field: IValidatable): TValidationResult;
 }

@@ -1,18 +1,17 @@
 import { TQualifier } from './abstract/TQualifier';
 import { TQualifierMeta } from './abstract/TQualifierMeta';
-import { Field } from './Field';
-import { Model } from './Model';
 import { TModelConstructor } from './abstract/TModelConstructor';
 import { TRuleCollection } from './abstract/TRuleCollection';
 import { TValidationResult } from './abstract/TValidationResult';
 import { TErrorCollection } from './abstract/TErrorCollection';
+import { IValidatable } from './abstract/IValidatable';
 
 export class Rule {
 	private _qualifiers: Map<TQualifier, TQualifierMeta> = new Map();
 	private _rules: TRuleCollection = {};
-	private _entity: TModelConstructor|null = null;
+	private _entity: TModelConstructor | null = null;
 
-	get entity(): TModelConstructor|null {
+	get entity(): TModelConstructor | null {
 		return this._entity;
 	}
 
@@ -22,19 +21,17 @@ export class Rule {
 		this._entity = entity;
 	}
 
-	public asArrayOf() {
-
-	}
+	public asArrayOf() {}
 
 	public using(rule: Rule): Rule {
 		this._rules[rule.name] = rule;
 		return this;
 	}
 
-	public must(qualifierName: string, qualifier: TQualifier) {
+	public must(qualifier: TQualifier) {
 		let rule = this;
 		this._qualifiers.set(qualifier, {
-			name: qualifierName,
+			name: qualifier.name,
 			message: `${this.name} is invalid.`
 		});
 
@@ -51,12 +48,12 @@ export class Rule {
 		};
 	}
 
-	public validate(field: Field): TValidationResult {
+	public validate(field: IValidatable): TValidationResult {
 		let errors: TErrorCollection = {};
 		let validity = [];
 
 		for (let [qualifier, meta] of this._qualifiers) {
-			let isValid = qualifier(field.value)
+			let isValid = qualifier(field.value);
 			if (!isValid) {
 				errors[meta.name] = meta.message;
 			}
