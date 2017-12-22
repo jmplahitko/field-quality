@@ -8,3 +8,5 @@ var quality_1 = require("./utils/quality");
 exports.quality = quality_1.quality;
 var qualifiers_1 = require("./utils/qualifiers");
 exports.qualifiers = qualifiers_1.qualifiers;
+var rx_1 = require("./utils/rx");
+exports.rx = rx_1.rx;
