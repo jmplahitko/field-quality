@@ -22,5 +22,6 @@ export declare class Rule {
     must(qualifier: TQualifier): ISimpleFluentInterface;
     stopOnFirstFailure(): void;
     using(rule: Rule): Rule;
+    if(precondition: (entity: any) => boolean, define: (rule: Rule) => void): this;
     validate(field: Field): TValidationResult;
 }

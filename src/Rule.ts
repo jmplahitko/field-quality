@@ -16,7 +16,7 @@ const { length, match, notEmpty, notNull } = qualifiers;
 
 export class Rule {
 	private _qualifiers: TQualifierCollection = new Map();
-	private _rules: TRuleCollection = {};
+	private _rules: Map<Rule, {name: String, precondition: ((entity: any) => boolean)|null}> = new Map();
 	private _entity: TModelConstructor | null = null;
 	private _stopOnFirstFailure: boolean = false;
 
@@ -93,7 +93,14 @@ export class Rule {
 	}
 
 	public using(rule: Rule): Rule {
-		this._rules[rule.name] = rule;
+		this._rules.set(rule, { name: rule.name, precondition: null });
+		return this;
+	}
+
+	public if(precondition: (entity: any) => boolean, define: (rule: Rule) => void) {
+		let rule = new Rule(this.name);
+		this._rules.set(rule, { name: rule.name, precondition });
+		define(rule);
 		return this;
 	}
 
@@ -126,25 +133,26 @@ export class Rule {
 			}
 		}
 
-		for (let ruleName in this._rules) {
-			let rule = this._rules[ruleName];
-			let _result = rule.validate(field);
-			if (!_result.isValid) {
-				for (let ruleNeme in _result.errors) {
-					errors[ruleName] = _result.errors[ruleName];
+		for (let [rule, meta] of this._rules) {
+			if (!meta.precondition || meta.precondition(field.parent)) {
+				let _result = rule.validate(field);
+				if (!_result.isValid) {
+					for (let ruleName in _result.errors) {
+						errors[ruleName] = _result.errors[ruleName];
+						validity.push(_result.isValid);
+					}
+
+					// TODO: We have some duplication here. Need to find a better solution.
+					if (this._stopOnFirstFailure) {
+						return {
+							value: field.value,
+							isValid: false,
+							errors
+						}
+					}
+				} else {
 					validity.push(_result.isValid);
 				}
-
-				// TODO: We have some duplication here. Need to find a better solution.
-				if (this._stopOnFirstFailure) {
-					return {
-						value: field.value,
-						isValid: false,
-						errors
-					}
-				}
-			} else {
-				validity.push(_result.isValid);
 			}
 		}
 

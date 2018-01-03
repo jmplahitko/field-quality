@@ -7,7 +7,7 @@ class Rule {
     constructor(name) {
         this.name = name;
         this._qualifiers = new Map();
-        this._rules = {};
+        this._rules = new Map();
         this._entity = null;
         this._stopOnFirstFailure = false;
     }
@@ -67,7 +67,13 @@ class Rule {
         this._stopOnFirstFailure = true;
     }
     using(rule) {
-        this._rules[rule.name] = rule;
+        this._rules.set(rule, { name: rule.name, precondition: null });
+        return this;
+    }
+    if(precondition, define) {
+        let rule = new Rule(this.name);
+        this._rules.set(rule, { name: rule.name, precondition });
+        define(rule);
         return this;
     }
     // TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
@@ -96,25 +102,26 @@ class Rule {
                 }
             }
         }
-        for (let ruleName in this._rules) {
-            let rule = this._rules[ruleName];
-            let _result = rule.validate(field);
-            if (!_result.isValid) {
-                for (let ruleNeme in _result.errors) {
-                    errors[ruleName] = _result.errors[ruleName];
+        for (let [rule, meta] of this._rules) {
+            if (!meta.precondition || meta.precondition(field.parent)) {
+                let _result = rule.validate(field);
+                if (!_result.isValid) {
+                    for (let ruleName in _result.errors) {
+                        errors[ruleName] = _result.errors[ruleName];
+                        validity.push(_result.isValid);
+                    }
+                    // TODO: We have some duplication here. Need to find a better solution.
+                    if (this._stopOnFirstFailure) {
+                        return {
+                            value: field.value,
+                            isValid: false,
+                            errors
+                        };
+                    }
+                }
+                else {
                     validity.push(_result.isValid);
                 }
-                // TODO: We have some duplication here. Need to find a better solution.
-                if (this._stopOnFirstFailure) {
-                    return {
-                        value: field.value,
-                        isValid: false,
-                        errors
-                    };
-                }
-            }
-            else {
-                validity.push(_result.isValid);
             }
         }
         return {
