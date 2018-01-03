@@ -20,8 +20,8 @@ export declare namespace rx {
     const numbersonly: RegExp;
     const password: RegExp;
     const routingnumber: RegExp;
-    const sn: RegExp;
-    const itle: RegExp;
-    const sername: RegExp;
-    const ipcode: RegExp;
+    const ssn: RegExp;
+    const title: RegExp;
+    const username: RegExp;
+    const zipcode: RegExp;
 }
