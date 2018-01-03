@@ -50,9 +50,10 @@ class Model {
         console.warn('define not implemented');
     }
     ruleFor(fieldName) {
-        let rule = new Rule_1.Rule(fieldName);
-        this._rules[fieldName] = rule;
-        return rule;
+        if (!this._rules[fieldName]) {
+            this._rules[fieldName] = new Rule_1.Rule(fieldName);
+        }
+        return this._rules[fieldName];
     }
     get(fieldName) {
         let fields = fieldName.split('.');

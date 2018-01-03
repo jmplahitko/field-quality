@@ -67,9 +67,10 @@ export class Model implements IValidatable {
 	}
 
 	protected ruleFor(fieldName: string): Rule {
-		let rule = new Rule(fieldName);
-		this._rules[fieldName] = rule;
-		return rule;
+		if (!this._rules[fieldName]) {
+			this._rules[fieldName] = new Rule(fieldName);
+		}
+		return this._rules[fieldName];
 	}
 
 	public get(fieldName: string) {
