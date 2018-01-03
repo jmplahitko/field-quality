@@ -3,7 +3,7 @@ import { TQualifier } from "../abstract/TQualifier";
 import { ISimpleFluentInterface } from "../abstract/ISimpleFluentInterface";
 export declare function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifier): {
     length: any;
-    match: any;
+    matches: any;
     must: any;
     notNull: any;
     notEmpty: any;
