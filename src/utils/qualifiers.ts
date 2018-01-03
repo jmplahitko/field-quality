@@ -5,7 +5,7 @@ const { isEmpty, isNull, isNumber } = quality;
 export namespace qualifiers {
 	export function length(num1: number, num2: number) {
 		return (value: any) => {
-			return (value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
+			return (value && value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
 		}
 	}
 

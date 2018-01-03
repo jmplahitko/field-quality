@@ -6,7 +6,7 @@ var qualifiers;
 (function (qualifiers) {
     function length(num1, num2) {
         return (value) => {
-            return (value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
+            return (value && value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
         };
     }
     qualifiers.length = length;
