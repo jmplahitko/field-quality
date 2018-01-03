@@ -1,6 +1,5 @@
 import { Field } from './Field';
 import { Rule } from './Rule';
-import { TQualifier } from './abstract/TQualifier';
 import { IValidatable } from './abstract/IValidatable';
 import { TFieldCollection } from './abstract/TFieldCollection';
 import { TRuleCollection } from './abstract/TRuleCollection';
