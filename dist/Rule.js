@@ -30,7 +30,7 @@ class Rule {
         });
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
     }
-    match(rx) {
+    matches(rx) {
         let matchRx = match(rx);
         this._qualifiers.set(matchRx, {
             name: matchRx.name,

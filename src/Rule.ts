@@ -47,7 +47,7 @@ export class Rule {
 		return simpleFluentInterfaceFor(this, beBetween);
 	}
 
-	public match(rx: RegExp): ISimpleFluentInterface {
+	public matches(rx: RegExp): ISimpleFluentInterface {
 		let matchRx = match(rx);
 		this._qualifiers.set(matchRx, {
 			name: matchRx.name,
