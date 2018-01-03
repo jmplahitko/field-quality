@@ -1,5 +1,6 @@
 import { quality } from './quality';
 import { Readable } from 'stream';
+import { isUndefined } from 'util';
 const { isEmpty, isNull, isNumber } = quality;
 
 export namespace qualifiers {
@@ -19,6 +20,6 @@ export namespace qualifiers {
 		return !isNull(value);
 	}
 	export function notEmpty(value: any) {
-		return !isEmpty(value);
+		return isNull(value) || isUndefined(value) ? false : !isEmpty(value);
 	}
 }

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const quality_1 = require("./quality");
+const util_1 = require("util");
 const { isEmpty, isNull, isNumber } = quality_1.quality;
 var qualifiers;
 (function (qualifiers) {
@@ -21,7 +22,7 @@ var qualifiers;
     }
     qualifiers.notNull = notNull;
     function notEmpty(value) {
-        return !isEmpty(value);
+        return isNull(value) || util_1.isUndefined(value) ? false : !isEmpty(value);
     }
     qualifiers.notEmpty = notEmpty;
 })(qualifiers = exports.qualifiers || (exports.qualifiers = {}));
