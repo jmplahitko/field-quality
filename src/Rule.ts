@@ -1,9 +1,6 @@
-import { IValidatable } from './abstract/IValidatable';
 import { ISimpleFluentInterface } from './abstract/ISimpleFluentInterface';
 import { TQualifier } from './abstract/TQualifier';
-import { TQualifierMeta } from './abstract/TQualifierMeta';
 import { TModelConstructor } from './abstract/TModelConstructor';
-import { TRuleCollection } from './abstract/TRuleCollection';
 import { TValidationResult } from './abstract/TValidationResult';
 import { TErrorCollection } from './abstract/TErrorCollection';
 import { TQualifierCollection } from './abstract/TQualifierCollection';
@@ -11,7 +8,6 @@ import { TQualifierCollection } from './abstract/TQualifierCollection';
 import { simpleFluentInterfaceFor } from './utils/simpleFluentIntefaceFor';
 import { qualifiers } from './utils/qualifiers';
 import { Field } from './Field';
-import { Readable } from 'stream';
 const { length, match, notEmpty, notNull } = qualifiers;
 
 export class Rule {
