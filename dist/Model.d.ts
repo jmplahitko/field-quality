@@ -3,6 +3,7 @@ import { IValidatable } from './abstract/IValidatable';
 import { TValidationResult } from './abstract/TValidationResult';
 export declare class Model implements IValidatable {
     name: string;
+    readonly isSerializable: boolean;
     private _isValid;
     private _errors;
     private _fields;
@@ -24,6 +25,7 @@ export declare class Model implements IValidatable {
     set(fieldNameOrValue: any, value?: any): TValidationResult;
     setValidity(result: TValidationResult): void;
     toObject(): Object;
+    serialize(): Object;
     toJSON(): string;
     validate(): TValidationResult;
 }

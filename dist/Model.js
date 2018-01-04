@@ -5,6 +5,7 @@ const Rule_1 = require("./Rule");
 const split_1 = require("./utils/split");
 class Model {
     constructor(entity = {}) {
+        this.isSerializable = true;
         this._isValid = true;
         this._errors = {};
         this._fields = {};
@@ -26,14 +27,22 @@ class Model {
         for (let prop in entity) {
             if (entity.hasOwnProperty(prop)) {
                 const propValue = entity[prop];
-                const rule = this._rules[prop] || this.ruleFor(prop).using(new Rule_1.Rule(prop));
-                let field;
-                if (rule.entity) {
-                    let Entity = rule.entity;
-                    field = new Entity(propValue);
+                let rule, field;
+                // If there's a rule defined for the property, get the rule, and create the field via Model or Field objects
+                if (this._rules[prop]) {
+                    rule = this._rules[prop];
+                    if (rule.entity) {
+                        let Entity = rule.entity;
+                        field = new Entity(propValue);
+                    }
+                    else {
+                        field = new Field_1.Field(prop, this, rule, propValue, true);
+                    }
                 }
                 else {
-                    field = new Field_1.Field(prop, this, rule, propValue);
+                    // No rule found, treat field as valid for sake of validation and ignore when serialized to an object or JSON
+                    rule = this.ruleFor(prop).using(new Rule_1.Rule(prop));
+                    field = new Field_1.Field(prop, this, rule, propValue, false);
                 }
                 this._fields[prop] = field;
             }
@@ -106,8 +115,18 @@ class Model {
         }
         return target;
     }
+    serialize() {
+        let target = {};
+        for (let fieldName in this._fields) {
+            let field = this._fields[fieldName];
+            if (field.isSerializable) {
+                target[fieldName] = this._fields[fieldName].serialize();
+            }
+        }
+        return target;
+    }
     toJSON() {
-        return JSON.stringify(this.toObject());
+        return JSON.stringify(this.serialize());
     }
     validate() {
         let errors = {};

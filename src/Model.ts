@@ -8,6 +8,7 @@ import split from './utils/split';
 
 export class Model implements IValidatable {
 	public name: string;
+	readonly isSerializable: boolean = true;
 	private _isValid: boolean = true;
 	private _errors = {};
 
@@ -36,15 +37,22 @@ export class Model implements IValidatable {
 		for (let prop in entity) {
 			if (entity.hasOwnProperty(prop)) {
 				const propValue = entity[prop];
-				const rule = this._rules[prop] || this.ruleFor(prop).using(new Rule(prop));
+				let rule, field;
 
-				let field;
+				// If there's a rule defined for the property, get the rule, and create the field via Model or Field objects
+				if (this._rules[prop]) {
+					rule = this._rules[prop];
 
-				if (rule.entity) {
-					let Entity = rule.entity;
-					field = new Entity(propValue);
+					if (rule.entity) {
+						let Entity = rule.entity;
+						field = new Entity(propValue);
+					} else {
+						field = new Field(prop, this, rule, propValue, true);
+					}
 				} else {
-					field = new Field(prop, this, rule, propValue);
+					// No rule found, treat field as valid for sake of validation and ignore when serialized to an object or JSON
+					rule = this.ruleFor(prop).using(new Rule(prop));
+					field = new Field(prop, this, rule, propValue, false);
 				}
 
 				this._fields[prop] = field;
@@ -130,8 +138,21 @@ export class Model implements IValidatable {
 		return target;
 	}
 
+	public serialize(): Object {
+		let target: { [key: string]: any } = {};
+
+		for (let fieldName in this._fields) {
+			let field = this._fields[fieldName];
+			if (field.isSerializable) {
+				target[fieldName] = this._fields[fieldName].serialize();
+			}
+		}
+
+		return target;
+	}
+
 	public toJSON(): string {
-		return JSON.stringify(this.toObject());
+		return JSON.stringify(this.serialize());
 	}
 
 	public validate(): TValidationResult {

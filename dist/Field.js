@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Field {
-    constructor(name, _parent, _rule, value) {
+    constructor(name, _parent, _rule, value, isSerializable = true) {
         this.name = name;
         this._parent = _parent;
         this._rule = _rule;
+        this.isSerializable = isSerializable;
         this._currentValue = null;
         this._originalValue = null;
         this._previousValue = null;
@@ -32,6 +33,9 @@ class Field {
         this._previousValue = this._currentValue;
         this._currentValue = value;
         return this.validate();
+    }
+    serialize() {
+        return this.isSerializable ? this.value : undefined;
     }
     setValidity(result) {
         this._errors = result.errors;

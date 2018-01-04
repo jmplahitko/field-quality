@@ -13,7 +13,7 @@ export class Field implements IValidatable {
 	private _isValid: boolean = true;
 	private _errors: TErrorCollection = {};
 
-	constructor(public name: string, private _parent: Model, private _rule: Rule, value?: any) {
+	constructor(public name: string, private _parent: Model, private _rule: Rule, value?: any, readonly isSerializable: boolean = true) {
 		this._currentValue = value || null;
 		this._originalValue = value || null;
 	}
@@ -42,6 +42,10 @@ export class Field implements IValidatable {
 		this._previousValue = this._currentValue;
 		this._currentValue = value;
 		return this.validate();
+	}
+
+	public serialize() {
+		return this.isSerializable ? this.value : undefined;
 	}
 
 	public setValidity(result: TValidationResult): void {
