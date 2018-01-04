@@ -4,7 +4,7 @@
   "description": "Validation Library",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmplahitko/field-quality.git"
+    "url": "ssh://git@10.8.49.104:7999/~jplahitko/fieldquality.git"
   },
   "private": true,
   "license": "MIT",
