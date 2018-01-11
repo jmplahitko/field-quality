@@ -1,92 +1,44 @@
-```js
-import { Model, Rule } from 'field-quality';
+# Field Quality
+Fluent Field Validation Library
 
-const beValidColor = (color: string) => {
-	let colors = ['white', 'black', 'calico'];
-	return colors.includes(color);
-}
-
-const beValidFurType = (type: string) => {
-	let types = ['long', 'short', 'bald'];
-	return types.includes(type);
-}
-
-// type TAddress = {
-// 	line1: string,
-// 	line2: string,
-// 	city: string,
-// 	state: string,
-// 	zip: string
-// }
-
-const beValidString = (val: any) => {
-	return typeof val === 'string';
-}
-
-class Address extends Model {
-	protected define(model: Address) {
-		model.ruleFor('line1')
-			.must('beValidString', beValidString)
-			.withMessage('Line 1 must be a string');
-
-		model.ruleFor('line2')
-			.must('beValidString', beValidString)
-			.withMessage('Line 2 must be a string');
-
-		model.ruleFor('city')
-			.must('beValidString', beValidString)
-			.withMessage('City must be a string');
-
-		model.ruleFor('state')
-			.must('beValidString', beValidString)
-			.withMessage('State must be a string');
-
-		model.ruleFor('zip')
-			.must('beValidString', beValidString)
-			.withMessage('Zip must be a string');
+### Usage
+Say you have a contact object that needs to be validated. The contact type looks something like this:
+```ts
+type contact = {
+	name: String,
+	phone: String,
+	email: String,
+	address: {
+		line1: String,
+		line2: String,
+		city: String,
+		state: String,
+		zip: String
 	}
 }
+```
 
-class Owner extends Model {
-	protected define(model: Owner) {
-		model.ruleFor('address')
-			.as(Address);
+and could be implemented as follows: :
+```ts
+let contact = {
+	name: 'Korbin Dallas',
+	phone: '888-555-2323',
+	email: 'korbin@TaxiDriversRUs.com',
+	address: {
+		line1: '45 South West St',
+		line2: 'PO Box 23',
+		city: 'Fictional City',
+		state: 'IN',
+		zip: '46223-8998'
 	}
 }
+```
 
-class Cat extends Model {
-	protected define(model: Cat) {
-		model.ruleFor('color')
-			.must('beValidColor', beValidColor)
-			.withMessage(`Cat's color must be white, black, or calico.`);
+Not too helpful for validation; everything is of type String.
 
+We need to define the shape of the contact object to better our chances of maintaining clean data. This can be accomplished using Field Quality `Model`s.
 
-		model.ruleFor('furType')
-			.must('beValidFurType', beValidFurType)
-			.withMessage(`Cat's color must be white, black, or calico.`);
+The `Model` class is intended to be extended using ES6 Classes.
+```ts
 
-		model.ruleFor('owner')
-			.as(Owner);
-	}
-}
-
-let cat = new Cat({
-	color: 'white',
-	furType: 'long',
-	owner: {
-		address: {
-			line1: 445,
-			line2: 'Apt 3',
-			city: 'Indianapolis',
-			state: 'In',
-			zip: '46234'
-		}
-	}
-});
-
-let line1 = cat.get('owner.address.line1');
-line1.set('445');
-console.log(line1.value);
-let result = line1.rollback();
-console.log(line1.value);
 ```
