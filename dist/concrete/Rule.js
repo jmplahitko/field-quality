@@ -19,10 +19,6 @@ class Rule {
         return this._qualifiers;
     }
     define(rule) { }
-    as(entity) {
-        this._entity = entity;
-    }
-    asArrayOf() { }
     length(num1, num2) {
         let beBetween = length(num1, num2);
         this._qualifiers.set(beBetween, {
@@ -64,6 +60,9 @@ class Rule {
             precondition: null
         });
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, qualifier);
+    }
+    setValidator(entity) {
+        this._entity = entity;
     }
     stopOnFirstFailure() {
         this._stopOnFirstFailure = true;

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Model_1 = require("./concrete/Model");
-exports.Model = Model_1.Model;
+var Validator_1 = require("./concrete/Validator");
+exports.Validator = Validator_1.Validator;
 var Rule_1 = require("./concrete/Rule");
 exports.Rule = Rule_1.Rule;
 var quality_1 = require("./utils/quality");

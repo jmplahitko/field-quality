@@ -9,7 +9,7 @@ import { Rule } from './Rule';
 
 import split from '../utils/split';
 
-export class Model implements IValidatable {
+export class Validator implements IValidatable {
 	public name: string;
 	readonly isSerializable: boolean = true;
 	private _isValid: boolean = true;
@@ -42,7 +42,7 @@ export class Model implements IValidatable {
 				const propValue = entity[prop];
 				let rule, field;
 
-				// If there's a rule defined for the property, get the rule, and create the field via Model or Field objects
+				// If there's a rule defined for the property, get the rule, and create the field via Validator or Field objects
 				if (this._rules[prop]) {
 					rule = this._rules[prop];
 
@@ -72,7 +72,7 @@ export class Model implements IValidatable {
 		return this.validate();
 	}
 
-	protected define(model: Model) {
+	protected define(validator: Validator) {
 		console.warn('define not implemented');
 	}
 

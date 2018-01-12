@@ -2,7 +2,7 @@ import { IValidatable } from '../abstract/IValidatable';
 import { TErrorCollection } from '../abstract/TErrorCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
 
-import { Model } from './Model';
+import { Validator } from './Validator';
 import { Rule } from './Rule';
 
 export class Field implements IValidatable {
@@ -13,7 +13,7 @@ export class Field implements IValidatable {
 	private _isValid: boolean = true;
 	private _errors: TErrorCollection = {};
 
-	constructor(public name: string, private _parent: Model, private _rule: Rule, value?: any, readonly isSerializable: boolean = true) {
+	constructor(public name: string, private _parent: Validator, private _rule: Rule, value?: any, readonly isSerializable: boolean = true) {
 		this._currentValue = value || null;
 		this._originalValue = value || null;
 	}

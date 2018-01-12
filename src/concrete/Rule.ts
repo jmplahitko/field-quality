@@ -1,6 +1,6 @@
 import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
 import { TErrorCollection } from '../abstract/TErrorCollection';
-import { TModelConstructor } from '../abstract/TModelConstructor';
+import { TValidatorConstructor } from '../abstract/TValidatorConstructor';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { TRuleConstructor } from '../abstract/TRuleConstructor';
@@ -15,10 +15,10 @@ export class Rule {
 	public name: string;
 	private _qualifiers: TQualifierCollection = new Map();
 	private _rules: Map<Rule, {name: String, precondition: ((entity: any) => boolean)|null}> = new Map();
-	private _entity: TModelConstructor | null = null;
+	private _entity: TValidatorConstructor | null = null;
 	private _stopOnFirstFailure: boolean = false;
 
-	get entity(): TModelConstructor | null {
+	get entity(): TValidatorConstructor | null {
 		return this._entity;
 	}
 
@@ -32,12 +32,6 @@ export class Rule {
 	}
 
 	protected define(rule: Rule): void {}
-
-	public as(entity: TModelConstructor) {
-		this._entity = entity;
-	}
-
-	public asArrayOf() {}
 
 	public length(num1: number, num2: number): ISimpleFluentInterface {
 		let beBetween = length(num1, num2);
@@ -89,6 +83,10 @@ export class Rule {
 		});
 
 		return simpleFluentInterfaceFor(this, qualifier);
+	}
+
+	public setValidator(entity: TValidatorConstructor) {
+		this._entity = entity;
 	}
 
 	public stopOnFirstFailure(): void {
