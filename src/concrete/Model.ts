@@ -1,10 +1,11 @@
 import { Field } from './Field';
 import { Rule } from './Rule';
-import { IValidatable } from './abstract/IValidatable';
-import { TFieldCollection } from './abstract/TFieldCollection';
-import { TRuleCollection } from './abstract/TRuleCollection';
-import { TValidationResult } from './abstract/TValidationResult';
-import split from './utils/split';
+import { IValidatable } from '../abstract/IValidatable';
+import { TFieldCollection } from '../abstract/TFieldCollection';
+import { TRuleCollection } from '../abstract/TRuleCollection';
+import { TValidationResult } from '../abstract/TValidationResult';
+import split from '../utils/split';
+import { EmptyRule } from './EmptyRule';
 
 export class Model implements IValidatable {
 	public name: string;
@@ -51,7 +52,7 @@ export class Model implements IValidatable {
 					}
 				} else {
 					// No rule found, treat field as valid for sake of validation and ignore when serialized to an object or JSON
-					rule = this.ruleFor(prop).using(new Rule(prop));
+					rule = this.ruleFor(prop).using(EmptyRule);
 					field = new Field(prop, this, rule, propValue, false);
 				}
 

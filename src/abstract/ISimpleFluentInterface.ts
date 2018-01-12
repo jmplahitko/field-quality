@@ -1,5 +1,5 @@
-import { TQualifier } from "./TQualifier";
-import { Rule } from "../Rule";
+import { TQualifier } from './TQualifier';
+import { Rule } from '../concrete/Rule';
 
 export interface ISimpleFluentInterface {
 	length(num1: number, num2: number): ISimpleFluentInterface;

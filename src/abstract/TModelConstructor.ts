@@ -1,4 +1,3 @@
-import { Rule } from '../Rule';
-import { Model } from '../Model';
+import { Model } from '../concrete/Model';
 
 export type TModelConstructor = new (entity: { [key: string]: any }) => Model;

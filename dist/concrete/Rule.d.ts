@@ -1,10 +1,10 @@
-import { ISimpleFluentInterface } from './abstract/ISimpleFluentInterface';
-import { TQualifier } from './abstract/TQualifier';
-import { TModelConstructor } from './abstract/TModelConstructor';
-import { TValidationResult } from './abstract/TValidationResult';
-import { TQualifierCollection } from './abstract/TQualifierCollection';
+import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
+import { TQualifier } from '../abstract/TQualifier';
+import { TModelConstructor } from '../abstract/TModelConstructor';
+import { TValidationResult } from '../abstract/TValidationResult';
+import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { Field } from './Field';
-import { TRuleConstructor } from './abstract/TRuleConstructor';
+import { TRuleConstructor } from '../abstract/TRuleConstructor';
 export declare class Rule {
     name: string;
     private _qualifiers;

@@ -1,6 +1,6 @@
-import { IValidatable } from './abstract/IValidatable';
-import { TValidationResult } from './abstract/TValidationResult';
-import { TErrorCollection } from './abstract/TErrorCollection';
+import { IValidatable } from '../abstract/IValidatable';
+import { TValidationResult } from '../abstract/TValidationResult';
+import { TErrorCollection } from '../abstract/TErrorCollection';
 
 import { Rule } from './Rule';
 import { Model } from './Model';

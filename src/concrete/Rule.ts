@@ -1,16 +1,18 @@
-import { ISimpleFluentInterface } from './abstract/ISimpleFluentInterface';
-import { TQualifier } from './abstract/TQualifier';
-import { TModelConstructor } from './abstract/TModelConstructor';
-import { TValidationResult } from './abstract/TValidationResult';
-import { TErrorCollection } from './abstract/TErrorCollection';
-import { TQualifierCollection } from './abstract/TQualifierCollection';
+import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
+import { TQualifier } from '../abstract/TQualifier';
+import { TModelConstructor } from '../abstract/TModelConstructor';
+import { TValidationResult } from '../abstract/TValidationResult';
+import { TErrorCollection } from '../abstract/TErrorCollection';
+import { TQualifierCollection } from '../abstract/TQualifierCollection';
 
-import { simpleFluentInterfaceFor } from './utils/simpleFluentIntefaceFor';
-import { qualifiers } from './utils/qualifiers';
+import { simpleFluentInterfaceFor } from '../utils/simpleFluentIntefaceFor';
+import { qualifiers } from '../utils/qualifiers';
 import { Field } from './Field';
+import { TRuleConstructor } from '../abstract/TRuleConstructor';
 const { length, match, notEmpty, notNull } = qualifiers;
 
 export class Rule {
+	public name: string;
 	private _qualifiers: TQualifierCollection = new Map();
 	private _rules: Map<Rule, {name: String, precondition: ((entity: any) => boolean)|null}> = new Map();
 	private _entity: TModelConstructor | null = null;
@@ -24,7 +26,12 @@ export class Rule {
 		return this._qualifiers;
 	}
 
-	constructor(public name: string) {}
+	constructor(name?: string) {
+		this.name = name || this.constructor.name.toLowerCase();
+		this.define(this);
+	}
+
+	protected define(rule: Rule): void {}
 
 	public as(entity: TModelConstructor) {
 		this._entity = entity;
@@ -88,7 +95,8 @@ export class Rule {
 		this._stopOnFirstFailure = true;
 	}
 
-	public using(rule: Rule): Rule {
+	public using(PreDefinedRule: TRuleConstructor): Rule {
+		let rule = new PreDefinedRule();
 		this._rules.set(rule, { name: rule.name, precondition: null });
 		return this;
 	}

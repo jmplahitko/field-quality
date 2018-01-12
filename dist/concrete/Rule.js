@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const simpleFluentIntefaceFor_1 = require("./utils/simpleFluentIntefaceFor");
-const qualifiers_1 = require("./utils/qualifiers");
+const simpleFluentIntefaceFor_1 = require("../utils/simpleFluentIntefaceFor");
+const qualifiers_1 = require("../utils/qualifiers");
 const { length, match, notEmpty, notNull } = qualifiers_1.qualifiers;
 class Rule {
     constructor(name) {

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Model_1 = require("./Model");
+var Model_1 = require("./concrete/Model");
 exports.Model = Model_1.Model;
-var Rule_1 = require("./Rule");
+var Rule_1 = require("./concrete/Rule");
 exports.Rule = Rule_1.Rule;
 var quality_1 = require("./utils/quality");
 exports.quality = quality_1.quality;
