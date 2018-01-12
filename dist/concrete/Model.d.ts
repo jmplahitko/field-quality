@@ -1,6 +1,6 @@
-import { Rule } from './Rule';
 import { IValidatable } from '../abstract/IValidatable';
 import { TValidationResult } from '../abstract/TValidationResult';
+import { Rule } from './Rule';
 export declare class Model implements IValidatable {
     name: string;
     readonly isSerializable: boolean;

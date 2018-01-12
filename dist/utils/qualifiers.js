@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const quality_1 = require("./quality");
 const util_1 = require("util");
+const quality_1 = require("./quality");
 const { isEmpty, isNull, isNumber } = quality_1.quality;
 var qualifiers;
 (function (qualifiers) {

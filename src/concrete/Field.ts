@@ -1,9 +1,9 @@
 import { IValidatable } from '../abstract/IValidatable';
-import { TValidationResult } from '../abstract/TValidationResult';
 import { TErrorCollection } from '../abstract/TErrorCollection';
+import { TValidationResult } from '../abstract/TValidationResult';
 
-import { Rule } from './Rule';
 import { Model } from './Model';
+import { Rule } from './Rule';
 
 export class Field implements IValidatable {
 	private _currentValue: any = null;

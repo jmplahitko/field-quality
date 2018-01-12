@@ -1,6 +1,5 @@
-import { quality } from './quality';
-import { Readable } from 'stream';
 import { isUndefined } from 'util';
+import { quality } from './quality';
 const { isEmpty, isNull, isNumber } = quality;
 
 export namespace qualifiers {

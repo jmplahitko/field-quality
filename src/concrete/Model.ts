@@ -1,11 +1,13 @@
-import { Field } from './Field';
-import { Rule } from './Rule';
 import { IValidatable } from '../abstract/IValidatable';
 import { TFieldCollection } from '../abstract/TFieldCollection';
 import { TRuleCollection } from '../abstract/TRuleCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
-import split from '../utils/split';
+
 import { EmptyRule } from './EmptyRule';
+import { Field } from './Field';
+import { Rule } from './Rule';
+
+import split from '../utils/split';
 
 export class Model implements IValidatable {
 	public name: string;

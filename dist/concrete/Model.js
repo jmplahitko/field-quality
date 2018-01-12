@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const EmptyRule_1 = require("./EmptyRule");
 const Field_1 = require("./Field");
 const Rule_1 = require("./Rule");
 const split_1 = require("../utils/split");
-const EmptyRule_1 = require("./EmptyRule");
 class Model {
     constructor(entity = {}) {
         this.isSerializable = true;

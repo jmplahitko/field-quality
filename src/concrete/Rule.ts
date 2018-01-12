@@ -1,14 +1,14 @@
 import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
-import { TQualifier } from '../abstract/TQualifier';
-import { TModelConstructor } from '../abstract/TModelConstructor';
-import { TValidationResult } from '../abstract/TValidationResult';
 import { TErrorCollection } from '../abstract/TErrorCollection';
+import { TModelConstructor } from '../abstract/TModelConstructor';
+import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
+import { TRuleConstructor } from '../abstract/TRuleConstructor';
+import { TValidationResult } from '../abstract/TValidationResult';
 
+import { Field } from './Field';
 import { simpleFluentInterfaceFor } from '../utils/simpleFluentIntefaceFor';
 import { qualifiers } from '../utils/qualifiers';
-import { Field } from './Field';
-import { TRuleConstructor } from '../abstract/TRuleConstructor';
 const { length, match, notEmpty, notNull } = qualifiers;
 
 export class Rule {

@@ -1,5 +1,6 @@
-import { Field } from '../concrete/Field';
 import { TValidationResult } from './TValidationResult';
+
+import { Field } from '../concrete/Field';
 
 export interface IValidatable {
 	value: any;
