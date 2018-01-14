@@ -1,26 +1,23 @@
 import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
+import { IValidatable } from '../abstract/IValidatable';
 import { TErrorCollection } from '../abstract/TErrorCollection';
-import { TValidatorConstructor } from '../abstract/TValidatorConstructor';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
-import { TRuleConstructor } from '../abstract/TRuleConstructor';
 import { TValidationResult } from '../abstract/TValidationResult';
 
-import { Field } from './Field';
 import { simpleFluentInterfaceFor } from '../utils/simpleFluentIntefaceFor';
 import { qualifiers } from '../utils/qualifiers';
+import { quality } from '../utils/quality';
+import { Validator } from './Validator';
 const { length, match, notEmpty, notNull } = qualifiers;
+const { isEmpty } = quality;
 
-export class Rule {
+export class Rule implements IValidatable {
 	public name: string;
 	private _qualifiers: TQualifierCollection = new Map();
 	private _rules: Map<Rule, {name: String, precondition: ((validator: any) => boolean)|null}> = new Map();
-	private _validator: TValidatorConstructor | null = null;
+	private _validator: Validator | null = null;
 	private _stopOnFirstFailure: boolean = false;
-
-	get validator(): TValidatorConstructor | null {
-		return this._validator;
-	}
 
 	get qualifiers(): TQualifierCollection {
 		return this._qualifiers;
@@ -42,10 +39,6 @@ export class Rule {
 		});
 
 		return simpleFluentInterfaceFor(this, beBetween);
-	}
-
-	public list() {
-
 	}
 
 	public matches(rx: RegExp): ISimpleFluentInterface {
@@ -89,7 +82,7 @@ export class Rule {
 		return simpleFluentInterfaceFor(this, qualifier);
 	}
 
-	public setValidator(validator: TValidatorConstructor) {
+	public setValidator(validator: Validator) {
 		this._validator = validator;
 	}
 
@@ -97,8 +90,7 @@ export class Rule {
 		this._stopOnFirstFailure = true;
 	}
 
-	public using(PreDefinedRule: TRuleConstructor): Rule {
-		let rule = new PreDefinedRule();
+	public using(rule: Rule): Rule {
 		this._rules.set(rule, { name: rule.name, precondition: null });
 		return this;
 	}
@@ -111,61 +103,52 @@ export class Rule {
 	}
 
 	// TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-	public validate(field: Field): TValidationResult {
-		let errors: TErrorCollection = {};
-		let validity = [];
+	public validate(parentValue: any, prop?: string): TValidationResult {
+		const propValue = prop ? parentValue[prop] || null : parentValue;
+		let result: TValidationResult = {
+			errors: {},
+			get isValid() { return isEmpty(this.errors) },
+			value: propValue
+		}
+
+		// If there's a validator, delegate validation to it and short-circuit.
+		if (this._validator) {
+			return this._validator.validate(propValue);
+		}
 
 		// Check qualifiers first
 		for (let [qualifier, meta] of this._qualifiers) {
 			// We check for a precondition to exist for a qualifier before calling it
-			if (!meta.precondition || meta.precondition(field.parent)) {
-				let isValid = qualifier(field.value);
+			if (!meta.precondition || meta.precondition(parentValue)) {
+				let isValid = qualifier(propValue);
 
 				if (!isValid) {
-					validity.push(isValid);
-					errors[meta.name] = meta.message;
+					result.errors[meta.name] = meta.message;
 
 					// Short-circuit if we have to stopOnFirstFailure
 					if (this._stopOnFirstFailure) {
-						return {
-							value: field.value,
-							isValid: false,
-							errors
-						}
+						return result;
 					}
-				} else {
-					validity.push(isValid);
 				}
 			}
 		}
 
 		for (let [rule, meta] of this._rules) {
-			if (!meta.precondition || meta.precondition(field.parent)) {
-				let _result = rule.validate(field);
+			if (!meta.precondition || meta.precondition(parentValue)) {
+				let _result = rule.validate(propValue);
 				if (!_result.isValid) {
 					for (let ruleName in _result.errors) {
-						errors[ruleName] = _result.errors[ruleName];
-						validity.push(_result.isValid);
+						result.errors[ruleName] = _result.errors[ruleName];
 					}
 
 					// TODO: We have some duplication here. Need to find a better solution.
 					if (this._stopOnFirstFailure) {
-						return {
-							value: field.value,
-							isValid: false,
-							errors
-						}
+						return result;
 					}
-				} else {
-					validity.push(_result.isValid);
 				}
 			}
 		}
 
-		return {
-			value: field.value,
-			isValid: !validity.includes(false),
-			errors
-		};
+		return result;
 	}
 }

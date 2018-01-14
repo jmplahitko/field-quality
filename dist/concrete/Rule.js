@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const simpleFluentIntefaceFor_1 = require("../utils/simpleFluentIntefaceFor");
 const qualifiers_1 = require("../utils/qualifiers");
+const quality_1 = require("../utils/quality");
 const { length, match, notEmpty, notNull } = qualifiers_1.qualifiers;
+const { isEmpty } = quality_1.quality;
 class Rule {
     constructor(name) {
         this._qualifiers = new Map();
@@ -11,9 +13,6 @@ class Rule {
         this._stopOnFirstFailure = false;
         this.name = name || this.constructor.name.toLowerCase();
         this.define(this);
-    }
-    get validator() {
-        return this._validator;
     }
     get qualifiers() {
         return this._qualifiers;
@@ -27,8 +26,6 @@ class Rule {
             precondition: null
         });
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
-    }
-    list() {
     }
     matches(rx) {
         let matchRx = match(rx);
@@ -69,8 +66,7 @@ class Rule {
     stopOnFirstFailure() {
         this._stopOnFirstFailure = true;
     }
-    using(PreDefinedRule) {
-        let rule = new PreDefinedRule();
+    using(rule) {
         this._rules.set(rule, { name: rule.name, precondition: null });
         return this;
     }
@@ -81,58 +77,46 @@ class Rule {
         return this;
     }
     // TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-    validate(field) {
-        let errors = {};
-        let validity = [];
+    validate(parentValue, prop) {
+        const propValue = prop ? parentValue[prop] || null : parentValue;
+        let result = {
+            errors: {},
+            get isValid() { return isEmpty(this.errors); },
+            value: propValue
+        };
+        // If there's a validator, delegate validation to it and short-circuit.
+        if (this._validator) {
+            return this._validator.validate(propValue);
+        }
         // Check qualifiers first
         for (let [qualifier, meta] of this._qualifiers) {
             // We check for a precondition to exist for a qualifier before calling it
-            if (!meta.precondition || meta.precondition(field.parent)) {
-                let isValid = qualifier(field.value);
+            if (!meta.precondition || meta.precondition(parentValue)) {
+                let isValid = qualifier(propValue);
                 if (!isValid) {
-                    validity.push(isValid);
-                    errors[meta.name] = meta.message;
+                    result.errors[meta.name] = meta.message;
                     // Short-circuit if we have to stopOnFirstFailure
                     if (this._stopOnFirstFailure) {
-                        return {
-                            value: field.value,
-                            isValid: false,
-                            errors
-                        };
+                        return result;
                     }
-                }
-                else {
-                    validity.push(isValid);
                 }
             }
         }
         for (let [rule, meta] of this._rules) {
-            if (!meta.precondition || meta.precondition(field.parent)) {
-                let _result = rule.validate(field);
+            if (!meta.precondition || meta.precondition(parentValue)) {
+                let _result = rule.validate(propValue);
                 if (!_result.isValid) {
                     for (let ruleName in _result.errors) {
-                        errors[ruleName] = _result.errors[ruleName];
-                        validity.push(_result.isValid);
+                        result.errors[ruleName] = _result.errors[ruleName];
                     }
                     // TODO: We have some duplication here. Need to find a better solution.
                     if (this._stopOnFirstFailure) {
-                        return {
-                            value: field.value,
-                            isValid: false,
-                            errors
-                        };
+                        return result;
                     }
-                }
-                else {
-                    validity.push(_result.isValid);
                 }
             }
         }
-        return {
-            value: field.value,
-            isValid: !validity.includes(false),
-            errors
-        };
+        return result;
     }
 }
 exports.Rule = Rule;
