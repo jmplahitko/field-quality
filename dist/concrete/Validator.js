@@ -32,9 +32,9 @@ class Validator {
                 // If there's a rule defined for the property, get the rule, and create the field via Validator or Field objects
                 if (this._rules[prop]) {
                     rule = this._rules[prop];
-                    if (rule.entity) {
-                        let Entity = rule.entity;
-                        field = new Entity(propValue);
+                    if (rule.validator) {
+                        let _Validator = rule.validator;
+                        field = new _Validator(propValue);
                     }
                     else {
                         field = new Field_1.Field(prop, this, rule, propValue, true);

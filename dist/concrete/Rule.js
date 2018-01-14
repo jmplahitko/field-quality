@@ -7,13 +7,13 @@ class Rule {
     constructor(name) {
         this._qualifiers = new Map();
         this._rules = new Map();
-        this._entity = null;
+        this._validator = null;
         this._stopOnFirstFailure = false;
         this.name = name || this.constructor.name.toLowerCase();
         this.define(this);
     }
-    get entity() {
-        return this._entity;
+    get validator() {
+        return this._validator;
     }
     get qualifiers() {
         return this._qualifiers;
@@ -27,6 +27,8 @@ class Rule {
             precondition: null
         });
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
+    }
+    list() {
     }
     matches(rx) {
         let matchRx = match(rx);
@@ -61,8 +63,8 @@ class Rule {
         });
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, qualifier);
     }
-    setValidator(entity) {
-        this._entity = entity;
+    setValidator(validator) {
+        this._validator = validator;
     }
     stopOnFirstFailure() {
         this._stopOnFirstFailure = true;

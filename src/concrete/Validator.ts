@@ -46,9 +46,9 @@ export class Validator implements IValidatable {
 				if (this._rules[prop]) {
 					rule = this._rules[prop];
 
-					if (rule.entity) {
-						let Entity = rule.entity;
-						field = new Entity(propValue);
+					if (rule.validator) {
+						let _Validator = rule.validator;
+						field = new _Validator(propValue);
 					} else {
 						field = new Field(prop, this, rule, propValue, true);
 					}

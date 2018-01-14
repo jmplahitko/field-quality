@@ -9,20 +9,21 @@ export declare class Rule {
     name: string;
     private _qualifiers;
     private _rules;
-    private _entity;
+    private _validator;
     private _stopOnFirstFailure;
-    readonly entity: TValidatorConstructor | null;
+    readonly validator: TValidatorConstructor | null;
     readonly qualifiers: TQualifierCollection;
     constructor(name?: string);
     protected define(rule: Rule): void;
     length(num1: number, num2: number): ISimpleFluentInterface;
+    list(): void;
     matches(rx: RegExp): ISimpleFluentInterface;
     notNull(): ISimpleFluentInterface;
     notEmpty(): ISimpleFluentInterface;
     must(qualifier: TQualifier): ISimpleFluentInterface;
-    setValidator(entity: TValidatorConstructor): void;
+    setValidator(validator: TValidatorConstructor): void;
     stopOnFirstFailure(): void;
     using(PreDefinedRule: TRuleConstructor): Rule;
-    if(precondition: (entity: any) => boolean, define: (rule: Rule) => void): this;
+    if(precondition: (validator: any) => boolean, define: (rule: Rule) => void): this;
     validate(field: Field): TValidationResult;
 }

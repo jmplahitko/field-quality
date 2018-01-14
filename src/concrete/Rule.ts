@@ -14,12 +14,12 @@ const { length, match, notEmpty, notNull } = qualifiers;
 export class Rule {
 	public name: string;
 	private _qualifiers: TQualifierCollection = new Map();
-	private _rules: Map<Rule, {name: String, precondition: ((entity: any) => boolean)|null}> = new Map();
-	private _entity: TValidatorConstructor | null = null;
+	private _rules: Map<Rule, {name: String, precondition: ((validator: any) => boolean)|null}> = new Map();
+	private _validator: TValidatorConstructor | null = null;
 	private _stopOnFirstFailure: boolean = false;
 
-	get entity(): TValidatorConstructor | null {
-		return this._entity;
+	get validator(): TValidatorConstructor | null {
+		return this._validator;
 	}
 
 	get qualifiers(): TQualifierCollection {
@@ -42,6 +42,10 @@ export class Rule {
 		});
 
 		return simpleFluentInterfaceFor(this, beBetween);
+	}
+
+	public list() {
+
 	}
 
 	public matches(rx: RegExp): ISimpleFluentInterface {
@@ -85,8 +89,8 @@ export class Rule {
 		return simpleFluentInterfaceFor(this, qualifier);
 	}
 
-	public setValidator(entity: TValidatorConstructor) {
-		this._entity = entity;
+	public setValidator(validator: TValidatorConstructor) {
+		this._validator = validator;
 	}
 
 	public stopOnFirstFailure(): void {
@@ -99,7 +103,7 @@ export class Rule {
 		return this;
 	}
 
-	public if(precondition: (entity: any) => boolean, define: (rule: Rule) => void) {
+	public if(precondition: (validator: any) => boolean, define: (rule: Rule) => void) {
 		let rule = new Rule(this.name);
 		this._rules.set(rule, { name: rule.name, precondition });
 		define(rule);
