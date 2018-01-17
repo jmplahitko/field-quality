@@ -3,14 +3,15 @@ import { IValidatable } from '../abstract/IValidatable';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
-import { Validator } from './Validator';
+import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
+import { TValidatorCollection } from '../abstract/TValidatorCollection';
 export declare class Rule implements IValidatable {
     name: string;
-    private _qualifiers;
-    private _rules;
-    private _validator;
-    private _stopOnFirstFailure;
+    protected _qualifiers: TQualifierCollection;
+    protected _validators: TValidatorCollection;
+    protected _stopOnFirstFailure: boolean;
     readonly qualifiers: TQualifierCollection;
+    readonly validators: TValidatorCollection;
     constructor(name?: string);
     protected define(rule: Rule): void;
     length(num1: number, num2: number): ISimpleFluentInterface;
@@ -18,9 +19,9 @@ export declare class Rule implements IValidatable {
     notNull(): ISimpleFluentInterface;
     notEmpty(): ISimpleFluentInterface;
     must(qualifier: TQualifier): ISimpleFluentInterface;
-    setValidator(validator: Validator): void;
     stopOnFirstFailure(): void;
-    using(rule: Rule): Rule;
+    using(validatable: IValidatable): Rule | ICollectionFluentInterface;
     if(precondition: (validator: any) => boolean, define: (rule: Rule) => void): this;
+    protected getValidationResult(propValue: any, parentValue: any): TValidationResult;
     validate(parentValue: any, prop?: string): TValidationResult;
 }

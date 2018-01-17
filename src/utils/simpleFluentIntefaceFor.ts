@@ -11,6 +11,7 @@ export function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifier) {
 		notNull: rule.notNull.bind(rule),
 		notEmpty: rule.notEmpty.bind(rule),
 		stopOnFirstFailure: rule.stopOnFirstFailure.bind(rule),
+		using: rule.using.bind(rule),
 		when(precondition: (entity: any) => boolean): ISimpleFluentInterface {
 			let qualifierMeta = rule.qualifiers.get(qualifier);
 			if (qualifierMeta) {

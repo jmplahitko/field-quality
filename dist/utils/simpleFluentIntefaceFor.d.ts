@@ -8,6 +8,7 @@ export declare function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifi
     notNull: any;
     notEmpty: any;
     stopOnFirstFailure: any;
+    using: any;
     when(precondition: (entity: any) => boolean): ISimpleFluentInterface;
     withMessage(message: string): Rule;
 };

@@ -8,14 +8,16 @@ const { isEmpty } = quality_1.quality;
 class Rule {
     constructor(name) {
         this._qualifiers = new Map();
-        this._rules = new Map();
-        this._validator = null;
+        this._validators = new Map();
         this._stopOnFirstFailure = false;
         this.name = name || this.constructor.name.toLowerCase();
         this.define(this);
     }
     get qualifiers() {
         return this._qualifiers;
+    }
+    get validators() {
+        return this._validators;
     }
     define(rule) { }
     length(num1, num2) {
@@ -60,34 +62,27 @@ class Rule {
         });
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, qualifier);
     }
-    setValidator(validator) {
-        this._validator = validator;
-    }
     stopOnFirstFailure() {
         this._stopOnFirstFailure = true;
     }
-    using(rule) {
-        this._rules.set(rule, { name: rule.name, precondition: null });
+    using(validatable) {
+        let rule = this;
+        this._validators.set(validatable, { name: validatable.name, precondition: null });
         return this;
     }
     if(precondition, define) {
         let rule = new Rule(this.name);
-        this._rules.set(rule, { name: rule.name, precondition });
+        this._validators.set(rule, { name: rule.name, precondition });
         define(rule);
         return this;
     }
     // TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-    validate(parentValue, prop) {
-        const propValue = prop ? parentValue[prop] || null : parentValue;
+    getValidationResult(propValue, parentValue) {
         let result = {
             errors: {},
             get isValid() { return isEmpty(this.errors); },
             value: propValue
         };
-        // If there's a validator, delegate validation to it and short-circuit.
-        if (this._validator) {
-            return this._validator.validate(propValue);
-        }
         // Check qualifiers first
         for (let [qualifier, meta] of this._qualifiers) {
             // We check for a precondition to exist for a qualifier before calling it
@@ -102,9 +97,9 @@ class Rule {
                 }
             }
         }
-        for (let [rule, meta] of this._rules) {
+        for (let [validator, meta] of this._validators) {
             if (!meta.precondition || meta.precondition(parentValue)) {
-                let _result = rule.validate(propValue);
+                let _result = validator.validate(propValue);
                 if (!_result.isValid) {
                     for (let ruleName in _result.errors) {
                         result.errors[ruleName] = _result.errors[ruleName];
@@ -117,6 +112,10 @@ class Rule {
             }
         }
         return result;
+    }
+    validate(parentValue, prop) {
+        const propValue = prop ? parentValue[prop] || null : parentValue;
+        return this.getValidationResult(propValue, parentValue);
     }
 }
 exports.Rule = Rule;

@@ -1,6 +1,5 @@
 import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
 import { IValidatable } from '../abstract/IValidatable';
-import { TErrorCollection } from '../abstract/TErrorCollection';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
@@ -9,18 +8,24 @@ import { simpleFluentInterfaceFor } from '../utils/simpleFluentIntefaceFor';
 import { qualifiers } from '../utils/qualifiers';
 import { quality } from '../utils/quality';
 import { Validator } from './Validator';
+import { isArray } from 'util';
+import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
+import { TValidatorCollection } from '../abstract/TValidatorCollection';
 const { length, match, notEmpty, notNull } = qualifiers;
 const { isEmpty } = quality;
 
 export class Rule implements IValidatable {
 	public name: string;
-	private _qualifiers: TQualifierCollection = new Map();
-	private _rules: Map<Rule, {name: String, precondition: ((validator: any) => boolean)|null}> = new Map();
-	private _validator: Validator | null = null;
-	private _stopOnFirstFailure: boolean = false;
+	protected _qualifiers: TQualifierCollection = new Map();
+	protected _validators: TValidatorCollection = new Map();
+	protected _stopOnFirstFailure: boolean = false;
 
 	get qualifiers(): TQualifierCollection {
 		return this._qualifiers;
+	}
+
+	get validators(): TValidatorCollection {
+		return this._validators;
 	}
 
 	constructor(name?: string) {
@@ -82,38 +87,29 @@ export class Rule implements IValidatable {
 		return simpleFluentInterfaceFor(this, qualifier);
 	}
 
-	public setValidator(validator: Validator) {
-		this._validator = validator;
-	}
-
 	public stopOnFirstFailure(): void {
 		this._stopOnFirstFailure = true;
 	}
 
-	public using(rule: Rule): Rule {
-		this._rules.set(rule, { name: rule.name, precondition: null });
+	public using(validatable: IValidatable): Rule | ICollectionFluentInterface {
+		let rule = this;
+		this._validators.set(validatable, { name: validatable.name, precondition: null });
 		return this;
 	}
 
 	public if(precondition: (validator: any) => boolean, define: (rule: Rule) => void) {
 		let rule = new Rule(this.name);
-		this._rules.set(rule, { name: rule.name, precondition });
+		this._validators.set(rule, { name: rule.name, precondition });
 		define(rule);
 		return this;
 	}
 
 	// TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-	public validate(parentValue: any, prop?: string): TValidationResult {
-		const propValue = prop ? parentValue[prop] || null : parentValue;
+	protected getValidationResult(propValue: any, parentValue: any): TValidationResult {
 		let result: TValidationResult = {
 			errors: {},
 			get isValid() { return isEmpty(this.errors) },
 			value: propValue
-		}
-
-		// If there's a validator, delegate validation to it and short-circuit.
-		if (this._validator) {
-			return this._validator.validate(propValue);
 		}
 
 		// Check qualifiers first
@@ -133,9 +129,9 @@ export class Rule implements IValidatable {
 			}
 		}
 
-		for (let [rule, meta] of this._rules) {
+		for (let [validator, meta] of this._validators) {
 			if (!meta.precondition || meta.precondition(parentValue)) {
-				let _result = rule.validate(propValue);
+				let _result = validator.validate(propValue);
 				if (!_result.isValid) {
 					for (let ruleName in _result.errors) {
 						result.errors[ruleName] = _result.errors[ruleName];
@@ -150,5 +146,11 @@ export class Rule implements IValidatable {
 		}
 
 		return result;
+	}
+
+	public validate(parentValue: any, prop?: string): TValidationResult {
+		const propValue = prop ? parentValue[prop] || null : parentValue;
+
+		return this.getValidationResult(propValue, parentValue);
 	}
 }
