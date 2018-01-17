@@ -5,13 +5,11 @@ import { TValidationResult } from '../abstract/TValidationResult';
 import { Rule } from './Rule';
 import { quality } from '../utils/quality';
 import { collectionFluentInterfaceFor } from '../utils/collectionFluentInterfaceFor';
+import copy from '../utils/copy';
+
 const { isArray, isEmpty } = quality;
 
 export class CollectionRule extends Rule {
-	constructor(name?: string) {
-		super(name);
-	}
-
 	public using(validatable: IValidatable): ICollectionFluentInterface {
 		let rule = this;
 		this._validators.set(validatable, { name: validatable.name, precondition: null });
@@ -20,6 +18,8 @@ export class CollectionRule extends Rule {
 	}
 
 	public validate(parentValue: any, prop?: string): TValidationResult {
+		parentValue = copy(parentValue);
+
 		const propValue = prop ? parentValue[prop] || null : parentValue;
 
 		if (isArray(propValue)) {

@@ -8,6 +8,14 @@ export namespace quality {
 		return null !== val && {}.toString.call(val) === '[object Array]';
 	}
 
+	export function isBufferArray(val: any) {
+		return Object.prototype.toString.call(val) === '[object ArrayBuffer]';
+	}
+
+	export function isBlankObject(val: any) {
+		return val !== null && typeof val === 'object' && !Object.getPrototypeOf(val);
+	}
+
 	export function isBoolean(val: any) {
 		return typeof val === 'boolean';
 	}
@@ -103,6 +111,11 @@ export namespace quality {
 		return typeof val === 'string';
 	}
 
+	export function isTypedArray(val: any) {
+		const TYPED_ARRAY_REGEXP = new RegExp(/^\[object (?:Uint8|Uint8Clamped|Uint16|Uint32|Int8|Int16|Int32|Float32|Float64)Array\]$/);
+		return val && isNumber(val.length) && TYPED_ARRAY_REGEXP.test(Object.prototype.toString.call(val));
+	}
+
 	export function isNull(val: any) {
 		return val === null;
 	}
@@ -117,5 +130,9 @@ export namespace quality {
 
 	export function isPromise(val: any) {
 		return !!val && isFunction(val.then);
+	}
+
+	export function isWindow(val: any) {
+		return val && val.window === val;
 	}
 }

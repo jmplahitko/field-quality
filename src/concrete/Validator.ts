@@ -7,6 +7,8 @@ import { CollectionRule } from './CollectionRule';
 
 import { quality } from '../utils/quality';
 import { isString } from 'util';
+import copy from '../utils/copy';
+
 const { isEmpty } = quality;
 
 export class Validator implements IValidatable {
@@ -59,6 +61,8 @@ export class Validator implements IValidatable {
 	}
 
 	public validate(value: any, props: Array<string> = []): TValidationResult {
+		value = copy(value);
+
 		let errors: { [ruleName: string]: TValidationResult } = {};
 
 		let propsToValidate = isEmpty(props) ? Object.keys(this._rules) : props;

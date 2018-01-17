@@ -11,6 +11,8 @@ import { Validator } from './Validator';
 import { isArray } from 'util';
 import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
 import { TValidatorCollection } from '../abstract/TValidatorCollection';
+import copy from '../utils/copy';
+
 const { length, match, notEmpty, notNull } = qualifiers;
 const { isEmpty } = quality;
 
@@ -149,6 +151,8 @@ export class Rule implements IValidatable {
 	}
 
 	public validate(parentValue: any, prop?: string): TValidationResult {
+		parentValue = copy(parentValue);
+
 		const propValue = prop ? parentValue[prop] || null : parentValue;
 
 		return this.getValidationResult(propValue, parentValue);

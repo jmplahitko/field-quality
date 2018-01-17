@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const simpleFluentIntefaceFor_1 = require("../utils/simpleFluentIntefaceFor");
 const qualifiers_1 = require("../utils/qualifiers");
 const quality_1 = require("../utils/quality");
+const copy_1 = require("../utils/copy");
 const { length, match, notEmpty, notNull } = qualifiers_1.qualifiers;
 const { isEmpty } = quality_1.quality;
 class Rule {
@@ -114,6 +115,7 @@ class Rule {
         return result;
     }
     validate(parentValue, prop) {
+        parentValue = copy_1.default(parentValue);
         const propValue = prop ? parentValue[prop] || null : parentValue;
         return this.getValidationResult(propValue, parentValue);
     }

@@ -1,6 +1,8 @@
 export declare namespace quality {
     function is(val1: any, val2: any): boolean;
     function isArray(val: any): boolean;
+    function isBufferArray(val: any): boolean;
+    function isBlankObject(val: any): boolean;
     function isBoolean(val: any): boolean;
     function isDate(val: any): boolean;
     function isUndefined(val: any): boolean;
@@ -11,8 +13,10 @@ export declare namespace quality {
     function isInteger(val: any): boolean;
     function isRegExp(val: any): boolean;
     function isString(val: any): boolean;
+    function isTypedArray(val: any): boolean;
     function isNull(val: any): boolean;
     function isNumber(val: any): boolean;
     function isObject(val: any): boolean;
     function isPromise(val: any): boolean;
+    function isWindow(val: any): boolean;
 }

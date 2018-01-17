@@ -12,6 +12,14 @@ var quality;
         return null !== val && {}.toString.call(val) === '[object Array]';
     }
     quality.isArray = isArray;
+    function isBufferArray(val) {
+        return Object.prototype.toString.call(val) === '[object ArrayBuffer]';
+    }
+    quality.isBufferArray = isBufferArray;
+    function isBlankObject(val) {
+        return val !== null && typeof val === 'object' && !Object.getPrototypeOf(val);
+    }
+    quality.isBlankObject = isBlankObject;
     function isBoolean(val) {
         return typeof val === 'boolean';
     }
@@ -113,6 +121,11 @@ var quality;
         return typeof val === 'string';
     }
     quality.isString = isString;
+    function isTypedArray(val) {
+        const TYPED_ARRAY_REGEXP = new RegExp(/^\[object (?:Uint8|Uint8Clamped|Uint16|Uint32|Int8|Int16|Int32|Float32|Float64)Array\]$/);
+        return val && isNumber(val.length) && TYPED_ARRAY_REGEXP.test(Object.prototype.toString.call(val));
+    }
+    quality.isTypedArray = isTypedArray;
     function isNull(val) {
         return val === null;
     }
@@ -129,4 +142,8 @@ var quality;
         return !!val && isFunction(val.then);
     }
     quality.isPromise = isPromise;
+    function isWindow(val) {
+        return val && val.window === val;
+    }
+    quality.isWindow = isWindow;
 })(quality = exports.quality || (exports.quality = {}));
