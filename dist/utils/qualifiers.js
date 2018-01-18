@@ -5,6 +5,12 @@ const quality_1 = require("./quality");
 const { isEmpty, isNull, isNumber } = quality_1.quality;
 var qualifiers;
 (function (qualifiers) {
+    function beValidEnum(arr) {
+        return function beValidEnum(value) {
+            return arr.includes(value);
+        };
+    }
+    qualifiers.beValidEnum = beValidEnum;
     function length(num1, num2) {
         return (value) => {
             return (value && value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
