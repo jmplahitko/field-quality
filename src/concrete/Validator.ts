@@ -2,11 +2,10 @@ import { IValidatable } from '../abstract/IValidatable';
 import { TRuleCollection } from '../abstract/TRuleCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
 
-import { Rule } from './Rule';
 import { CollectionRule } from './CollectionRule';
+import { Rule } from './Rule';
 
 import { quality } from '../utils/quality';
-import { isString } from 'util';
 import copy from '../utils/copy';
 
 const { isEmpty } = quality;

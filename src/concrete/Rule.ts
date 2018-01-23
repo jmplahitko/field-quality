@@ -1,17 +1,15 @@
+import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
 import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
 import { IValidatable } from '../abstract/IValidatable';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
+import { TValidatorCollection } from '../abstract/TValidatorCollection';
 
+import copy from '../utils/copy';
 import { simpleFluentInterfaceFor } from '../utils/simpleFluentIntefaceFor';
 import { qualifiers } from '../utils/qualifiers';
 import { quality } from '../utils/quality';
-import { Validator } from './Validator';
-import { isArray } from 'util';
-import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
-import { TValidatorCollection } from '../abstract/TValidatorCollection';
-import copy from '../utils/copy';
 
 const { length, match, notEmpty, notNull } = qualifiers;
 const { isEmpty } = quality;

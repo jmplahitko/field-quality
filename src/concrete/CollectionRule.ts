@@ -3,9 +3,10 @@ import { IValidatable } from '../abstract/IValidatable';
 import { TValidationResult } from '../abstract/TValidationResult';
 
 import { Rule } from './Rule';
-import { quality } from '../utils/quality';
+
 import { collectionFluentInterfaceFor } from '../utils/collectionFluentInterfaceFor';
 import copy from '../utils/copy';
+import { quality } from '../utils/quality';
 
 const { isArray, isEmpty } = quality;
 
@@ -39,6 +40,8 @@ export class CollectionRule extends Rule {
 
 			return result;
 		} else {
+			// propValue is not a collection at this point, and cannot be validated.
+			// TODO: The beCollection error can be pulled out and defined as a qualifier.
 			return {
 				errors: {
 					beCollection: 'Must be a collection.'
