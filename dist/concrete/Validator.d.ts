@@ -7,8 +7,8 @@ export declare class Validator implements IValidatable {
     private _rules;
     constructor();
     protected define(validator: Validator): void;
-    protected ruleFor(fieldName: string): Rule;
-    protected ruleForEach(fieldName: string): CollectionRule;
-    private getValidationResult(ruleName, value);
+    protected ruleFor(propertyName: string): Rule;
+    protected ruleForEach(propertyName: string): CollectionRule;
+    private getValidationResult(propertyName, value);
     validate(value: any, props?: Array<string>): TValidationResult;
 }

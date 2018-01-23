@@ -37,11 +37,11 @@ export class Rule implements IValidatable {
 
 	protected define(rule: Rule): void {}
 
-	public length(num1: number, num2: number): ISimpleFluentInterface {
-		let beBetween = length(num1, num2);
+	public length(min: number, max: number): ISimpleFluentInterface {
+		let beBetween = length(min, max);
 		this._qualifiers.set(beBetween, {
-			name: `beBetween${num1}and${num2}`,
-			message: `${this.name} must be between ${num1} and ${num2}`,
+			name: `beBetween${min}and${max}`,
+			message: `${this.name} must be between ${min} and ${max}`,
 			precondition: null
 		});
 
@@ -99,7 +99,7 @@ export class Rule implements IValidatable {
 		return this;
 	}
 
-	public if(precondition: (validator: any) => boolean, define: (rule: Rule) => void) {
+	public if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule {
 		let rule = new Rule(this.name);
 		this._validators.set(rule, { name: rule.name, precondition });
 		define(rule);

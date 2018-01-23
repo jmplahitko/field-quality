@@ -14,14 +14,14 @@ export declare class Rule implements IValidatable {
     readonly validators: TValidatorCollection;
     constructor(name?: string);
     protected define(rule: Rule): void;
-    length(num1: number, num2: number): ISimpleFluentInterface;
+    length(min: number, max: number): ISimpleFluentInterface;
     matches(rx: RegExp): ISimpleFluentInterface;
     notNull(): ISimpleFluentInterface;
     notEmpty(): ISimpleFluentInterface;
     must(qualifier: TQualifier): ISimpleFluentInterface;
     stopOnFirstFailure(): void;
     using(validatable: IValidatable): Rule | ICollectionFluentInterface;
-    if(precondition: (validator: any) => boolean, define: (rule: Rule) => void): this;
+    if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule;
     protected getValidationResult(propValue: any, parentValue: any): TValidationResult;
     validate(parentValue: any, prop?: string): TValidationResult;
 }

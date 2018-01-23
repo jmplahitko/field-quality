@@ -21,11 +21,11 @@ class Rule {
         return this._validators;
     }
     define(rule) { }
-    length(num1, num2) {
-        let beBetween = length(num1, num2);
+    length(min, max) {
+        let beBetween = length(min, max);
         this._qualifiers.set(beBetween, {
-            name: `beBetween${num1}and${num2}`,
-            message: `${this.name} must be between ${num1} and ${num2}`,
+            name: `beBetween${min}and${max}`,
+            message: `${this.name} must be between ${min} and ${max}`,
             precondition: null
         });
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);

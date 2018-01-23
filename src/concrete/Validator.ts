@@ -24,33 +24,33 @@ export class Validator implements IValidatable {
 		console.warn('define not implemented');
 	}
 
-	protected ruleFor(fieldName: string): Rule {
-		let rule = new Rule(fieldName);
+	protected ruleFor(propertyName: string): Rule {
+		let rule = new Rule(propertyName);
 
-		if (!this._rules[fieldName]) {
-			this._rules[fieldName] = [rule];
+		if (!this._rules[propertyName]) {
+			this._rules[propertyName] = [rule];
 		} else {
-			this._rules[fieldName].push(rule);
+			this._rules[propertyName].push(rule);
 		}
 
 		return rule;
 	}
 
-	protected ruleForEach(fieldName: string): CollectionRule {
-		let rule = new CollectionRule(fieldName);
+	protected ruleForEach(propertyName: string): CollectionRule {
+		let rule = new CollectionRule(propertyName);
 
-		if (!this._rules[fieldName]) {
-			this._rules[fieldName] = [rule];
+		if (!this._rules[propertyName]) {
+			this._rules[propertyName] = [rule];
 		} else {
-			this._rules[fieldName].push(rule);
+			this._rules[propertyName].push(rule);
 		}
 
 		return rule;
 	}
 
-	private getValidationResult(ruleName: string, value: any) {
-		let result = this._rules[ruleName]
-			.map(rule => rule.validate(value, ruleName))
+	private getValidationResult(propertyName: string, value: any) {
+		let result = this._rules[propertyName]
+			.map(rule => rule.validate(value, propertyName))
 			.reduce(( previousResult, currentResult) => ({
 				isValid: previousResult.isValid === true ? currentResult.isValid : previousResult.isValid,
 				errors: Object.assign(previousResult.errors, currentResult.errors),
