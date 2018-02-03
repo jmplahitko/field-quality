@@ -12,7 +12,7 @@ import { qualifiers } from '../utils/qualifiers';
 import { quality } from '../utils/quality';
 
 const { length, match, notEmpty, notNull } = qualifiers;
-const { isEmpty } = quality;
+const { isEmpty, isNull } = quality;
 
 export class Rule implements IValidatable {
 	public name: string;
@@ -47,7 +47,8 @@ export class Rule implements IValidatable {
 	}
 
 	public matches(rx: RegExp): ISimpleFluentInterface {
-		let matchRx = match(rx);
+		let matches = match(rx);
+		let matchRx = (val: any) => isNull(val) || matches(val);
 		this._qualifiers.set(matchRx, {
 			name: matchRx.name,
 			message: `${this.name} is an invalid format.`,

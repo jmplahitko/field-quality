@@ -5,7 +5,7 @@ const simpleFluentIntefaceFor_1 = require("../utils/simpleFluentIntefaceFor");
 const qualifiers_1 = require("../utils/qualifiers");
 const quality_1 = require("../utils/quality");
 const { length, match, notEmpty, notNull } = qualifiers_1.qualifiers;
-const { isEmpty } = quality_1.quality;
+const { isEmpty, isNull } = quality_1.quality;
 class Rule {
     constructor(name) {
         this._qualifiers = new Map();
@@ -31,7 +31,8 @@ class Rule {
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
     }
     matches(rx) {
-        let matchRx = match(rx);
+        let matches = match(rx);
+        let matchRx = (val) => isNull(val) || matches(val);
         this._qualifiers.set(matchRx, {
             name: matchRx.name,
             message: `${this.name} is an invalid format.`,
