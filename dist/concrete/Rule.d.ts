@@ -1,9 +1,9 @@
+import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
 import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
 import { IValidatable } from '../abstract/IValidatable';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
-import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
 import { TValidatorCollection } from '../abstract/TValidatorCollection';
 export declare class Rule implements IValidatable {
     name: string;

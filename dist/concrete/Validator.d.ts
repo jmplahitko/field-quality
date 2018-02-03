@@ -1,7 +1,7 @@
 import { IValidatable } from '../abstract/IValidatable';
 import { TValidationResult } from '../abstract/TValidationResult';
-import { Rule } from './Rule';
 import { CollectionRule } from './CollectionRule';
+import { Rule } from './Rule';
 export declare class Validator implements IValidatable {
     name: string;
     private _rules;

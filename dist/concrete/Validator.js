@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Rule_1 = require("./Rule");
 const CollectionRule_1 = require("./CollectionRule");
+const Rule_1 = require("./Rule");
 const quality_1 = require("../utils/quality");
 const copy_1 = require("../utils/copy");
 const { isEmpty } = quality_1.quality;

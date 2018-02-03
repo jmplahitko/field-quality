@@ -12,13 +12,13 @@ var qualifiers;
     }
     qualifiers.beValidEnum = beValidEnum;
     function length(num1, num2) {
-        return (value) => {
+        return function beBetween(value) {
             return (value && value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
         };
     }
     qualifiers.length = length;
     function match(rx) {
-        return (value) => {
+        return function matches(value) {
             return rx.test(value);
         };
     }

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Rule_1 = require("./Rule");
-const quality_1 = require("../utils/quality");
 const collectionFluentInterfaceFor_1 = require("../utils/collectionFluentInterfaceFor");
 const copy_1 = require("../utils/copy");
+const quality_1 = require("../utils/quality");
 const { isArray, isEmpty } = quality_1.quality;
 class CollectionRule extends Rule_1.Rule {
     using(validatable) {
@@ -29,6 +29,8 @@ class CollectionRule extends Rule_1.Rule {
             return result;
         }
         else {
+            // propValue is not a collection at this point, and cannot be validated.
+            // TODO: The beCollection error can be pulled out and defined as a qualifier.
             return {
                 errors: {
                     beCollection: 'Must be a collection.'
