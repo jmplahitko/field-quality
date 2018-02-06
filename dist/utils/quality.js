@@ -2,6 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var quality;
 (function (quality) {
+    function hasAnyFlags(flags, mask) {
+        flags = parseInt(flags, 10);
+        mask = parseInt(mask, 10);
+        if (isNaN(flags) || isNaN(mask)) {
+            return false;
+        }
+        return (mask & flags) !== 0;
+    }
+    quality.hasAnyFlags = hasAnyFlags;
+    function hasFlags(flags, mask) {
+        flags = parseInt(flags, 10);
+        mask = parseInt(mask, 10);
+        if (isNaN(flags) || isNaN(mask)) {
+            return false;
+        }
+        return (mask & flags) === mask;
+    }
+    quality.hasFlags = hasFlags;
     function is(val1, val2) {
         if (val1 === val2)
             return val1 !== 0 || 1 / val1 === 1 / val2;

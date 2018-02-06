@@ -1,4 +1,6 @@
 export declare namespace quality {
+    function hasAnyFlags(flags: any, mask: any): boolean;
+    function hasFlags(flags: any, mask: any): boolean;
     function is(val1: any, val2: any): boolean;
     function isArray(val: any): boolean;
     function isBufferArray(val: any): boolean;

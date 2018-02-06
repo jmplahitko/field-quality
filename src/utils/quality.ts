@@ -1,4 +1,26 @@
 export namespace quality {
+	export function hasAnyFlags(flags: any, mask: any) {
+		flags = parseInt(flags, 10);
+		mask = parseInt(mask, 10);
+
+		if (isNaN(flags) || isNaN(mask)) {
+			return false;
+		}
+
+		return (mask & flags) !== 0;
+	}
+
+	export function hasFlags(flags: any, mask: any) {
+		flags = parseInt(flags, 10);
+		mask = parseInt(mask, 10);
+
+		if (isNaN(flags) || isNaN(mask)) {
+			return false;
+		}
+
+		return (mask & flags) === mask;
+	}
+
 	export function is(val1: any, val2: any) {
 		if (val1 === val2) return val1 !== 0 || 1 / val1 === 1 / val2;
 		return val1 !== val1 && val2 !== val2;
