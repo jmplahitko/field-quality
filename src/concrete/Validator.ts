@@ -47,9 +47,9 @@ export class Validator implements IValidatable {
 		return rule;
 	}
 
-	private getValidationResult(propertyName: string, value: any) {
+	private getValidationResult(propertyName: string, value: any, parentValue: any) {
 		let result = this._rules[propertyName]
-			.map(rule => rule.validate(value, propertyName))
+			.map(rule => rule.validate(value, parentValue))
 			.reduce(( previousResult, currentResult) => ({
 				isValid: previousResult.isValid === true ? currentResult.isValid : previousResult.isValid,
 				errors: Object.assign(previousResult.errors, currentResult.errors),
@@ -59,15 +59,13 @@ export class Validator implements IValidatable {
 		return result;
 	}
 
-	public validate(value: any, props: Array<string> = []): TValidationResult {
+	public validate(value: any = {}): TValidationResult {
 		value = copy(value);
 
 		let errors: { [ruleName: string]: TValidationResult } = {};
 
-		let propsToValidate = isEmpty(props) ? Object.keys(this._rules) : props;
-
-		for (let propName of propsToValidate) {
-			let result = this.getValidationResult(propName, value);
+		for (let propName in this._rules) {
+			let result = this.getValidationResult(propName, value[propName], value);
 
 			if (!result.isValid) {
 				errors[propName] = result;

@@ -28,8 +28,8 @@ export class Rule implements IValidatable {
 		return this._validators;
 	}
 
-	constructor(name?: string) {
-		this.name = name || this.constructor.name.toLowerCase();
+	constructor(name: string) {
+		this.name = name;
 		this.define(this);
 	}
 
@@ -132,7 +132,7 @@ export class Rule implements IValidatable {
 
 		for (let [validator, meta] of this._validators) {
 			if (!meta.precondition || meta.precondition(parentValue)) {
-				let _result = validator.validate(propValue);
+				let _result = validator.validate(propValue, parentValue);
 				if (!_result.isValid) {
 					for (let ruleName in _result.errors) {
 						result.errors[ruleName] = _result.errors[ruleName];
@@ -149,11 +149,10 @@ export class Rule implements IValidatable {
 		return result;
 	}
 
-	public validate(parentValue: any, prop?: string): TValidationResult {
+	public validate(value: any, parentValue: any): TValidationResult {
+		value = copy(value);
 		parentValue = copy(parentValue);
 
-		const propValue = prop ? parentValue[prop] || null : parentValue;
-
-		return this.getValidationResult(propValue, parentValue);
+		return this.getValidationResult(value, parentValue);
 	}
 }

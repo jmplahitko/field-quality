@@ -18,23 +18,22 @@ export class CollectionRule extends Rule {
 		return collectionFluentInterfaceFor(rule, validatable);
 	}
 
-	public validate(parentValue: any, prop?: string): TValidationResult {
+	public validate(value: any, parentValue: any): TValidationResult {
+		value = copy(value);
 		parentValue = copy(parentValue);
 
-		const propValue = prop ? parentValue[prop] || null : parentValue;
-
-		if (isArray(propValue)) {
+		if (isArray(value)) {
 			let result: TValidationResult = {
 				errors: {},
 				get isValid() { return isEmpty(this.errors) },
-				value: propValue
+				value
 			};
 
-			propValue.forEach((_propValue: any, index: number) => {
-				let _result = this.getValidationResult(_propValue, _propValue);
+			value.forEach((_propValue: any, index: number) => {
+				let _result = this.getValidationResult(_propValue, parentValue);
 
 				if (!_result.isValid) {
-					result.errors[`${prop||''}[${index}]`] = _result;
+					result.errors[`${this.name||''}[${index}]`] = _result;
 				}
 			});
 
@@ -47,7 +46,7 @@ export class CollectionRule extends Rule {
 					beCollection: 'Must be a collection.'
 				},
 				isValid: false,
-				value: propValue
+				value
 			}
 		}
 	}

@@ -34,9 +34,9 @@ class Validator {
         }
         return rule;
     }
-    getValidationResult(propertyName, value) {
+    getValidationResult(propertyName, value, parentValue) {
         let result = this._rules[propertyName]
-            .map(rule => rule.validate(value, propertyName))
+            .map(rule => rule.validate(value, parentValue))
             .reduce((previousResult, currentResult) => ({
             isValid: previousResult.isValid === true ? currentResult.isValid : previousResult.isValid,
             errors: Object.assign(previousResult.errors, currentResult.errors),
@@ -44,12 +44,11 @@ class Validator {
         }));
         return result;
     }
-    validate(value, props = []) {
+    validate(value = {}) {
         value = copy_1.default(value);
         let errors = {};
-        let propsToValidate = isEmpty(props) ? Object.keys(this._rules) : props;
-        for (let propName of propsToValidate) {
-            let result = this.getValidationResult(propName, value);
+        for (let propName in this._rules) {
+            let result = this.getValidationResult(propName, value[propName], value);
             if (!result.isValid) {
                 errors[propName] = result;
             }

@@ -11,19 +11,19 @@ class CollectionRule extends Rule_1.Rule {
         this._validators.set(validatable, { name: validatable.name, precondition: null });
         return collectionFluentInterfaceFor_1.collectionFluentInterfaceFor(rule, validatable);
     }
-    validate(parentValue, prop) {
+    validate(value, parentValue) {
+        value = copy_1.default(value);
         parentValue = copy_1.default(parentValue);
-        const propValue = prop ? parentValue[prop] || null : parentValue;
-        if (isArray(propValue)) {
+        if (isArray(value)) {
             let result = {
                 errors: {},
                 get isValid() { return isEmpty(this.errors); },
-                value: propValue
+                value
             };
-            propValue.forEach((_propValue, index) => {
-                let _result = this.getValidationResult(_propValue, _propValue);
+            value.forEach((_propValue, index) => {
+                let _result = this.getValidationResult(_propValue, parentValue);
                 if (!_result.isValid) {
-                    result.errors[`${prop || ''}[${index}]`] = _result;
+                    result.errors[`${this.name || ''}[${index}]`] = _result;
                 }
             });
             return result;
@@ -36,7 +36,7 @@ class CollectionRule extends Rule_1.Rule {
                     beCollection: 'Must be a collection.'
                 },
                 isValid: false,
-                value: propValue
+                value
             };
         }
     }

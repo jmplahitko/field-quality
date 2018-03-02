@@ -12,7 +12,7 @@ export declare class Rule implements IValidatable {
     protected _stopOnFirstFailure: boolean;
     readonly qualifiers: TQualifierCollection;
     readonly validators: TValidatorCollection;
-    constructor(name?: string);
+    constructor(name: string);
     protected define(rule: Rule): void;
     length(min: number, max: number): ISimpleFluentInterface;
     matches(rx: RegExp): ISimpleFluentInterface;
@@ -23,5 +23,5 @@ export declare class Rule implements IValidatable {
     using(validatable: IValidatable): Rule | ICollectionFluentInterface;
     if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule;
     protected getValidationResult(propValue: any, parentValue: any): TValidationResult;
-    validate(parentValue: any, prop?: string): TValidationResult;
+    validate(value: any, parentValue: any): TValidationResult;
 }

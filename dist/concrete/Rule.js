@@ -11,7 +11,7 @@ class Rule {
         this._qualifiers = new Map();
         this._validators = new Map();
         this._stopOnFirstFailure = false;
-        this.name = name || this.constructor.name.toLowerCase();
+        this.name = name;
         this.define(this);
     }
     get qualifiers() {
@@ -101,7 +101,7 @@ class Rule {
         }
         for (let [validator, meta] of this._validators) {
             if (!meta.precondition || meta.precondition(parentValue)) {
-                let _result = validator.validate(propValue);
+                let _result = validator.validate(propValue, parentValue);
                 if (!_result.isValid) {
                     for (let ruleName in _result.errors) {
                         result.errors[ruleName] = _result.errors[ruleName];
@@ -115,10 +115,10 @@ class Rule {
         }
         return result;
     }
-    validate(parentValue, prop) {
+    validate(value, parentValue) {
+        value = copy_1.default(value);
         parentValue = copy_1.default(parentValue);
-        const propValue = prop ? parentValue[prop] || null : parentValue;
-        return this.getValidationResult(propValue, parentValue);
+        return this.getValidationResult(value, parentValue);
     }
 }
 exports.Rule = Rule;
