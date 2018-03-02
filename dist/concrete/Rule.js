@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const ValidationResult_1 = require("./ValidationResult");
 const copy_1 = require("../utils/copy");
 const simpleFluentIntefaceFor_1 = require("../utils/simpleFluentIntefaceFor");
 const qualifiers_1 = require("../utils/qualifiers");
@@ -11,7 +12,7 @@ class Rule {
         this._qualifiers = new Map();
         this._validators = new Map();
         this._stopOnFirstFailure = false;
-        this.name = name;
+        this.name = name || this.constructor.name.toLowerCase();
         this.define(this);
     }
     get qualifiers() {
@@ -94,7 +95,7 @@ class Rule {
                     result.errors[meta.name] = meta.message;
                     // Short-circuit if we have to stopOnFirstFailure
                     if (this._stopOnFirstFailure) {
-                        return result;
+                        return new ValidationResult_1.ValidationResult(result);
                     }
                 }
             }
@@ -108,12 +109,12 @@ class Rule {
                     }
                     // TODO: We have some duplication here. Need to find a better solution.
                     if (this._stopOnFirstFailure) {
-                        return result;
+                        return new ValidationResult_1.ValidationResult(result);
                     }
                 }
             }
         }
-        return result;
+        return new ValidationResult_1.ValidationResult(result);
     }
     validate(value, parentValue) {
         value = copy_1.default(value);

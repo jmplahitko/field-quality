@@ -6,6 +6,8 @@ import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
 import { TValidatorCollection } from '../abstract/TValidatorCollection';
 
+import { ValidationResult } from './ValidationResult';
+
 import copy from '../utils/copy';
 import { simpleFluentInterfaceFor } from '../utils/simpleFluentIntefaceFor';
 import { qualifiers } from '../utils/qualifiers';
@@ -28,8 +30,8 @@ export class Rule implements IValidatable {
 		return this._validators;
 	}
 
-	constructor(name: string) {
-		this.name = name;
+	constructor(name?: string) {
+		this.name = name || this.constructor.name.toLowerCase();
 		this.define(this);
 	}
 
@@ -106,7 +108,7 @@ export class Rule implements IValidatable {
 	}
 
 	// TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-	protected getValidationResult(propValue: any, parentValue: any): TValidationResult {
+	protected getValidationResult(propValue: any, parentValue: any): ValidationResult {
 		let result: TValidationResult = {
 			errors: {},
 			get isValid() { return isEmpty(this.errors) },
@@ -124,7 +126,7 @@ export class Rule implements IValidatable {
 
 					// Short-circuit if we have to stopOnFirstFailure
 					if (this._stopOnFirstFailure) {
-						return result;
+						return new ValidationResult(result);
 					}
 				}
 			}
@@ -140,13 +142,13 @@ export class Rule implements IValidatable {
 
 					// TODO: We have some duplication here. Need to find a better solution.
 					if (this._stopOnFirstFailure) {
-						return result;
+						return new ValidationResult(result);
 					}
 				}
 			}
 		}
 
-		return result;
+		return new ValidationResult(result);
 	}
 
 	public validate(value: any, parentValue: any): TValidationResult {

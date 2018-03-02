@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Rule_1 = require("./Rule");
+const ValidationResult_1 = require("./ValidationResult");
 const collectionFluentInterfaceFor_1 = require("../utils/collectionFluentInterfaceFor");
 const copy_1 = require("../utils/copy");
 const quality_1 = require("../utils/quality");
@@ -26,18 +27,18 @@ class CollectionRule extends Rule_1.Rule {
                     result.errors[`${this.name || ''}[${index}]`] = _result;
                 }
             });
-            return result;
+            return new ValidationResult_1.ValidationResult(result);
         }
         else {
             // propValue is not a collection at this point, and cannot be validated.
             // TODO: The beCollection error can be pulled out and defined as a qualifier.
-            return {
+            return new ValidationResult_1.ValidationResult({
                 errors: {
                     beCollection: 'Must be a collection.'
                 },
                 isValid: false,
                 value
-            };
+            });
         }
     }
 }

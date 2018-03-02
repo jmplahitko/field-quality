@@ -3,6 +3,7 @@ import { IValidatable } from '../abstract/IValidatable';
 import { TValidationResult } from '../abstract/TValidationResult';
 
 import { Rule } from './Rule';
+import { ValidationResult } from './ValidationResult';
 
 import { collectionFluentInterfaceFor } from '../utils/collectionFluentInterfaceFor';
 import copy from '../utils/copy';
@@ -18,7 +19,7 @@ export class CollectionRule extends Rule {
 		return collectionFluentInterfaceFor(rule, validatable);
 	}
 
-	public validate(value: any, parentValue: any): TValidationResult {
+	public validate(value: any, parentValue: any): ValidationResult {
 		value = copy(value);
 		parentValue = copy(parentValue);
 
@@ -37,17 +38,17 @@ export class CollectionRule extends Rule {
 				}
 			});
 
-			return result;
+			return new ValidationResult(result);
 		} else {
 			// propValue is not a collection at this point, and cannot be validated.
 			// TODO: The beCollection error can be pulled out and defined as a qualifier.
-			return {
+			return new ValidationResult({
 				errors: {
 					beCollection: 'Must be a collection.'
 				},
 				isValid: false,
 				value
-			}
+			});
 		}
 	}
 }

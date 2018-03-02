@@ -7,6 +7,7 @@ import { Rule } from './Rule';
 
 import { quality } from '../utils/quality';
 import copy from '../utils/copy';
+import { ValidationResult } from './ValidationResult';
 
 const { isEmpty } = quality;
 
@@ -59,23 +60,23 @@ export class Validator implements IValidatable {
 		return result;
 	}
 
-	public validate(value: any = {}): TValidationResult {
+	public validate(value: any = {}): ValidationResult {
 		value = copy(value);
 
-		let errors: { [ruleName: string]: TValidationResult } = {};
+		let errors: { [ruleName: string]: ValidationResult } = {};
 
 		for (let propName in this._rules) {
 			let result = this.getValidationResult(propName, value[propName], value);
 
 			if (!result.isValid) {
-				errors[propName] = result;
+				errors[propName] = new ValidationResult(result);
 			}
 		}
 
-		return {
+		return new ValidationResult({
 			errors,
 			isValid: isEmpty(errors),
 			value
-		}
+		});
 	}
 }

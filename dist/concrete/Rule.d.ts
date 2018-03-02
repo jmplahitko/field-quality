@@ -5,6 +5,7 @@ import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
 import { TValidatorCollection } from '../abstract/TValidatorCollection';
+import { ValidationResult } from './ValidationResult';
 export declare class Rule implements IValidatable {
     name: string;
     protected _qualifiers: TQualifierCollection;
@@ -12,7 +13,7 @@ export declare class Rule implements IValidatable {
     protected _stopOnFirstFailure: boolean;
     readonly qualifiers: TQualifierCollection;
     readonly validators: TValidatorCollection;
-    constructor(name: string);
+    constructor(name?: string);
     protected define(rule: Rule): void;
     length(min: number, max: number): ISimpleFluentInterface;
     matches(rx: RegExp): ISimpleFluentInterface;
@@ -22,6 +23,6 @@ export declare class Rule implements IValidatable {
     stopOnFirstFailure(): void;
     using(validatable: IValidatable): Rule | ICollectionFluentInterface;
     if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule;
-    protected getValidationResult(propValue: any, parentValue: any): TValidationResult;
+    protected getValidationResult(propValue: any, parentValue: any): ValidationResult;
     validate(value: any, parentValue: any): TValidationResult;
 }

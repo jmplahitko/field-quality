@@ -4,6 +4,7 @@ const CollectionRule_1 = require("./CollectionRule");
 const Rule_1 = require("./Rule");
 const quality_1 = require("../utils/quality");
 const copy_1 = require("../utils/copy");
+const ValidationResult_1 = require("./ValidationResult");
 const { isEmpty } = quality_1.quality;
 class Validator {
     constructor() {
@@ -50,14 +51,14 @@ class Validator {
         for (let propName in this._rules) {
             let result = this.getValidationResult(propName, value[propName], value);
             if (!result.isValid) {
-                errors[propName] = result;
+                errors[propName] = new ValidationResult_1.ValidationResult(result);
             }
         }
-        return {
+        return new ValidationResult_1.ValidationResult({
             errors,
             isValid: isEmpty(errors),
             value
-        };
+        });
     }
 }
 exports.Validator = Validator;
