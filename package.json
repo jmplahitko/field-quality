@@ -12,12 +12,19 @@
   "main": "dist/index.js",
   "devDependencies": {
     "@types/node": "^8.5.1",
+    "@babel/cli": "^7.0.0-beta.32",
+    "@babel/core": "^7.0.0-beta.32",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.32",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.32",
+    "@babel/preset-env": "^7.0.0-beta.32",
+    "@babel/preset-typescript": "^7.0.0-beta.32",
+    "typescript": "~2.7.1",
     "jshint": "^2.9.5",
-    "prettier": "1.9.2",
-    "typescript": "2.6.2"
+    "prettier": "1.9.2"
   },
   "scripts": {
-    "build": "tsc -p .",
+    "build": "npm run type-check && babel src --out-dir dist --extensions \".ts,.tsx\"",
+    "type-check": "tsc",
     "watch": "tsc -p . --watch"
   },
   "dependencies": {}
