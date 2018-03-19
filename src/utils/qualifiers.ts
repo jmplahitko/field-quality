@@ -8,7 +8,7 @@ function beBoolean(value: any) {
 
 function beInRange(num1: number, num2: number) {
 	return function beInRange(value: any) {
-		return (value && isNumber(value)) ? (value >= num1 && value <= num2) : false;
+		return (isNumber(value) && !isNaN(value)) ? (value >= num1 && value <= num2) : false;
 	}
 }
 
@@ -20,7 +20,7 @@ function beValidEnum(arr: Array<string|number>) {
 
 function length(num1: number, num2: number) {
 	return function beValidLength(value: any) {
-		return (value && value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
+		return (!isUndefined(value) && value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
 	}
 }
 

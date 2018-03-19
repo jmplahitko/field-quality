@@ -20,7 +20,7 @@ function beBoolean(value) {
 
 function beInRange(num1, num2) {
   return function beInRange(value) {
-    return value && isNumber(value) ? value >= num1 && value <= num2 : false;
+    return isNumber(value) && !isNaN(value) ? value >= num1 && value <= num2 : false;
   };
 }
 
@@ -32,7 +32,7 @@ function beValidEnum(arr) {
 
 function length(num1, num2) {
   return function beValidLength(value) {
-    return value && value.length && isNumber(value.length) ? value.length >= num1 && value.length <= num2 : false;
+    return !(0, _util.isUndefined)(value) && value.length && isNumber(value.length) ? value.length >= num1 && value.length <= num2 : false;
   };
 }
 
