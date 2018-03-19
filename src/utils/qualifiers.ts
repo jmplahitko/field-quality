@@ -1,6 +1,6 @@
 import { isUndefined } from 'util';
 import { quality } from './quality';
-const { isBoolean, isEmpty, isNull, isNumber } = quality;
+const { isArray, isBoolean, isEmpty, isNull, isNumber, isString } = quality;
 
 function beBoolean(value: any) {
 	return isNull(value) || isBoolean(value);
@@ -20,7 +20,7 @@ function beValidEnum(arr: Array<string|number>) {
 
 function length(num1: number, num2: number) {
 	return function beValidLength(value: any) {
-		return (!isUndefined(value) && value.length && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
+		return ((isString(value) || isArray(value)) && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
 	}
 }
 

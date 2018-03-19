@@ -9,10 +9,12 @@ var _util = require("util");
 
 var _quality = require("./quality");
 
-var isBoolean = _quality.quality.isBoolean,
+var isArray = _quality.quality.isArray,
+    isBoolean = _quality.quality.isBoolean,
     isEmpty = _quality.quality.isEmpty,
     isNull = _quality.quality.isNull,
-    isNumber = _quality.quality.isNumber;
+    isNumber = _quality.quality.isNumber,
+    isString = _quality.quality.isString;
 
 function beBoolean(value) {
   return isNull(value) || isBoolean(value);
@@ -32,7 +34,7 @@ function beValidEnum(arr) {
 
 function length(num1, num2) {
   return function beValidLength(value) {
-    return !(0, _util.isUndefined)(value) && value.length && isNumber(value.length) ? value.length >= num1 && value.length <= num2 : false;
+    return (isString(value) || isArray(value)) && isNumber(value.length) ? value.length >= num1 && value.length <= num2 : false;
   };
 }
 
