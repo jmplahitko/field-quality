@@ -1,10 +1,10 @@
 {
   "name": "field-quality",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Validation Library",
   "repository": {
     "type": "git",
-    "url": "ssh://git@10.8.49.104:7999/~jplahitko/fieldquality.git"
+    "url": "ssh://git@code.ai.org:7999/~jplahitko/fieldquality.git"
   },
   "private": true,
   "license": "MIT",
