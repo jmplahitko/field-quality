@@ -34,7 +34,7 @@ export class CollectionRule extends Rule {
 				let _result = this.getValidationResult(_propValue, parentValue);
 
 				if (!_result.isValid) {
-					result.errors[`${this.name||''}[${index}]`] = _result;
+					result.errors[`[${index}]`] = _result;
 				}
 			});
 

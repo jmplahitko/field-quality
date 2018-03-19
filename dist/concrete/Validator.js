@@ -81,15 +81,48 @@ function () {
   }, {
     key: "getValidationResult",
     value: function getValidationResult(propertyName, value, parentValue) {
-      var result = this._rules[propertyName].map(function (rule) {
-        return rule.validate(value, parentValue);
-      }).reduce(function (previousResult, currentResult) {
-        return {
-          isValid: previousResult.isValid === true ? currentResult.isValid : previousResult.isValid,
-          errors: Object.assign(previousResult.errors, currentResult.errors),
-          value: currentResult.value
-        };
-      });
+      var rules = this._rules[propertyName];
+      var result = {
+        errors: {},
+
+        get isValid() {
+          return isEmpty(this.errors);
+        },
+
+        value: value
+      };
+
+      for (var rule in rules) {
+        if (rules[rule] instanceof _CollectionRule.CollectionRule) {
+          var _result = rules[rule].validate(value, parentValue);
+
+          if (!_result.isValid) {
+            for (var errorProp in _result.errors) {
+              var propName = "".concat(propertyName).concat(errorProp);
+
+              if (_result.errors[errorProp] instanceof _ValidationResult.ValidationResult) {
+                if (result.errors.hasOwnProperty(propName)) {
+                  result.errors[propName] = new _ValidationResult.ValidationResult(Object.assign(result.errors[propName], _result.errors[errorProp]));
+                } else {
+                  result.errors[propName] = _result.errors[errorProp];
+                }
+              } else {
+                result.errors[propertyName] = _result;
+              }
+            }
+          }
+        } else {
+          var _result2 = rules[rule].validate(value, parentValue);
+
+          if (!_result2.isValid) {
+            if (result.errors.hasOwnProperty(propertyName)) {
+              result.errors[propertyName] = new _ValidationResult.ValidationResult(Object.assign(result.errors[propertyName], _result2));
+            } else {
+              result.errors[propertyName] = _result2;
+            }
+          }
+        }
+      }
 
       return result;
     }
@@ -104,7 +137,9 @@ function () {
         var result = this.getValidationResult(propName, value[propName], value);
 
         if (!result.isValid) {
-          errors[propName] = new _ValidationResult.ValidationResult(result);
+          for (var errorProp in result.errors) {
+            errors[errorProp] = result.errors[errorProp];
+          }
         }
       }
 

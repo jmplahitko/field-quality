@@ -48,14 +48,45 @@ export class Validator implements IValidatable {
 		return rule;
 	}
 
-	private getValidationResult(propertyName: string, value: any, parentValue: any) {
-		let result = this._rules[propertyName]
-			.map(rule => rule.validate(value, parentValue))
-			.reduce(( previousResult, currentResult) => ({
-				isValid: previousResult.isValid === true ? currentResult.isValid : previousResult.isValid,
-				errors: Object.assign(previousResult.errors, currentResult.errors),
-				value: currentResult.value,
-			}));
+	private getValidationResult(propertyName: string, value: any, parentValue: any): TValidationResult {
+		let rules = this._rules[propertyName];
+		let result: TValidationResult = {
+			errors: {},
+			get isValid() { return isEmpty(this.errors) },
+			value
+		};
+
+		for (let rule in rules) {
+			if (rules[rule] instanceof CollectionRule) {
+				let _result = rules[rule].validate(value, parentValue);
+
+				if (!_result.isValid) {
+					for (let errorProp in _result.errors) {
+						let propName = `${propertyName}${errorProp}`;
+
+						if (_result.errors[errorProp] instanceof ValidationResult) {
+							if (result.errors.hasOwnProperty(propName)) {
+								result.errors[propName] = new ValidationResult(Object.assign(result.errors[propName], _result.errors[errorProp]));
+							} else {
+								result.errors[propName] = _result.errors[errorProp];
+							}
+						} else {
+							result.errors[propertyName] = _result;
+						}
+					}
+				}
+			} else {
+				let _result = rules[rule].validate(value, parentValue);
+
+				if (!_result.isValid) {
+					if (result.errors.hasOwnProperty(propertyName)) {
+						result.errors[propertyName] = new ValidationResult(Object.assign(result.errors[propertyName], _result));
+					} else {
+						result.errors[propertyName] = _result;
+					}
+				}
+			}
+		}
 
 		return result;
 	}
@@ -69,7 +100,9 @@ export class Validator implements IValidatable {
 			let result = this.getValidationResult(propName, value[propName], value);
 
 			if (!result.isValid) {
-				errors[propName] = new ValidationResult(result);
+				for (let errorProp in result.errors) {
+					errors[errorProp] = result.errors[errorProp];
+				}
 			}
 		}
 

@@ -77,7 +77,7 @@ function (_Rule) {
           var _result = _this.getValidationResult(_propValue, parentValue);
 
           if (!_result.isValid) {
-            result.errors["".concat(_this.name || '', "[").concat(index, "]")] = _result;
+            result.errors["[".concat(index, "]")] = _result;
           }
         });
         return new _ValidationResult.ValidationResult(result);
