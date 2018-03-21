@@ -8,6 +8,7 @@ import { Rule } from './Rule';
 import { quality } from '../utils/quality';
 import copy from '../utils/copy';
 import { ValidationResult } from './ValidationResult';
+import getProperty from '../utils/getProperty';
 
 const { isEmpty } = quality;
 
@@ -62,7 +63,7 @@ export class Validator implements IValidatable {
 
 				if (!_result.isValid) {
 					for (let errorProp in _result.errors) {
-						let propName = `${propertyName}${errorProp}`;
+						let propName = `${propertyName}${propertyName.includes('.') ? '.' : ''}${errorProp}`;
 
 						if (_result.errors[errorProp] instanceof ValidationResult) {
 							if (result.errors.hasOwnProperty(propName)) {
@@ -97,7 +98,7 @@ export class Validator implements IValidatable {
 		let errors: { [ruleName: string]: ValidationResult } = {};
 
 		for (let propName in this._rules) {
-			let result = this.getValidationResult(propName, value[propName], value);
+			let result = this.getValidationResult(propName, getProperty(value, propName), value);
 
 			if (!result.isValid) {
 				for (let errorProp in result.errors) {

@@ -15,6 +15,8 @@ var _copy = _interopRequireDefault(require("../utils/copy"));
 
 var _ValidationResult = require("./ValidationResult");
 
+var _getProperty = _interopRequireDefault(require("../utils/getProperty"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -98,7 +100,7 @@ function () {
 
           if (!_result.isValid) {
             for (var errorProp in _result.errors) {
-              var propName = "".concat(propertyName).concat(errorProp);
+              var propName = "".concat(propertyName).concat(propertyName.includes('.') ? '.' : '').concat(errorProp);
 
               if (_result.errors[errorProp] instanceof _ValidationResult.ValidationResult) {
                 if (result.errors.hasOwnProperty(propName)) {
@@ -134,7 +136,7 @@ function () {
       var errors = {};
 
       for (var propName in this._rules) {
-        var result = this.getValidationResult(propName, value[propName], value);
+        var result = this.getValidationResult(propName, (0, _getProperty.default)(value, propName), value);
 
         if (!result.isValid) {
           for (var errorProp in result.errors) {
