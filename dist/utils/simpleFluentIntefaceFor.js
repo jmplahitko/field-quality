@@ -7,6 +7,16 @@ exports.simpleFluentInterfaceFor = simpleFluentInterfaceFor;
 
 function simpleFluentInterfaceFor(rule, qualifier) {
   return {
+    as: function as(qualifierName) {
+      var qualifierMeta = rule.qualifiers.get(qualifier);
+
+      if (qualifierMeta) {
+        qualifierMeta.name = qualifierName;
+        rule.qualifiers.set(qualifier, qualifierMeta);
+      }
+
+      return simpleFluentInterfaceFor(rule, qualifier);
+    },
     length: rule.length.bind(rule),
     matches: rule.matches.bind(rule),
     must: rule.must.bind(rule),

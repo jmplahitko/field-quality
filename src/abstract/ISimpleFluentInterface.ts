@@ -4,6 +4,7 @@ import { Rule } from '../concrete/Rule';
 import { IValidatable } from './IValidatable';
 
 export interface ISimpleFluentInterface {
+	as(qualifierName: string): ISimpleFluentInterface;
 	length(num1: number, num2: number): ISimpleFluentInterface;
 	matches(rx: RegExp): ISimpleFluentInterface;
 	must(qualifier: TQualifier): ISimpleFluentInterface;
