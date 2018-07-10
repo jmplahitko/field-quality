@@ -205,7 +205,7 @@ function () {
 
           // We check for a precondition to exist for a qualifier before calling it
           if (!_meta2.precondition || _meta2.precondition(parentValue)) {
-            var isValid = _qualifier(propValue);
+            var isValid = _qualifier(propValue, parentValue);
 
             if (!isValid) {
               result.errors[_meta2.name] = _meta2.message; // Short-circuit if we have to stopOnFirstFailure

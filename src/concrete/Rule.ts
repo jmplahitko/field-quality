@@ -119,7 +119,7 @@ export class Rule implements IValidatable {
 		for (let [qualifier, meta] of this._qualifiers) {
 			// We check for a precondition to exist for a qualifier before calling it
 			if (!meta.precondition || meta.precondition(parentValue)) {
-				let isValid = qualifier(propValue);
+				let isValid = qualifier(propValue, parentValue);
 
 				if (!isValid) {
 					result.errors[meta.name] = meta.message;
