@@ -108,7 +108,7 @@ export class Rule implements IValidatable {
 	}
 
 	// TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-	protected getValidationResult(propValue: any, parentValue: any): ValidationResult {
+	protected getValidationResult(propValue: any, parentValue: any, customOptions: any): ValidationResult {
 		let result: TValidationResult = {
 			errors: {},
 			get isValid() { return isEmpty(this.errors) },
@@ -118,8 +118,8 @@ export class Rule implements IValidatable {
 		// Check qualifiers first
 		for (let [qualifier, meta] of this._qualifiers) {
 			// We check for a precondition to exist for a qualifier before calling it
-			if (!meta.precondition || meta.precondition(parentValue)) {
-				let isValid = qualifier(propValue, parentValue);
+			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
+				let isValid = qualifier(propValue, parentValue, customOptions);
 
 				if (!isValid) {
 					result.errors[meta.name] = meta.message;
@@ -133,8 +133,8 @@ export class Rule implements IValidatable {
 		}
 
 		for (let [validator, meta] of this._validators) {
-			if (!meta.precondition || meta.precondition(parentValue)) {
-				let _result = validator.validate(propValue, parentValue);
+			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
+				let _result = validator.validate(propValue, parentValue, customOptions);
 				if (!_result.isValid) {
 					for (let ruleName in _result.errors) {
 						result.errors[ruleName] = _result.errors[ruleName];
@@ -151,10 +151,10 @@ export class Rule implements IValidatable {
 		return new ValidationResult(result);
 	}
 
-	public validate(value: any, parentValue: any): TValidationResult {
+	public validate(value: any, parentValue: any, customOptions?: any): TValidationResult {
 		value = copy(value);
 		parentValue = copy(parentValue);
 
-		return this.getValidationResult(value, parentValue);
+		return this.getValidationResult(value, parentValue, customOptions);
 	}
 }

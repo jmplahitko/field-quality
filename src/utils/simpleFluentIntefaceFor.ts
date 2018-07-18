@@ -2,6 +2,7 @@ import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
 import { TQualifier } from '../abstract/TQualifier';
 
 import { Rule } from '../concrete/Rule';
+import { TPrecondition } from '../abstract/TPrecondition';
 
 export function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifier) {
 	return {
@@ -21,7 +22,7 @@ export function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifier) {
 		notEmpty: rule.notEmpty.bind(rule),
 		stopOnFirstFailure: rule.stopOnFirstFailure.bind(rule),
 		using: rule.using.bind(rule),
-		when(precondition: (entity: any) => boolean): ISimpleFluentInterface {
+		when(precondition: TPrecondition): ISimpleFluentInterface {
 			let qualifierMeta = rule.qualifiers.get(qualifier);
 			if (qualifierMeta) {
 				qualifierMeta.precondition = precondition;

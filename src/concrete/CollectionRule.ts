@@ -19,7 +19,7 @@ export class CollectionRule extends Rule {
 		return collectionFluentInterfaceFor(rule, validatable);
 	}
 
-	public validate(value: any, parentValue: any): ValidationResult {
+	public validate(value: any, parentValue: any, customOptions?: any): ValidationResult {
 		value = copy(value);
 		parentValue = copy(parentValue);
 
@@ -31,7 +31,7 @@ export class CollectionRule extends Rule {
 			};
 
 			value.forEach((_propValue: any, index: number) => {
-				let _result = this.getValidationResult(_propValue, parentValue);
+				let _result = this.getValidationResult(_propValue, parentValue, customOptions);
 
 				if (!_result.isValid) {
 					result.errors[`[${index}]`] = _result;

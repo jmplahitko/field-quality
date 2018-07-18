@@ -49,7 +49,7 @@ export class Validator implements IValidatable {
 		return rule;
 	}
 
-	private getValidationResult(propertyName: string, value: any, parentValue: any): TValidationResult {
+	private getValidationResult(propertyName: string, value: any, parentValue: any, customOptions?: any): TValidationResult {
 		let rules = this._rules[propertyName];
 		let result: TValidationResult = {
 			errors: {},
@@ -59,7 +59,7 @@ export class Validator implements IValidatable {
 
 		for (let rule in rules) {
 			if (rules[rule] instanceof CollectionRule) {
-				let _result = rules[rule].validate(value, parentValue);
+				let _result = rules[rule].validate(value, parentValue, customOptions);
 
 				if (!_result.isValid) {
 					for (let errorProp in _result.errors) {
@@ -77,7 +77,7 @@ export class Validator implements IValidatable {
 					}
 				}
 			} else {
-				let _result = rules[rule].validate(value, parentValue);
+				let _result = rules[rule].validate(value, parentValue, customOptions);
 
 				if (!_result.isValid) {
 					if (result.errors.hasOwnProperty(propertyName)) {
@@ -92,13 +92,24 @@ export class Validator implements IValidatable {
 		return result;
 	}
 
-	public validate(value: any = {}): ValidationResult {
+	public validate(value: any, customOptions?: any): ValidationResult;
+	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResult {
 		value = copy(value);
+
+		if (arguments.length === 3) {
+			parentValue = copy(arguments[1]);
+			customOptions = copy(arguments[2]);
+		} else if (arguments.length === 2) {
+			parentValue = copy(value);
+			customOptions = arguments[1];
+		} else if (arguments.length === 1) {
+			parentValue = copy(value);
+		}
 
 		let errors: { [ruleName: string]: ValidationResult } = {};
 
 		for (let propName in this._rules) {
-			let result = this.getValidationResult(propName, getProperty(value, propName), value);
+			let result = this.getValidationResult(propName, getProperty(value, propName), parentValue, customOptions);
 
 			if (!result.isValid) {
 				for (let errorProp in result.errors) {

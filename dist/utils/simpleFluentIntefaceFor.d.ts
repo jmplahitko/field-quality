@@ -1,6 +1,7 @@
 import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
 import { TQualifier } from '../abstract/TQualifier';
 import { Rule } from '../concrete/Rule';
+import { TPrecondition } from '../abstract/TPrecondition';
 export declare function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifier): {
     as(qualifierName: string): ISimpleFluentInterface;
     length: any;
@@ -10,6 +11,6 @@ export declare function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifi
     notEmpty: any;
     stopOnFirstFailure: any;
     using: any;
-    when(precondition: (entity: any) => boolean): ISimpleFluentInterface;
+    when(precondition: TPrecondition): ISimpleFluentInterface;
     withMessage(message: string): Rule;
 };

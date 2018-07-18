@@ -4,6 +4,7 @@ import { TQualifier } from '../abstract/TQualifier';
 
 import { CollectionRule } from '../concrete/CollectionRule';
 import { Rule } from '../concrete/Rule';
+import { TPrecondition } from '../abstract/TPrecondition';
 
 export function collectionFluentInterfaceFor(rule: CollectionRule, validatable: IValidatable) {
 	return {
@@ -14,7 +15,7 @@ export function collectionFluentInterfaceFor(rule: CollectionRule, validatable: 
 		notEmpty: rule.notEmpty.bind(rule),
 		stopOnFirstFailure: rule.stopOnFirstFailure.bind(rule),
 		using: rule.using.bind(rule),
-		where(precondition: (entity: any) => boolean): CollectionRule {
+		where(precondition: TPrecondition): CollectionRule {
 			let validatorMeta = rule.validators.get(validatable);
 			if (validatorMeta) {
 				validatorMeta.precondition = precondition;

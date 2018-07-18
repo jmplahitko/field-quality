@@ -1,6 +1,7 @@
 import { TQualifier } from './TQualifier';
 import { Rule } from '../concrete/Rule';
 import { IValidatable } from './IValidatable';
+import { TPrecondition } from './TPrecondition';
 export interface ISimpleFluentInterface {
     as(qualifierName: string): ISimpleFluentInterface;
     length(num1: number, num2: number): ISimpleFluentInterface;
@@ -10,6 +11,6 @@ export interface ISimpleFluentInterface {
     notNull(): ISimpleFluentInterface;
     stopOnFirstFailure(): void;
     using(validatable: IValidatable): Rule;
-    when(precondition: (entity: any) => boolean): ISimpleFluentInterface;
+    when(precondition: TPrecondition): ISimpleFluentInterface;
     withMessage(message: string): Rule;
 }

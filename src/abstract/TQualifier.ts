@@ -1,1 +1,1 @@
-export type TQualifier = (val: any, entity?: any) => boolean;
+export type TQualifier = (val: any, entity?: any, customOptions?: any) => boolean;

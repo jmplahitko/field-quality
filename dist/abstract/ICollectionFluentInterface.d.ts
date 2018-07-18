@@ -1,5 +1,6 @@
 import { IValidatable } from './IValidatable';
 import { CollectionRule } from '../concrete/CollectionRule';
+import { TPrecondition } from './TPrecondition';
 export interface ICollectionFluentInterface {
     length: any;
     matches: any;
@@ -8,5 +9,5 @@ export interface ICollectionFluentInterface {
     notEmpty: any;
     stopOnFirstFailure: any;
     using(validatable: IValidatable): ICollectionFluentInterface;
-    where(precondition: (entity: any) => boolean): CollectionRule;
+    where(precondition: TPrecondition): CollectionRule;
 }

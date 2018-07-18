@@ -4,5 +4,5 @@ import { Rule } from './Rule';
 import { ValidationResult } from './ValidationResult';
 export declare class CollectionRule extends Rule {
     using(validatable: IValidatable): ICollectionFluentInterface;
-    validate(value: any, parentValue: any): ValidationResult;
+    validate(value: any, parentValue: any, customOptions?: any): ValidationResult;
 }

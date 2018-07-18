@@ -1,5 +1,7 @@
+import { TPrecondition } from "./TPrecondition";
+
 export type TQualifierMeta = {
 	name: string;
 	message: string;
-	precondition: ((entity: any) => boolean) | null;
+	precondition: TPrecondition | null;
 };

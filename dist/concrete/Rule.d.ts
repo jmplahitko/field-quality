@@ -23,6 +23,6 @@ export declare class Rule implements IValidatable {
     stopOnFirstFailure(): void;
     using(validatable: IValidatable): Rule | ICollectionFluentInterface;
     if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule;
-    protected getValidationResult(propValue: any, parentValue: any): ValidationResult;
-    validate(value: any, parentValue: any): TValidationResult;
+    protected getValidationResult(propValue: any, parentValue: any, customOptions: any): ValidationResult;
+    validate(value: any, parentValue: any, customOptions?: any): TValidationResult;
 }
