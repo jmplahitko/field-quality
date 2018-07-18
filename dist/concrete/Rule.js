@@ -31,6 +31,15 @@ class Rule {
         });
         return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
     }
+    lengthOrEmpty(min, max) {
+        let beBetween = length(min, max);
+        this._qualifiers.set(beBetween, {
+            name: `beBetween${min}and${max}OrEmpty`,
+            message: `${this.name} must be between ${min} and ${max}`,
+            precondition: null
+        });
+        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
+    }
     matches(rx) {
         let matches = match(rx);
         let matchRx = (val) => isNull(val) || matches(val);

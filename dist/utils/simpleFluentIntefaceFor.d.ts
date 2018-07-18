@@ -5,6 +5,7 @@ import { TPrecondition } from '../abstract/TPrecondition';
 export declare function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifier): {
     as(qualifierName: string): ISimpleFluentInterface;
     length: any;
+    lengthOrEmpty: any;
     matches: any;
     must: any;
     notNull: any;

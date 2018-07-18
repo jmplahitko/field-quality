@@ -11,6 +11,7 @@ function simpleFluentInterfaceFor(rule, qualifier) {
             return simpleFluentInterfaceFor(rule, qualifier);
         },
         length: rule.length.bind(rule),
+        lengthOrEmpty: rule.lengthOrEmpty.bind(rule),
         matches: rule.matches.bind(rule),
         must: rule.must.bind(rule),
         notNull: rule.notNull.bind(rule),

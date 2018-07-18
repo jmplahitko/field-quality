@@ -4,6 +4,7 @@ import { TPrecondition } from './TPrecondition';
 import { TQualifier } from './TQualifier';
 export interface ICollectionFluentInterface {
     length(num1: number, num2: number): ICollectionFluentInterface;
+    lengthOrEmpty(num1: number, num2: number): ICollectionFluentInterface;
     must(qualifier: TQualifier): ICollectionFluentInterface;
     notEmpty(): ICollectionFluentInterface;
     notNull(): ICollectionFluentInterface;

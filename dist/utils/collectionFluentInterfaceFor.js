@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function collectionFluentInterfaceFor(rule, validatable) {
     return {
         length: rule.length.bind(rule),
+        lengthOrEmpty: rule.lengthOrEmpty.bind(rule),
         must: rule.must.bind(rule),
         notNull: rule.notNull.bind(rule),
         notEmpty: rule.notEmpty.bind(rule),

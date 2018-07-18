@@ -47,6 +47,16 @@ export class Rule implements IValidatable {
 
 		return simpleFluentInterfaceFor(this, beBetween);
 	}
+	public lengthOrEmpty(min: number, max: number): ISimpleFluentInterface {
+		let beBetween = length(min, max);
+		this._qualifiers.set(beBetween, {
+			name: `beBetween${min}and${max}OrEmpty`,
+			message: `${this.name} must be between ${min} and ${max}`,
+			precondition: null
+		});
+
+		return simpleFluentInterfaceFor(this, beBetween);
+	}
 
 	public matches(rx: RegExp): ISimpleFluentInterface {
 		let matches = match(rx);

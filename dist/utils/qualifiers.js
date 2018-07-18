@@ -21,6 +21,16 @@ function length(num1, num2) {
         return ((isString(value) || isArray(value)) && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
     };
 }
+function lengthOrEmpty(num1, num2) {
+    return function beValidLengthOrEmpty(value) {
+        if (isNull(value) || util_1.isUndefined(value)) {
+            return true;
+        }
+        else {
+            return ((isString(value) || isArray(value)) && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
+        }
+    };
+}
 function match(rx) {
     return function matches(value) {
         return rx.test(value);
@@ -37,6 +47,7 @@ exports.qualifiers = {
     beInRange,
     beValidEnum,
     length,
+    lengthOrEmpty,
     match,
     notNull,
     notEmpty

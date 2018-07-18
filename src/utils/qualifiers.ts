@@ -24,6 +24,16 @@ function length(num1: number, num2: number) {
 	}
 }
 
+function lengthOrEmpty(num1: number, num2: number) {
+	return function beValidLengthOrEmpty(value: any) {
+		if (isNull(value) || isUndefined(value)) {
+			return true;
+		} else {
+			return ((isString(value) || isArray(value)) && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
+		}
+	}
+}
+
 function match(rx: RegExp) {
 	return function matches(value: any) {
 		return rx.test(value);
@@ -43,6 +53,7 @@ export const qualifiers = {
 	beInRange,
 	beValidEnum,
 	length,
+	lengthOrEmpty,
 	match,
 	notNull,
 	notEmpty

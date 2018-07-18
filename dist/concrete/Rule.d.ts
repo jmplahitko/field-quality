@@ -16,6 +16,7 @@ export declare class Rule implements IValidatable {
     constructor(name?: string);
     protected define(rule: Rule): void;
     length(min: number, max: number): ISimpleFluentInterface;
+    lengthOrEmpty(min: number, max: number): ISimpleFluentInterface;
     matches(rx: RegExp): ISimpleFluentInterface;
     notNull(): ISimpleFluentInterface;
     notEmpty(): ISimpleFluentInterface;

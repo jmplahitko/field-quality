@@ -6,6 +6,7 @@ import { TPrecondition } from '../abstract/TPrecondition';
 export function collectionFluentInterfaceFor(rule: CollectionRule, validatable: IValidatable) {
 	return {
 		length: rule.length.bind(rule),
+		lengthOrEmpty: rule.lengthOrEmpty.bind(rule),
 		must: rule.must.bind(rule),
 		notNull: rule.notNull.bind(rule),
 		notEmpty: rule.notEmpty.bind(rule),
