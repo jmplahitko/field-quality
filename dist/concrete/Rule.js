@@ -1,138 +1,310 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const ValidationResult_1 = require("./ValidationResult");
-const copy_1 = require("../utils/copy");
-const simpleFluentIntefaceFor_1 = require("../utils/simpleFluentIntefaceFor");
-const qualifiers_1 = require("../utils/qualifiers");
-const quality_1 = require("../utils/quality");
-const { length, match, notEmpty, notNull } = qualifiers_1.qualifiers;
-const { isEmpty, isNull } = quality_1.quality;
-class Rule {
-    constructor(name) {
-        this._qualifiers = new Map();
-        this._validators = new Map();
-        this._stopOnFirstFailure = true;
-        this.name = name || this.constructor.name;
-        this.define(this);
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Rule = void 0;
+
+var _ValidationResult = require("./ValidationResult");
+
+var _copy = _interopRequireDefault(require("../utils/copy"));
+
+var _simpleFluentIntefaceFor = require("../utils/simpleFluentIntefaceFor");
+
+var _qualifiers = require("../utils/qualifiers");
+
+var _quality = require("../utils/quality");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return _sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var _length = _qualifiers.qualifiers.length,
+    match = _qualifiers.qualifiers.match,
+    _notEmpty = _qualifiers.qualifiers.notEmpty,
+    _notNull = _qualifiers.qualifiers.notNull;
+var isEmpty = _quality.quality.isEmpty,
+    isNull = _quality.quality.isNull;
+
+var Rule =
+/*#__PURE__*/
+function () {
+  _createClass(Rule, [{
+    key: "qualifiers",
+    get: function get() {
+      return this._qualifiers;
     }
-    get qualifiers() {
-        return this._qualifiers;
+  }, {
+    key: "validators",
+    get: function get() {
+      return this._validators;
     }
-    get validators() {
-        return this._validators;
+  }]);
+
+  function Rule(name) {
+    _classCallCheck(this, Rule);
+
+    Object.defineProperty(this, "name", {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "_qualifiers", {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: new Map()
+    });
+    Object.defineProperty(this, "_validators", {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: new Map()
+    });
+    Object.defineProperty(this, "_stopOnFirstFailure", {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: true
+    });
+    this.name = name || this.constructor.name;
+    this.define(this);
+  }
+
+  _createClass(Rule, [{
+    key: "define",
+    value: function define(rule) {}
+  }, {
+    key: "length",
+    value: function length(min, max) {
+      var beBetween = _length(min, max);
+
+      this._qualifiers.set(beBetween, {
+        name: "beBetween".concat(min, "and").concat(max),
+        message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max),
+        precondition: null
+      });
+
+      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, beBetween);
     }
-    define(rule) { }
-    length(min, max) {
-        let beBetween = length(min, max);
-        this._qualifiers.set(beBetween, {
-            name: `beBetween${min}and${max}`,
-            message: `${this.name} must be between ${min} and ${max}`,
-            precondition: null
-        });
-        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
+  }, {
+    key: "lengthOrEmpty",
+    value: function lengthOrEmpty(min, max) {
+      var beBetween = _length(min, max);
+
+      this._qualifiers.set(beBetween, {
+        name: "beBetween".concat(min, "and").concat(max, "OrEmpty"),
+        message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max),
+        precondition: null
+      });
+
+      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, beBetween);
     }
-    lengthOrEmpty(min, max) {
-        let beBetween = length(min, max);
-        this._qualifiers.set(beBetween, {
-            name: `beBetween${min}and${max}OrEmpty`,
-            message: `${this.name} must be between ${min} and ${max}`,
-            precondition: null
-        });
-        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, beBetween);
+  }, {
+    key: "matches",
+    value: function matches(rx) {
+      var matches = match(rx);
+
+      var matchRx = function matchRx(val) {
+        return isNull(val) || matches(val);
+      };
+
+      this._qualifiers.set(matchRx, {
+        name: matchRx.name,
+        message: "".concat(this.name, " is an invalid format."),
+        precondition: null
+      });
+
+      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, matchRx);
     }
-    matches(rx) {
-        let matches = match(rx);
-        let matchRx = (val) => isNull(val) || matches(val);
-        this._qualifiers.set(matchRx, {
-            name: matchRx.name,
-            message: `${this.name} is an invalid format.`,
-            precondition: null
-        });
-        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, matchRx);
+  }, {
+    key: "notNull",
+    value: function notNull() {
+      this._qualifiers.set(_notNull, {
+        name: _notNull.name,
+        message: "".concat(this.name, " cannot be null."),
+        precondition: null
+      });
+
+      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, _notNull);
     }
-    notNull() {
-        this._qualifiers.set(notNull, {
-            name: notNull.name,
-            message: `${this.name} cannot be null.`,
-            precondition: null
-        });
-        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, notNull);
+  }, {
+    key: "notEmpty",
+    value: function notEmpty() {
+      this._qualifiers.set(_notEmpty, {
+        name: _notEmpty.name,
+        message: "".concat(this.name, " cannot be empty."),
+        precondition: null
+      });
+
+      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, _notEmpty);
     }
-    notEmpty() {
-        this._qualifiers.set(notEmpty, {
-            name: notEmpty.name,
-            message: `${this.name} cannot be empty.`,
-            precondition: null
-        });
-        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, notEmpty);
+  }, {
+    key: "must",
+    value: function must(qualifier) {
+      this._qualifiers.set(qualifier, {
+        name: qualifier.name,
+        message: "".concat(this.name, " is invalid."),
+        precondition: null
+      });
+
+      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, qualifier);
     }
-    must(qualifier) {
-        this._qualifiers.set(qualifier, {
-            name: qualifier.name,
-            message: `${this.name} is invalid.`,
-            precondition: null
-        });
-        return simpleFluentIntefaceFor_1.simpleFluentInterfaceFor(this, qualifier);
+  }, {
+    key: "stopOnFirstFailure",
+    value: function stopOnFirstFailure() {
+      this._stopOnFirstFailure = true;
+      console.warn("FieldQuality Deprecation Warning: As of version 1.4.0, rules default stopOnFirstFailure to true. You can safely remove your call to .stopOnFirstFailure() on ".concat(this.name, ", or use the .cascade() method to change stopOnFirstFailure to false."));
     }
-    stopOnFirstFailure() {
-        this._stopOnFirstFailure = true;
-        console.warn(`FieldQuality Deprecation Warning: As of version 1.4.0, rules default stopOnFirstFailure to true. You can safely remove your call to .stopOnFirstFailure() on ${this.name}, or use the .cascade() method to change stopOnFirstFailure to false.`);
+  }, {
+    key: "cascade",
+    value: function cascade() {
+      this._stopOnFirstFailure = false;
     }
-    cascade() {
-        this._stopOnFirstFailure = false;
+  }, {
+    key: "using",
+    value: function using(validatable) {
+      var rule = this;
+
+      this._validators.set(validatable, {
+        name: validatable.name,
+        precondition: null
+      });
+
+      return this;
     }
-    using(validatable) {
-        let rule = this;
-        this._validators.set(validatable, { name: validatable.name, precondition: null });
-        return this;
-    }
-    if(precondition, define) {
-        let rule = new Rule(this.name);
-        this._validators.set(rule, { name: rule.name, precondition });
-        define(rule);
-        return this;
-    }
-    // TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-    getValidationResult(propValue, parentValue, customOptions) {
-        let result = {
-            errors: {},
-            get isValid() { return isEmpty(this.errors); },
-            value: propValue
-        };
-        // Check qualifiers first
-        for (let [qualifier, meta] of this._qualifiers) {
-            // We check for a precondition to exist for a qualifier before calling it
-            if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
-                let isValid = qualifier(propValue, parentValue, customOptions);
-                if (!isValid) {
-                    result.errors[meta.name] = meta.message;
-                    // Short-circuit if we have to stopOnFirstFailure
-                    if (this._stopOnFirstFailure) {
-                        return new ValidationResult_1.ValidationResult(result);
-                    }
-                }
+  }, {
+    key: "if",
+    value: function _if(precondition, define) {
+      var rule = new Rule(this.name);
+
+      this._validators.set(rule, {
+        name: rule.name,
+        precondition: precondition
+      });
+
+      define(rule);
+      return this;
+    } // TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
+
+  }, {
+    key: "getValidationResult",
+    value: function getValidationResult(propValue, parentValue, customOptions) {
+      var result = {
+        errors: {},
+
+        get isValid() {
+          return isEmpty(this.errors);
+        },
+
+        value: propValue // Check qualifiers first
+
+      };
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this._qualifiers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _ref5 = _step.value;
+
+          var _ref2 = _slicedToArray(_ref5, 2);
+
+          var _qualifier = _ref2[0];
+          var _meta2 = _ref2[1];
+
+          // We check for a precondition to exist for a qualifier before calling it
+          if (!_meta2.precondition || _meta2.precondition(parentValue, customOptions)) {
+            var isValid = _qualifier(propValue, parentValue, customOptions);
+
+            if (!isValid) {
+              result.errors[_meta2.name] = _meta2.message; // Short-circuit if we have to stopOnFirstFailure
+
+              if (this._stopOnFirstFailure) {
+                return new _ValidationResult.ValidationResult(result);
+              }
             }
+          }
         }
-        for (let [validator, meta] of this._validators) {
-            if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
-                let _result = validator.validate(propValue, parentValue, customOptions);
-                if (!_result.isValid) {
-                    for (let ruleName in _result.errors) {
-                        result.errors[ruleName] = _result.errors[ruleName];
-                    }
-                    // TODO: We have some duplication here. Need to find a better solution.
-                    if (this._stopOnFirstFailure) {
-                        return new ValidationResult_1.ValidationResult(result);
-                    }
-                }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this._validators[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var _ref6 = _step2.value;
+
+          var _ref4 = _slicedToArray(_ref6, 2);
+
+          var _validator = _ref4[0];
+          var _meta3 = _ref4[1];
+
+          if (!_meta3.precondition || _meta3.precondition(parentValue, customOptions)) {
+            var _result = _validator.validate(propValue, parentValue, customOptions);
+
+            if (!_result.isValid) {
+              for (var ruleName in _result.errors) {
+                result.errors[ruleName] = _result.errors[ruleName];
+              } // TODO: We have some duplication here. Need to find a better solution.
+
+
+              if (this._stopOnFirstFailure) {
+                return new _ValidationResult.ValidationResult(result);
+              }
             }
+          }
         }
-        return new ValidationResult_1.ValidationResult(result);
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      return new _ValidationResult.ValidationResult(result);
     }
-    validate(value, parentValue, customOptions) {
-        value = copy_1.default(value);
-        parentValue = copy_1.default(parentValue);
-        return this.getValidationResult(value, parentValue, customOptions);
+  }, {
+    key: "validate",
+    value: function validate(value, parentValue, customOptions) {
+      value = (0, _copy.default)(value);
+      parentValue = (0, _copy.default)(parentValue);
+      return this.getValidationResult(value, parentValue, customOptions);
     }
-}
+  }]);
+
+  return Rule;
+}();
+
 exports.Rule = Rule;

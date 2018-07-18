@@ -1,8 +1,12 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function split(arr, ndx) {
-    let head = arr.slice(0, ndx);
-    let tail = arr.slice(ndx);
-    return [head, tail];
-}
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.default = split;
+
+function split(arr, ndx) {
+  var head = arr.slice(0, ndx);
+  var tail = arr.slice(ndx);
+  return [head, tail];
+}
