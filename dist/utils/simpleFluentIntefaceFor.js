@@ -16,6 +16,7 @@ function simpleFluentInterfaceFor(rule, qualifier) {
         notNull: rule.notNull.bind(rule),
         notEmpty: rule.notEmpty.bind(rule),
         stopOnFirstFailure: rule.stopOnFirstFailure.bind(rule),
+        cascade: rule.cascade.bind(rule),
         using: rule.using.bind(rule),
         when(precondition) {
             let qualifierMeta = rule.qualifiers.get(qualifier);

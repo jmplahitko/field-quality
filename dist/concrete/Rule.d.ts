@@ -21,6 +21,7 @@ export declare class Rule implements IValidatable {
     notEmpty(): ISimpleFluentInterface;
     must(qualifier: TQualifier): ISimpleFluentInterface;
     stopOnFirstFailure(): void;
+    cascade(): void;
     using(validatable: IValidatable): Rule | ICollectionFluentInterface;
     if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule;
     protected getValidationResult(propValue: any, parentValue: any, customOptions: any): ValidationResult;

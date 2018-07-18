@@ -10,6 +10,7 @@ export declare function simpleFluentInterfaceFor(rule: Rule, qualifier: TQualifi
     notNull: any;
     notEmpty: any;
     stopOnFirstFailure: any;
+    cascade: any;
     using: any;
     when(precondition: TPrecondition): ISimpleFluentInterface;
     withMessage(message: string): Rule;

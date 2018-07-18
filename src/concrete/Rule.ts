@@ -20,7 +20,7 @@ export class Rule implements IValidatable {
 	public name: string;
 	protected _qualifiers: TQualifierCollection = new Map();
 	protected _validators: TValidatorCollection = new Map();
-	protected _stopOnFirstFailure: boolean = false;
+	protected _stopOnFirstFailure: boolean = true;
 
 	get qualifiers(): TQualifierCollection {
 		return this._qualifiers;
@@ -31,7 +31,7 @@ export class Rule implements IValidatable {
 	}
 
 	constructor(name?: string) {
-		this.name = name || this.constructor.name.toLowerCase();
+		this.name = name || this.constructor.name;
 		this.define(this);
 	}
 
@@ -92,6 +92,11 @@ export class Rule implements IValidatable {
 
 	public stopOnFirstFailure(): void {
 		this._stopOnFirstFailure = true;
+		console.warn(`FieldQuality Deprecation Warning: As of version 1.4.0, rules default stopOnFirstFailure to true. You can safely remove your call to .stopOnFirstFailure() on ${this.name}, or use the .cascade() method to change stopOnFirstFailure to false.`)
+	}
+
+	public cascade(): void {
+		this._stopOnFirstFailure = false;
 	}
 
 	public using(validatable: IValidatable): Rule | ICollectionFluentInterface {

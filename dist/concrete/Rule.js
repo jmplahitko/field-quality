@@ -11,8 +11,8 @@ class Rule {
     constructor(name) {
         this._qualifiers = new Map();
         this._validators = new Map();
-        this._stopOnFirstFailure = false;
-        this.name = name || this.constructor.name.toLowerCase();
+        this._stopOnFirstFailure = true;
+        this.name = name || this.constructor.name;
         this.define(this);
     }
     get qualifiers() {
@@ -67,6 +67,10 @@ class Rule {
     }
     stopOnFirstFailure() {
         this._stopOnFirstFailure = true;
+        console.warn(`FieldQuality Deprecation Warning: As of version 1.4.0, rules default stopOnFirstFailure to true. You can safely remove your call to .stopOnFirstFailure() on ${this.name}, or use the .cascade() method to change stopOnFirstFailure to false.`);
+    }
+    cascade() {
+        this._stopOnFirstFailure = false;
     }
     using(validatable) {
         let rule = this;

@@ -10,6 +10,7 @@ export interface ISimpleFluentInterface {
     notEmpty(): ISimpleFluentInterface;
     notNull(): ISimpleFluentInterface;
     stopOnFirstFailure(): void;
+    cascade(): void;
     using(validatable: IValidatable): Rule;
     when(precondition: TPrecondition): ISimpleFluentInterface;
     withMessage(message: string): Rule;
