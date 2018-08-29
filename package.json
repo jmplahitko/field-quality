@@ -23,7 +23,7 @@
     "prettier": "1.9.2"
   },
   "scripts": {
-    "build": "npm run type-check && babel src --out-dir dist --extensions \".ts,.tsx\"",
+    "build": "rimraf dist/* && npm run type-check && babel src --out-dir dist --extensions \".ts,.tsx\"",
     "type-check": "tsc",
     "watch": "tsc -p . --watch"
   },
