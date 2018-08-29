@@ -147,6 +147,10 @@ export class Rule implements IValidatable {
 			}
 		}
 
+		return this.runValidators(result, propValue, parentValue, customOptions);
+	}
+
+	protected runValidators(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): ValidationResult {
 		for (let [validator, meta] of this._validators) {
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
 				let _result = validator.validate(propValue, parentValue, customOptions);
@@ -155,7 +159,6 @@ export class Rule implements IValidatable {
 						result.errors[ruleName] = _result.errors[ruleName];
 					}
 
-					// TODO: We have some duplication here. Need to find a better solution.
 					if (this._stopOnFirstFailure) {
 						return new ValidationResult(result);
 					}

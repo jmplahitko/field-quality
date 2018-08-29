@@ -26,5 +26,6 @@ export declare class Rule implements IValidatable {
     using(validatable: IValidatable): Rule | ICollectionFluentInterface;
     if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule;
     protected getValidationResult(propValue: any, parentValue: any, customOptions: any): ValidationResult;
+    protected runValidators(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): ValidationResult;
     validate(value: any, parentValue: any, customOptions?: any): TValidationResult;
 }

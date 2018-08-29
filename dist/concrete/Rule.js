@@ -215,19 +215,19 @@ function () {
 
       try {
         for (var _iterator = this._qualifiers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _ref5 = _step.value;
+          var _ref3 = _step.value;
 
-          var _ref2 = _slicedToArray(_ref5, 2);
+          var _ref2 = _slicedToArray(_ref3, 2);
 
           var _qualifier = _ref2[0];
-          var _meta2 = _ref2[1];
+          var _meta = _ref2[1];
 
           // We check for a precondition to exist for a qualifier before calling it
-          if (!_meta2.precondition || _meta2.precondition(parentValue, customOptions)) {
+          if (!_meta.precondition || _meta.precondition(parentValue, customOptions)) {
             var isValid = _qualifier(propValue, parentValue, customOptions);
 
             if (!isValid) {
-              result.errors[_meta2.name] = _meta2.message; // Short-circuit if we have to stopOnFirstFailure
+              result.errors[_meta.name] = _meta.message; // Short-circuit if we have to stopOnFirstFailure
 
               if (this._stopOnFirstFailure) {
                 return new _ValidationResult.ValidationResult(result);
@@ -250,6 +250,11 @@ function () {
         }
       }
 
+      return this.runValidators(result, propValue, parentValue, customOptions);
+    }
+  }, {
+    key: "runValidators",
+    value: function runValidators(result, propValue, parentValue, customOptions) {
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
@@ -258,19 +263,18 @@ function () {
         for (var _iterator2 = this._validators[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var _ref6 = _step2.value;
 
-          var _ref4 = _slicedToArray(_ref6, 2);
+          var _ref5 = _slicedToArray(_ref6, 2);
 
-          var _validator = _ref4[0];
-          var _meta3 = _ref4[1];
+          var _validator = _ref5[0];
+          var _meta2 = _ref5[1];
 
-          if (!_meta3.precondition || _meta3.precondition(parentValue, customOptions)) {
+          if (!_meta2.precondition || _meta2.precondition(parentValue, customOptions)) {
             var _result = _validator.validate(propValue, parentValue, customOptions);
 
             if (!_result.isValid) {
               for (var ruleName in _result.errors) {
                 result.errors[ruleName] = _result.errors[ruleName];
-              } // TODO: We have some duplication here. Need to find a better solution.
-
+              }
 
               if (this._stopOnFirstFailure) {
                 return new _ValidationResult.ValidationResult(result);

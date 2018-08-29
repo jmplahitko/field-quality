@@ -51,4 +51,23 @@ export class CollectionRule extends Rule {
 			});
 		}
 	}
+
+	protected runValidators(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): ValidationResult {
+		for (let [validator, meta] of this._validators) {
+			if (!meta.precondition || meta.precondition(propValue, customOptions)) {
+				let _result = validator.validate(propValue, parentValue, customOptions);
+				if (!_result.isValid) {
+					for (let ruleName in _result.errors) {
+						result.errors[ruleName] = _result.errors[ruleName];
+					}
+
+					if (this._stopOnFirstFailure) {
+						return new ValidationResult(result);
+					}
+				}
+			}
+		}
+
+		return new ValidationResult(result);
+	}
 }
