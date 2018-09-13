@@ -1,4 +1,7 @@
 import { TValidationResult } from '../abstract/TValidationResult';
+import { quality } from '../utils/quality';
+
+const { isEmpty } = quality;
 
 export class ValidationResult {
 	readonly errors: { [name: string]: any };
@@ -7,7 +10,7 @@ export class ValidationResult {
 
 	constructor(validationResult: TValidationResult) {
 		this.errors = validationResult.errors;
-		this.isValid = validationResult.isValid;
+		this.isValid = isEmpty(this.errors);
 		this.value = validationResult.value;
 	}
 

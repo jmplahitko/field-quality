@@ -72,7 +72,7 @@ export class Validator implements IValidatable {
 								result.errors[propName] = _result.errors[errorProp];
 							}
 						} else {
-							result.errors[propertyName] = _result;
+							result.errors[propName] = new ValidationResult(_result.errors[errorProp]);
 						}
 					}
 				}
