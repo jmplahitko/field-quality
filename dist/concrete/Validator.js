@@ -109,7 +109,7 @@ function () {
                   result.errors[propName] = _result.errors[errorProp];
                 }
               } else {
-                result.errors[propertyName] = _result;
+                result.errors[propName] = new _ValidationResult.ValidationResult(_result.errors[errorProp]);
               }
             }
           }
