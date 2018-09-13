@@ -9,8 +9,6 @@ var _Rule2 = require("./Rule");
 
 var _ValidationResult = require("./ValidationResult");
 
-var _collectionFluentInterfaceFor = require("../utils/collectionFluentInterfaceFor");
-
 var _copy = _interopRequireDefault(require("../utils/copy"));
 
 var _quality = require("../utils/quality");
@@ -33,6 +31,8 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 var isArray = _quality.quality.isArray,
     isEmpty = _quality.quality.isEmpty;
 
@@ -42,90 +42,110 @@ function (_Rule) {
   _inherits(CollectionRule, _Rule);
 
   function CollectionRule() {
+    var _ref;
+
+    var _temp, _this;
+
     _classCallCheck(this, CollectionRule);
 
-    return _possibleConstructorReturn(this, (CollectionRule.__proto__ || Object.getPrototypeOf(CollectionRule)).apply(this, arguments));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_ref = CollectionRule.__proto__ || Object.getPrototypeOf(CollectionRule)).call.apply(_ref, [this].concat(args))), Object.defineProperty(_assertThisInitialized(_this), "_subsetRules", {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: new Map()
+    }), _temp));
   }
 
   _createClass(CollectionRule, [{
     key: "using",
     value: function using(validatable) {
-      var rule = this;
-
-      this._validators.set(validatable, {
+      var meta = {
         name: validatable.name,
+        message: '',
         precondition: null
-      });
+      };
 
-      return (0, _collectionFluentInterfaceFor.collectionFluentInterfaceFor)(rule, validatable);
+      this._validators.set(validatable, meta);
+
+      return this;
     }
   }, {
-    key: "validate",
-    value: function validate(value, parentValue, customOptions) {
-      var _this = this;
+    key: "where",
+    value: function where(filter, define) {
+      var rule = new _Rule2.Rule(this.name);
+      var meta = {
+        name: rule.name,
+        filter: filter
+      };
 
-      value = (0, _copy.default)(value);
-      parentValue = (0, _copy.default)(parentValue);
+      this._subsetRules.set(rule, meta);
 
-      if (isArray(value)) {
-        var result = {
-          errors: {},
+      define(rule);
+      return this;
+    }
+  }, {
+    key: "__runSubsetRules",
+    value: function __runSubsetRules(result, collection, parentValue, customOptions) {
+      var _loop = function _loop(rule, meta) {
+        var subset = collection.filter(function (value, index) {
+          return meta.filter(value, index, collection, parentValue, customOptions);
+        });
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
 
-          get isValid() {
-            return isEmpty(this.errors);
-          },
+        try {
+          for (var _iterator2 = subset[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var _value = _step2.value;
 
-          value: value
-        };
-        value.forEach(function (_propValue, index) {
-          var _result = _this.getValidationResult(_propValue, parentValue, customOptions);
+            var _result = rule.validate(_value, _value, customOptions);
 
-          if (!_result.isValid) {
-            result.errors["[".concat(index, "]")] = _result;
+            if (!_result.isValid) {
+              var _collectionIndex = collection.indexOf(_value);
+
+              var errorKey = "[".concat(_collectionIndex, "]");
+
+              if (result.errors[errorKey]) {
+                result.errors[errorKey] = (0, _copy.default)(_result, result.errors[errorKey]);
+              } else {
+                result.errors[errorKey] = _result;
+              }
+            }
           }
-        });
-        return new _ValidationResult.ValidationResult(result);
-      } else {
-        // propValue is not a collection at this point, and cannot be validated.
-        // TODO: The beCollection error can be pulled out and defined as a qualifier.
-        return new _ValidationResult.ValidationResult({
-          errors: {
-            beCollection: 'Must be a collection.'
-          },
-          isValid: false,
-          value: value
-        });
-      }
-    }
-  }, {
-    key: "runValidators",
-    value: function runValidators(result, propValue, parentValue, customOptions) {
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+              _iterator2.return();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+      };
+
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = this._validators[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _ref3 = _step.value;
+        for (var _iterator = this._subsetRules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _ref4 = _step.value;
 
-          var _ref2 = _slicedToArray(_ref3, 2);
+          var _ref3 = _slicedToArray(_ref4, 2);
 
-          var _validator = _ref2[0];
-          var _meta = _ref2[1];
+          var rule = _ref3[0];
+          var meta = _ref3[1];
 
-          if (!_meta.precondition || _meta.precondition(propValue, customOptions)) {
-            var _result = _validator.validate(propValue, parentValue, customOptions);
-
-            if (!_result.isValid) {
-              for (var ruleName in _result.errors) {
-                result.errors[ruleName] = _result.errors[ruleName];
-              }
-
-              if (this._stopOnFirstFailure) {
-                return new _ValidationResult.ValidationResult(result);
-              }
-            }
-          }
+          _loop(rule, meta);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -142,7 +162,50 @@ function (_Rule) {
         }
       }
 
-      return new _ValidationResult.ValidationResult(result);
+      return result;
+    }
+  }, {
+    key: "validate",
+    value: function validate(value, parentValue, customOptions) {
+      var _this2 = this;
+
+      value = (0, _copy.default)(value);
+      parentValue = (0, _copy.default)(parentValue);
+
+      if (isArray(value)) {
+        var result = {
+          errors: {},
+
+          get isValid() {
+            return isEmpty(this.errors);
+          },
+
+          value: value
+        };
+        value.map(function (_propValue, index) {
+          var _result = _this2.__getValidationResult(_propValue, parentValue, customOptions);
+
+          if (!_result.isValid) {
+            result.errors["[".concat(index, "]")] = _result;
+          }
+        });
+
+        if (result.isValid || !this._stopOnFirstFailure) {
+          result = this.__runSubsetRules(result, value, parentValue, customOptions);
+        }
+
+        return new _ValidationResult.ValidationResult(result);
+      } else {
+        // propValue is not a collection at this point, and cannot be validated.
+        // TODO: The beCollection error can be pulled out and defined as a qualifier.
+        return new _ValidationResult.ValidationResult({
+          errors: {
+            beCollection: 'Must be a collection.'
+          },
+          isValid: false,
+          value: value
+        });
+      }
     }
   }]);
 
