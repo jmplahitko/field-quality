@@ -1,5 +1,3 @@
-import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
-import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
 import { IValidatable } from '../abstract/IValidatable';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
@@ -9,9 +7,10 @@ import { TValidatorCollection } from '../abstract/TValidatorCollection';
 import { ValidationResult } from './ValidationResult';
 
 import copy from '../utils/copy';
-import { simpleFluentInterfaceFor } from '../utils/simpleFluentIntefaceFor';
 import { qualifiers } from '../utils/qualifiers';
 import { quality } from '../utils/quality';
+import { RuleApi } from './RuleApi';
+import { TPrecondition } from '../abstract/TPrecondition';
 
 const { length, match, notEmpty, notNull } = qualifiers;
 const { isEmpty, isNull } = quality;
@@ -37,67 +36,80 @@ export class Rule implements IValidatable {
 
 	protected define(rule: Rule): void {}
 
-	public length(min: number, max: number): ISimpleFluentInterface {
+	public length(min: number, max: number) {
 		let beBetween = length(min, max);
-		this._qualifiers.set(beBetween, {
+		let meta = {
 			name: `beBetween${min}and${max}`,
 			message: `${this.name} must be between ${min} and ${max}`,
 			precondition: null
-		});
+		};
 
-		return simpleFluentInterfaceFor(this, beBetween);
+		this._qualifiers.set(beBetween, meta);
+
+		return new RuleApi(this, meta);
 	}
-	public lengthOrEmpty(min: number, max: number): ISimpleFluentInterface {
+
+	public lengthOrEmpty(min: number, max: number) {
 		let beBetween = length(min, max);
-		this._qualifiers.set(beBetween, {
+		let meta = {
 			name: `beBetween${min}and${max}OrEmpty`,
 			message: `${this.name} must be between ${min} and ${max}`,
 			precondition: null
-		});
+		};
 
-		return simpleFluentInterfaceFor(this, beBetween);
+		this._qualifiers.set(beBetween, meta);
+
+		return new RuleApi(this, meta);
 	}
 
-	public matches(rx: RegExp): ISimpleFluentInterface {
+	public matches(rx: RegExp) {
 		let matches = match(rx);
 		let matchRx = (val: any) => isNull(val) || matches(val);
-		this._qualifiers.set(matchRx, {
+		let meta = {
 			name: matchRx.name,
 			message: `${this.name} is an invalid format.`,
 			precondition: null
-		});
+		};
 
-		return simpleFluentInterfaceFor(this, matchRx);
+		this._qualifiers.set(matchRx, meta);
+
+		return new RuleApi(this, meta);
 	}
 
-	public notNull(): ISimpleFluentInterface {
-		this._qualifiers.set(notNull, {
+	public notNull() {
+		let meta = {
 			name: notNull.name,
 			message: `${this.name} cannot be null.`,
 			precondition: null
-		});
+		};
 
-		return simpleFluentInterfaceFor(this, notNull);
+		this._qualifiers.set(notNull, meta);
+
+		return new RuleApi(this, meta);
 	}
 
-	public notEmpty(): ISimpleFluentInterface {
-		this._qualifiers.set(notEmpty, {
+	public notEmpty() {
+		let meta = {
 			name: notEmpty.name,
 			message: `${this.name} cannot be empty.`,
 			precondition: null
-		});
+		};
 
-		return simpleFluentInterfaceFor(this, notEmpty);
+		this._qualifiers.set(notEmpty, meta);
+
+		return new RuleApi(this, meta);
 	}
 
-	public must(qualifier: TQualifier): ISimpleFluentInterface {
-		this._qualifiers.set(qualifier, {
+	public must(qualifier: TQualifier) {
+		let meta = {
 			name: qualifier.name,
 			message: `${this.name} is invalid.`,
 			precondition: null
-		});
+		};
 
-		return simpleFluentInterfaceFor(this, qualifier);
+		this._qualifiers.set(qualifier, meta);
+
+		return new RuleApi(this, meta);
 	}
 
 	public stopOnFirstFailure(): void {
@@ -109,21 +121,33 @@ export class Rule implements IValidatable {
 		this._stopOnFirstFailure = false;
 	}
 
-	public using(validatable: IValidatable): Rule | ICollectionFluentInterface {
-		let rule = this;
-		this._validators.set(validatable, { name: validatable.name, precondition: null });
+	public using(validatable: IValidatable): Rule {
+		let meta = {
+			name: validatable.name,
+			message: '',
+			precondition: null
+		};
+
+		this._validators.set(validatable, meta);
 		return this;
 	}
 
-	public if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule {
+	public if(precondition: TPrecondition, define: (rule: Rule) => void): Rule {
 		let rule = new Rule(this.name);
-		this._validators.set(rule, { name: rule.name, precondition });
+		let meta = {
+			name: rule.name,
+			message: '',
+			precondition
+		};
+
+		this._validators.set(rule, meta);
 		define(rule);
+
 		return this;
 	}
 
 	// TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-	protected getValidationResult(propValue: any, parentValue: any, customOptions: any): ValidationResult {
+	protected __getValidationResult(propValue: any, parentValue: any, customOptions: any): TValidationResult {
 		let result: TValidationResult = {
 			errors: {},
 			get isValid() { return isEmpty(this.errors) },
@@ -131,6 +155,16 @@ export class Rule implements IValidatable {
 		}
 
 		// Check qualifiers first
+		result = this.__runQualifiers(result, propValue, parentValue, customOptions);
+		if (result.isValid || !this._stopOnFirstFailure) {
+			result = this.__runValidators(result, propValue, parentValue, customOptions);
+		}
+
+
+		return result;
+	}
+
+	protected __runQualifiers(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): TValidationResult {
 		for (let [qualifier, meta] of this._qualifiers) {
 			// We check for a precondition to exist for a qualifier before calling it
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
@@ -141,16 +175,16 @@ export class Rule implements IValidatable {
 
 					// Short-circuit if we have to stopOnFirstFailure
 					if (this._stopOnFirstFailure) {
-						return new ValidationResult(result);
+						break;
 					}
 				}
 			}
 		}
 
-		return this.runValidators(result, propValue, parentValue, customOptions);
+		return result;
 	}
 
-	protected runValidators(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): ValidationResult {
+	protected __runValidators(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): TValidationResult {
 		for (let [validator, meta] of this._validators) {
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
 				let _result = validator.validate(propValue, parentValue, customOptions);
@@ -160,19 +194,21 @@ export class Rule implements IValidatable {
 					}
 
 					if (this._stopOnFirstFailure) {
-						return new ValidationResult(result);
+						break;
 					}
 				}
 			}
 		}
 
-		return new ValidationResult(result);
+		return result;
 	}
 
-	public validate(value: any, parentValue: any, customOptions?: any): TValidationResult {
+	public validate(value: any, parentValue: any, customOptions?: any): ValidationResult {
 		value = copy(value);
 		parentValue = copy(parentValue);
 
-		return this.getValidationResult(value, parentValue, customOptions);
+		let result = this.__getValidationResult(value, parentValue, customOptions);
+
+		return new ValidationResult(result);
 	}
 }

@@ -1,1 +1,1 @@
-export type TPrecondition = (entity?: any, customOptions?: any) => boolean;
+export type TPrecondition = (parentValue?: any, customOptions?: any) => boolean;

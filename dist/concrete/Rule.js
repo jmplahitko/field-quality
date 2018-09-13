@@ -9,11 +9,11 @@ var _ValidationResult = require("./ValidationResult");
 
 var _copy = _interopRequireDefault(require("../utils/copy"));
 
-var _simpleFluentIntefaceFor = require("../utils/simpleFluentIntefaceFor");
-
 var _qualifiers = require("../utils/qualifiers");
 
 var _quality = require("../utils/quality");
+
+var _RuleApi = require("./RuleApi");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -88,26 +88,30 @@ function () {
     value: function length(min, max) {
       var beBetween = _length(min, max);
 
-      this._qualifiers.set(beBetween, {
+      var meta = {
         name: "beBetween".concat(min, "and").concat(max),
         message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max),
         precondition: null
-      });
+      };
 
-      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, beBetween);
+      this._qualifiers.set(beBetween, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
     }
   }, {
     key: "lengthOrEmpty",
     value: function lengthOrEmpty(min, max) {
       var beBetween = _length(min, max);
 
-      this._qualifiers.set(beBetween, {
+      var meta = {
         name: "beBetween".concat(min, "and").concat(max, "OrEmpty"),
         message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max),
         precondition: null
-      });
+      };
 
-      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, beBetween);
+      this._qualifiers.set(beBetween, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
     }
   }, {
     key: "matches",
@@ -118,46 +122,54 @@ function () {
         return isNull(val) || matches(val);
       };
 
-      this._qualifiers.set(matchRx, {
+      var meta = {
         name: matchRx.name,
         message: "".concat(this.name, " is an invalid format."),
         precondition: null
-      });
+      };
 
-      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, matchRx);
+      this._qualifiers.set(matchRx, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
     }
   }, {
     key: "notNull",
     value: function notNull() {
-      this._qualifiers.set(_notNull, {
+      var meta = {
         name: _notNull.name,
         message: "".concat(this.name, " cannot be null."),
         precondition: null
-      });
+      };
 
-      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, _notNull);
+      this._qualifiers.set(_notNull, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
     }
   }, {
     key: "notEmpty",
     value: function notEmpty() {
-      this._qualifiers.set(_notEmpty, {
+      var meta = {
         name: _notEmpty.name,
         message: "".concat(this.name, " cannot be empty."),
         precondition: null
-      });
+      };
 
-      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, _notEmpty);
+      this._qualifiers.set(_notEmpty, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
     }
   }, {
     key: "must",
     value: function must(qualifier) {
-      this._qualifiers.set(qualifier, {
+      var meta = {
         name: qualifier.name,
         message: "".concat(this.name, " is invalid."),
         precondition: null
-      });
+      };
 
-      return (0, _simpleFluentIntefaceFor.simpleFluentInterfaceFor)(this, qualifier);
+      this._qualifiers.set(qualifier, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
     }
   }, {
     key: "stopOnFirstFailure",
@@ -173,12 +185,13 @@ function () {
   }, {
     key: "using",
     value: function using(validatable) {
-      var rule = this;
-
-      this._validators.set(validatable, {
+      var meta = {
         name: validatable.name,
+        message: '',
         precondition: null
-      });
+      };
+
+      this._validators.set(validatable, meta);
 
       return this;
     }
@@ -186,19 +199,21 @@ function () {
     key: "if",
     value: function _if(precondition, define) {
       var rule = new Rule(this.name);
-
-      this._validators.set(rule, {
+      var meta = {
         name: rule.name,
+        message: '',
         precondition: precondition
-      });
+      };
+
+      this._validators.set(rule, meta);
 
       define(rule);
       return this;
     } // TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
 
   }, {
-    key: "getValidationResult",
-    value: function getValidationResult(propValue, parentValue, customOptions) {
+    key: "__getValidationResult",
+    value: function __getValidationResult(propValue, parentValue, customOptions) {
       var result = {
         errors: {},
 
@@ -209,6 +224,17 @@ function () {
         value: propValue // Check qualifiers first
 
       };
+      result = this.__runQualifiers(result, propValue, parentValue, customOptions);
+
+      if (result.isValid || !this._stopOnFirstFailure) {
+        result = this.__runValidators(result, propValue, parentValue, customOptions);
+      }
+
+      return result;
+    }
+  }, {
+    key: "__runQualifiers",
+    value: function __runQualifiers(result, propValue, parentValue, customOptions) {
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -230,7 +256,7 @@ function () {
               result.errors[_meta.name] = _meta.message; // Short-circuit if we have to stopOnFirstFailure
 
               if (this._stopOnFirstFailure) {
-                return new _ValidationResult.ValidationResult(result);
+                break;
               }
             }
           }
@@ -250,11 +276,11 @@ function () {
         }
       }
 
-      return this.runValidators(result, propValue, parentValue, customOptions);
+      return result;
     }
   }, {
-    key: "runValidators",
-    value: function runValidators(result, propValue, parentValue, customOptions) {
+    key: "__runValidators",
+    value: function __runValidators(result, propValue, parentValue, customOptions) {
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
@@ -277,7 +303,7 @@ function () {
               }
 
               if (this._stopOnFirstFailure) {
-                return new _ValidationResult.ValidationResult(result);
+                break;
               }
             }
           }
@@ -297,14 +323,17 @@ function () {
         }
       }
 
-      return new _ValidationResult.ValidationResult(result);
+      return result;
     }
   }, {
     key: "validate",
     value: function validate(value, parentValue, customOptions) {
       value = (0, _copy.default)(value);
       parentValue = (0, _copy.default)(parentValue);
-      return this.getValidationResult(value, parentValue, customOptions);
+
+      var result = this.__getValidationResult(value, parentValue, customOptions);
+
+      return new _ValidationResult.ValidationResult(result);
     }
   }]);
 

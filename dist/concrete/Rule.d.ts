@@ -1,11 +1,11 @@
-import { ICollectionFluentInterface } from '../abstract/ICollectionFluentInterface';
-import { ISimpleFluentInterface } from '../abstract/ISimpleFluentInterface';
 import { IValidatable } from '../abstract/IValidatable';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
 import { TValidationResult } from '../abstract/TValidationResult';
 import { TValidatorCollection } from '../abstract/TValidatorCollection';
 import { ValidationResult } from './ValidationResult';
+import { RuleApi } from './RuleApi';
+import { TPrecondition } from '../abstract/TPrecondition';
 export declare class Rule implements IValidatable {
     name: string;
     protected _qualifiers: TQualifierCollection;
@@ -15,17 +15,18 @@ export declare class Rule implements IValidatable {
     readonly validators: TValidatorCollection;
     constructor(name?: string);
     protected define(rule: Rule): void;
-    length(min: number, max: number): ISimpleFluentInterface;
-    lengthOrEmpty(min: number, max: number): ISimpleFluentInterface;
-    matches(rx: RegExp): ISimpleFluentInterface;
-    notNull(): ISimpleFluentInterface;
-    notEmpty(): ISimpleFluentInterface;
-    must(qualifier: TQualifier): ISimpleFluentInterface;
+    length(min: number, max: number): RuleApi;
+    lengthOrEmpty(min: number, max: number): RuleApi;
+    matches(rx: RegExp): RuleApi;
+    notNull(): RuleApi;
+    notEmpty(): RuleApi;
+    must(qualifier: TQualifier): RuleApi;
     stopOnFirstFailure(): void;
     cascade(): void;
-    using(validatable: IValidatable): Rule | ICollectionFluentInterface;
-    if(precondition: (parentValue: any) => boolean, define: (rule: Rule) => void): Rule;
-    protected getValidationResult(propValue: any, parentValue: any, customOptions: any): ValidationResult;
-    protected runValidators(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): ValidationResult;
-    validate(value: any, parentValue: any, customOptions?: any): TValidationResult;
+    using(validatable: IValidatable): Rule;
+    if(precondition: TPrecondition, define: (rule: Rule) => void): Rule;
+    protected __getValidationResult(propValue: any, parentValue: any, customOptions: any): TValidationResult;
+    protected __runQualifiers(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): TValidationResult;
+    protected __runValidators(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): TValidationResult;
+    validate(value: any, parentValue: any, customOptions?: any): ValidationResult;
 }
