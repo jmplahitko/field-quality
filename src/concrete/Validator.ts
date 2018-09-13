@@ -97,11 +97,11 @@ export class Validator implements IValidatable {
 		value = copy(value);
 
 		if (arguments.length === 3) {
-			parentValue = copy(arguments[1]);
+			parentValue = copy(value);
 			customOptions = copy(arguments[2]);
 		} else if (arguments.length === 2) {
 			parentValue = copy(value);
-			customOptions = arguments[1];
+			customOptions = copy(arguments[1]);
 		} else if (arguments.length === 1) {
 			parentValue = copy(value);
 		}

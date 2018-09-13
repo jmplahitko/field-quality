@@ -134,11 +134,11 @@ function () {
       value = (0, _copy.default)(value);
 
       if (arguments.length === 3) {
-        parentValue = (0, _copy.default)(arguments[1]);
+        parentValue = (0, _copy.default)(value);
         customOptions = (0, _copy.default)(arguments[2]);
       } else if (arguments.length === 2) {
         parentValue = (0, _copy.default)(value);
-        customOptions = arguments[1];
+        customOptions = (0, _copy.default)(arguments[1]);
       } else if (arguments.length === 1) {
         parentValue = (0, _copy.default)(value);
       }
