@@ -17,7 +17,7 @@ var isArray = _quality.quality.isArray,
     isString = _quality.quality.isString;
 
 function beBoolean(value) {
-  return isNull(value) || isBoolean(value);
+  return isBoolean(value);
 }
 
 function beInRange(num1, num2) {

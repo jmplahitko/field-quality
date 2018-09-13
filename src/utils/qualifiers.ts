@@ -3,7 +3,7 @@ import { quality } from './quality';
 const { isArray, isBoolean, isEmpty, isNull, isNumber, isString } = quality;
 
 function beBoolean(value: any) {
-	return isNull(value) || isBoolean(value);
+	return isBoolean(value);
 }
 
 function beInRange(num1: number, num2: number) {
