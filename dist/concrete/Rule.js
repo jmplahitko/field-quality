@@ -91,7 +91,8 @@ function () {
       var meta = {
         name: "beBetween".concat(min, "and").concat(max),
         message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max),
-        precondition: null
+        precondition: null,
+        isValidIfEmpty: true
       };
 
       this._qualifiers.set(beBetween, meta);
@@ -106,7 +107,8 @@ function () {
       var meta = {
         name: "beBetween".concat(min, "and").concat(max, "OrEmpty"),
         message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max),
-        precondition: null
+        precondition: null,
+        isValidIfEmpty: true
       };
 
       this._qualifiers.set(beBetween, meta);
@@ -125,7 +127,8 @@ function () {
       var meta = {
         name: matchRx.name,
         message: "".concat(this.name, " is an invalid format."),
-        precondition: null
+        precondition: null,
+        isValidIfEmpty: true
       };
 
       this._qualifiers.set(matchRx, meta);
@@ -138,7 +141,8 @@ function () {
       var meta = {
         name: _notNull.name,
         message: "".concat(this.name, " cannot be null."),
-        precondition: null
+        precondition: null,
+        isValidIfEmpty: false
       };
 
       this._qualifiers.set(_notNull, meta);
@@ -151,7 +155,8 @@ function () {
       var meta = {
         name: _notEmpty.name,
         message: "".concat(this.name, " cannot be empty."),
-        precondition: null
+        precondition: null,
+        isValidIfEmpty: false
       };
 
       this._qualifiers.set(_notEmpty, meta);
@@ -164,7 +169,8 @@ function () {
       var meta = {
         name: qualifier.name,
         message: "".concat(this.name, " is invalid."),
-        precondition: null
+        precondition: null,
+        isValidIfEmpty: false
       };
 
       this._qualifiers.set(qualifier, meta);
@@ -188,7 +194,8 @@ function () {
       var meta = {
         name: validatable.name,
         message: '',
-        precondition: null
+        precondition: null,
+        isValidIfEmpty: false
       };
 
       this._validators.set(validatable, meta);
@@ -202,7 +209,8 @@ function () {
       var meta = {
         name: rule.name,
         message: '',
-        precondition: precondition
+        precondition: precondition,
+        isValidIfEmpty: false
       };
 
       this._validators.set(rule, meta);
@@ -248,7 +256,12 @@ function () {
           var _qualifier = _ref2[0];
           var _meta = _ref2[1];
 
-          // We check for a precondition to exist for a qualifier before calling it
+          // We check if we should run the validator based on whether the property has a value
+          if (isEmpty(propValue) && _meta.isValidIfEmpty) {
+            continue;
+          } // We check for a precondition to exist for a qualifier before calling it
+
+
           if (!_meta.precondition || _meta.precondition(parentValue, customOptions)) {
             var isValid = _qualifier(propValue, parentValue, customOptions);
 

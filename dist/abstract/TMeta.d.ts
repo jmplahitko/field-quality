@@ -3,4 +3,5 @@ export declare type TMeta = {
     name: string;
     message: string;
     precondition: TPrecondition | null;
+    isValidIfEmpty: boolean;
 };

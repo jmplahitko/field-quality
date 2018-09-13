@@ -66,7 +66,8 @@ function (_Rule) {
       var meta = {
         name: validatable.name,
         message: '',
-        precondition: null
+        precondition: null,
+        isValidIfEmpty: false
       };
 
       this._validators.set(validatable, meta);

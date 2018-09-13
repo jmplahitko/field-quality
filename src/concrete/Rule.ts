@@ -41,7 +41,8 @@ export class Rule implements IValidatable {
 		let meta = {
 			name: `beBetween${min}and${max}`,
 			message: `${this.name} must be between ${min} and ${max}`,
-			precondition: null
+			precondition: null,
+			isValidIfEmpty: true
 		};
 
 		this._qualifiers.set(beBetween, meta);
@@ -54,7 +55,8 @@ export class Rule implements IValidatable {
 		let meta = {
 			name: `beBetween${min}and${max}OrEmpty`,
 			message: `${this.name} must be between ${min} and ${max}`,
-			precondition: null
+			precondition: null,
+			isValidIfEmpty: true
 		};
 
 		this._qualifiers.set(beBetween, meta);
@@ -68,7 +70,8 @@ export class Rule implements IValidatable {
 		let meta = {
 			name: matchRx.name,
 			message: `${this.name} is an invalid format.`,
-			precondition: null
+			precondition: null,
+			isValidIfEmpty: true
 		};
 
 		this._qualifiers.set(matchRx, meta);
@@ -80,7 +83,8 @@ export class Rule implements IValidatable {
 		let meta = {
 			name: notNull.name,
 			message: `${this.name} cannot be null.`,
-			precondition: null
+			precondition: null,
+			isValidIfEmpty: false
 		};
 
 		this._qualifiers.set(notNull, meta);
@@ -92,7 +96,8 @@ export class Rule implements IValidatable {
 		let meta = {
 			name: notEmpty.name,
 			message: `${this.name} cannot be empty.`,
-			precondition: null
+			precondition: null,
+			isValidIfEmpty: false
 		};
 
 		this._qualifiers.set(notEmpty, meta);
@@ -104,7 +109,8 @@ export class Rule implements IValidatable {
 		let meta = {
 			name: qualifier.name,
 			message: `${this.name} is invalid.`,
-			precondition: null
+			precondition: null,
+			isValidIfEmpty: false
 		};
 
 		this._qualifiers.set(qualifier, meta);
@@ -125,7 +131,8 @@ export class Rule implements IValidatable {
 		let meta = {
 			name: validatable.name,
 			message: '',
-			precondition: null
+			precondition: null,
+			isValidIfEmpty: false
 		};
 
 		this._validators.set(validatable, meta);
@@ -137,7 +144,8 @@ export class Rule implements IValidatable {
 		let meta = {
 			name: rule.name,
 			message: '',
-			precondition
+			precondition,
+			isValidIfEmpty: false
 		};
 
 		this._validators.set(rule, meta);
@@ -166,6 +174,11 @@ export class Rule implements IValidatable {
 
 	protected __runQualifiers(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): TValidationResult {
 		for (let [qualifier, meta] of this._qualifiers) {
+			// We check if we should run the validator based on whether the property has a value
+			if (isEmpty(propValue) && meta.isValidIfEmpty) {
+				continue;
+			}
+
 			// We check for a precondition to exist for a qualifier before calling it
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
 				let isValid = qualifier(propValue, parentValue, customOptions);
