@@ -1,4 +1,4 @@
 import { IValidatable } from "./IValidatable";
-import { TPrecondition } from "./TPrecondition";
+import { TMeta } from "./TMeta";
 
-export type TValidatorCollection = Map<IValidatable, {name: String, precondition: TPrecondition|null}>;
+export type TValidatorCollection = Map<IValidatable, TMeta>;

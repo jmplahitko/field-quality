@@ -1,4 +1,4 @@
 import { TQualifier } from './TQualifier';
-import { TQualifierMeta } from './TQualifierMeta';
+import { TMeta } from './TMeta';
 
-export type TQualifierCollection = Map<TQualifier, TQualifierMeta>;
+export type TQualifierCollection = Map<TQualifier, TMeta>;

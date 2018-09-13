@@ -1,5 +1,5 @@
 import { TPrecondition } from "./TPrecondition";
-export declare type TQualifierMeta = {
+export declare type TMeta = {
     name: string;
     message: string;
     precondition: TPrecondition | null;

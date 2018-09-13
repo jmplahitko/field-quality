@@ -1,6 +1,3 @@
 import { IValidatable } from "./IValidatable";
-import { TPrecondition } from "./TPrecondition";
-export declare type TValidatorCollection = Map<IValidatable, {
-    name: String;
-    precondition: TPrecondition | null;
-}>;
+import { TMeta } from "./TMeta";
+export declare type TValidatorCollection = Map<IValidatable, TMeta>;
