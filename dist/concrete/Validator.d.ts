@@ -9,6 +9,6 @@ export declare class Validator implements IValidatable {
     protected define(validator: Validator): void;
     protected ruleFor(propertyName: string): Rule;
     protected ruleForEach(propertyName: string): CollectionRule;
-    private getValidationResult(propertyName, value, parentValue, customOptions?);
+    private getValidationResult;
     validate(value: any, customOptions?: any): ValidationResult;
 }

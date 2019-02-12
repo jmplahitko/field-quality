@@ -11,6 +11,8 @@ export declare const rx: {
     floatsonly: RegExp;
     foreignphone: RegExp;
     fullname: RegExp;
+    iso8601: RegExp;
+    iso8601constricted: RegExp;
     lastname: RegExp;
     lettersonly: RegExp;
     militarytime: RegExp;

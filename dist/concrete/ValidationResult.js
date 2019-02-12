@@ -13,6 +13,8 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var isEmpty = _quality.quality.isEmpty;
 
 var ValidationResult =
@@ -21,24 +23,12 @@ function () {
   function ValidationResult(validationResult) {
     _classCallCheck(this, ValidationResult);
 
-    Object.defineProperty(this, "errors", {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "isValid", {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "value", {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: void 0
-    });
+    _defineProperty(this, "errors", void 0);
+
+    _defineProperty(this, "isValid", void 0);
+
+    _defineProperty(this, "value", void 0);
+
     this.errors = validationResult.errors;
     this.isValid = isEmpty(this.errors);
     this.value = validationResult.value;

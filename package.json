@@ -1,6 +1,6 @@
 {
   "name": "field-quality",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Validation Library",
   "repository": {
     "type": "git",
@@ -11,14 +11,14 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "devDependencies": {
-    "@types/node": "^8.5.1",
-    "@babel/cli": "^7.0.0-beta.32",
-    "@babel/core": "^7.0.0-beta.32",
-    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.32",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.32",
-    "@babel/preset-env": "^7.0.0-beta.32",
-    "@babel/preset-typescript": "^7.0.0-beta.32",
-    "typescript": "~2.7.1",
+    "@types/node": "^11.9.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-typescript": "^7.1.0",
+    "typescript": "^3.2.4",
     "jshint": "^2.9.5",
     "prettier": "1.9.2"
   },

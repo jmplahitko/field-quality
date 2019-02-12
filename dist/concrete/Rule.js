@@ -17,15 +17,21 @@ var _RuleApi = require("./RuleApi");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
-function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return _sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var _length = _qualifiers.qualifiers.length,
     match = _qualifiers.qualifiers.match,
@@ -52,30 +58,14 @@ function () {
   function Rule(name) {
     _classCallCheck(this, Rule);
 
-    Object.defineProperty(this, "name", {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "_qualifiers", {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: new Map()
-    });
-    Object.defineProperty(this, "_validators", {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: new Map()
-    });
-    Object.defineProperty(this, "_stopOnFirstFailure", {
-      configurable: true,
-      enumerable: true,
-      writable: true,
-      value: true
-    });
+    _defineProperty(this, "name", void 0);
+
+    _defineProperty(this, "_qualifiers", new Map());
+
+    _defineProperty(this, "_validators", new Map());
+
+    _defineProperty(this, "_stopOnFirstFailure", true);
+
     this.name = name || this.constructor.name;
     this.define(this);
   }
@@ -249,24 +239,21 @@ function () {
 
       try {
         for (var _iterator = this._qualifiers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _ref3 = _step.value;
-
-          var _ref2 = _slicedToArray(_ref3, 2);
-
-          var _qualifier = _ref2[0];
-          var _meta = _ref2[1];
+          var _step$value = _slicedToArray(_step.value, 2),
+              qualifier = _step$value[0],
+              meta = _step$value[1];
 
           // We check if we should run the validator based on whether the property has a value
-          if (isEmpty(propValue) && _meta.isValidIfEmpty) {
+          if (isEmpty(propValue) && meta.isValidIfEmpty) {
             continue;
           } // We check for a precondition to exist for a qualifier before calling it
 
 
-          if (!_meta.precondition || _meta.precondition(parentValue, customOptions)) {
-            var isValid = _qualifier(propValue, parentValue, customOptions);
+          if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
+            var isValid = qualifier(propValue, parentValue, customOptions);
 
             if (!isValid) {
-              result.errors[_meta.name] = _meta.message; // Short-circuit if we have to stopOnFirstFailure
+              result.errors[meta.name] = meta.message; // Short-circuit if we have to stopOnFirstFailure
 
               if (this._stopOnFirstFailure) {
                 break;
@@ -300,15 +287,12 @@ function () {
 
       try {
         for (var _iterator2 = this._validators[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var _ref6 = _step2.value;
+          var _step2$value = _slicedToArray(_step2.value, 2),
+              validator = _step2$value[0],
+              meta = _step2$value[1];
 
-          var _ref5 = _slicedToArray(_ref6, 2);
-
-          var _validator = _ref5[0];
-          var _meta2 = _ref5[1];
-
-          if (!_meta2.precondition || _meta2.precondition(parentValue, customOptions)) {
-            var _result = _validator.validate(propValue, parentValue, customOptions);
+          if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
+            var _result = validator.validate(propValue, parentValue, customOptions);
 
             if (!_result.isValid) {
               for (var ruleName in _result.errors) {
