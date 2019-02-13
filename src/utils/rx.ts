@@ -16,7 +16,6 @@ const lastname = /^[a-zA-Z\-' .,]*$/;
 const lettersonly = /^[a-zA-Z\s]*$/;
 const militarytime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
 const name = /^[a-zA-Z\-' .]*$/;
-const nonnegative = /^[-9][1-9]?/;
 const nospecialcharacters =/^(?:[^|~"%<>#@$()*+={}:;]*)$/;
 const numbersonly = /^[0-9]*$/;
 const password = /^(?:(?!.*[<>])(?:(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])|(?=.*[@#$%^&*_+=\[\]\{\}|\\:',?\/`~"();.-])(?=.*[A-Z])(?=.*[0-9])|(?=.*[@#$%^&*_+=\[\]\{\}|\\:',?\/`~"();.-])(?=.*[a-z])(?=.*[0-9])|(?=.*[@#$%^&*_+=\[\]\{\}|\\:',?\/`~"();.-])(?=.*[a-z])(?=.*[A-Z])|(?=.*[@#$%^&*_+=\[\]\{\}|\\:',?\/`~"();.-])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]))).*$/;
@@ -45,7 +44,6 @@ export const rx = {
 	lettersonly,
 	militarytime,
 	name,
-	nonnegative,
 	nospecialcharacters,
 	numbersonly,
 	password,
