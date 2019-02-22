@@ -94,7 +94,7 @@ function () {
 
           if (!_result.isValid) {
             for (var errorProp in _result.errors) {
-              var propName = "".concat(propertyName).concat(propertyName.includes('.') ? '.' : '').concat(errorProp);
+              var propName = "".concat(propertyName).concat(errorProp);
 
               if (_result.errors[errorProp] instanceof _ValidationResult.ValidationResult) {
                 if (result.errors.hasOwnProperty(propName)) {

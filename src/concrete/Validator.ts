@@ -63,7 +63,7 @@ export class Validator implements IValidatable {
 
 				if (!_result.isValid) {
 					for (let errorProp in _result.errors) {
-						let propName = `${propertyName}${propertyName.includes('.') ? '.' : ''}${errorProp}`;
+						let propName = `${propertyName}${errorProp}`;
 
 						if (_result.errors[errorProp] instanceof ValidationResult) {
 							if (result.errors.hasOwnProperty(propName)) {
