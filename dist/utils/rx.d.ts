@@ -17,7 +17,6 @@ export declare const rx: {
     lettersonly: RegExp;
     militarytime: RegExp;
     name: RegExp;
-    nonnegative: RegExp;
     nospecialcharacters: RegExp;
     numbersonly: RegExp;
     password: RegExp;

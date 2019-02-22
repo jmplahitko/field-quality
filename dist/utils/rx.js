@@ -22,7 +22,6 @@ var lastname = /^[a-zA-Z\-' .,]*$/;
 var lettersonly = /^[a-zA-Z\s]*$/;
 var militarytime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
 var name = /^[a-zA-Z\-' .]*$/;
-var nonnegative = /^[-9][1-9]?/;
 var nospecialcharacters = /^(?:[^|~"%<>#@$()*+={}:;]*)$/;
 var numbersonly = /^[0-9]*$/;
 var password = /^(?:(?!.*[<>])(?:(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])|(?=.*[@#$%^&*_+=\[\]\{\}|\\:',?\/`~"();.-])(?=.*[A-Z])(?=.*[0-9])|(?=.*[@#$%^&*_+=\[\]\{\}|\\:',?\/`~"();.-])(?=.*[a-z])(?=.*[0-9])|(?=.*[@#$%^&*_+=\[\]\{\}|\\:',?\/`~"();.-])(?=.*[a-z])(?=.*[A-Z])|(?=.*[@#$%^&*_+=\[\]\{\}|\\:',?\/`~"();.-])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]))).*$/;
@@ -50,7 +49,6 @@ var rx = {
   lettersonly: lettersonly,
   militarytime: militarytime,
   name: name,
-  nonnegative: nonnegative,
   nospecialcharacters: nospecialcharacters,
   numbersonly: numbersonly,
   password: password,
