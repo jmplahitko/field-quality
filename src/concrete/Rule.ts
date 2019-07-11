@@ -12,7 +12,7 @@ import { quality } from '../utils/quality';
 import { RuleApi } from './RuleApi';
 import { TPrecondition } from '../abstract/TPrecondition';
 
-const { length, match, notEmpty, notNull } = qualifiers;
+const { length, match, max, min, notEmpty, notNull, beValidEnum } = qualifiers;
 const { isEmpty, isNull } = quality;
 
 export class Rule implements IValidatable {
@@ -36,11 +36,26 @@ export class Rule implements IValidatable {
 
 	protected define(rule: Rule): void {}
 
+	public enum(allowedValues: Array<string|number>) {
+		let beEnumeratedValue = beValidEnum(allowedValues);
+
+		let meta = {
+			name: `beEnumeratedValue`,
+			message: `${this.name} must be one of the following: "${allowedValues.join(', ')}".`,
+			precondition: null,
+			isValidIfEmpty: true
+		};
+
+		this._qualifiers.set(beEnumeratedValue, meta);
+
+		return new RuleApi(this, meta)
+	}
+
 	public length(min: number, max: number) {
 		let beBetween = length(min, max);
 		let meta = {
 			name: `beBetween${min}and${max}`,
-			message: `${this.name} must be between ${min} and ${max}`,
+			message: `${this.name} must be between ${min} and ${max}.`,
 			precondition: null,
 			isValidIfEmpty: true
 		};
@@ -54,7 +69,7 @@ export class Rule implements IValidatable {
 		let beBetween = length(min, max);
 		let meta = {
 			name: `beBetween${min}and${max}OrEmpty`,
-			message: `${this.name} must be between ${min} and ${max}`,
+			message: `${this.name} must be between ${min} and ${max}.`,
 			precondition: null,
 			isValidIfEmpty: true
 		};
@@ -101,6 +116,66 @@ export class Rule implements IValidatable {
 		};
 
 		this._qualifiers.set(notEmpty, meta);
+
+		return new RuleApi(this, meta);
+	}
+
+	public max(num: number) {
+		let beLessThanOrEqual = max(num);
+
+		let meta = {
+			name: 'beLessThanOrEqual',
+			message: `${this.name} cannot be greater than or equal to ${num}.`,
+			precondition: null,
+			isValidIfEmpty: false
+		};
+
+		this._qualifiers.set(beLessThanOrEqual, meta);
+
+		return new RuleApi(this, meta);
+	}
+
+	public maxExclusiveOf(num: number) {
+		let beLessThan = max(num - 1);
+
+		let meta = {
+			name: 'beLessThan',
+			message: `${this.name} cannot be greater than ${num}.`,
+			precondition: null,
+			isValidIfEmpty: false
+		};
+
+		this._qualifiers.set(beLessThan, meta);
+
+		return new RuleApi(this, meta);
+	}
+
+	public min(num: number) {
+		let beGreaterThanOrEqual = min(num);
+
+		let meta = {
+			name: 'beGreaterThanOrEqual',
+			message: `${this.name} cannot be less than or equal to ${num}.`,
+			precondition: null,
+			isValidIfEmpty: false
+		};
+
+		this._qualifiers.set(beGreaterThanOrEqual, meta);
+
+		return new RuleApi(this, meta);
+	}
+
+	public minExclusiveOf(num: number) {
+		let beGreaterThan = min(num + 1);
+
+		let meta = {
+			name: 'beGreaterThan',
+			message: `${this.name} cannot be less than ${num}.`,
+			precondition: null,
+			isValidIfEmpty: false
+		};
+
+		this._qualifiers.set(beGreaterThan, meta);
 
 		return new RuleApi(this, meta);
 	}

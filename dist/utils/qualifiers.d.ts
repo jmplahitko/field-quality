@@ -4,6 +4,8 @@ declare function beValidEnum(arr: Array<string | number>): (value: any) => boole
 declare function length(num1: number, num2: number): (value: any) => boolean;
 declare function lengthOrEmpty(num1: number, num2: number): (value: any) => boolean;
 declare function match(rx: RegExp): (value: any) => boolean;
+declare function max(num: number): (val: number) => boolean;
+declare function min(num: number): (val: number) => boolean;
 declare function notNull(value: any): boolean;
 declare function notEmpty(value: any): boolean;
 export declare const qualifiers: {
@@ -13,6 +15,8 @@ export declare const qualifiers: {
     length: typeof length;
     lengthOrEmpty: typeof lengthOrEmpty;
     match: typeof match;
+    max: typeof max;
+    min: typeof min;
     notNull: typeof notNull;
     notEmpty: typeof notEmpty;
 };

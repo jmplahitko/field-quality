@@ -13,53 +13,73 @@ export class RuleApi {
 		this.__meta = meta;
 	}
 
-	length(min: number, max: number): RuleApi {
+	public enum(allowedValues: Array<string|number>) {
+		return this.__rule.enum(allowedValues);
+	}
+
+	public length(min: number, max: number): RuleApi {
 		return this.__rule.length(min, max);
 	}
 
-	lengthOrEmpty(min: number, max: number): RuleApi {
+	public lengthOrEmpty(min: number, max: number): RuleApi {
 		return this.__rule.lengthOrEmpty(min, max)
 	}
 
-	matches(rx: RegExp): RuleApi {
+	public matches(rx: RegExp): RuleApi {
 		return this.__rule.matches(rx);
 	}
 
-	must(qualifier: TQualifier): RuleApi {
+	public max(num: number) {
+		return this.__rule.max(num);
+	}
+
+	public maxExclusiveOf(num: number) {
+		return this.__rule.maxExclusiveOf(num);
+	}
+
+	public min(num: number) {
+		return this.__rule.min(num);
+	}
+
+	public minExclusiveOf(num: number) {
+		return this.__rule.minExclusiveOf(num);
+	}
+
+	public must(qualifier: TQualifier): RuleApi {
 		return this.__rule.must(qualifier);
 	}
 
-	notNull(): RuleApi {
+	public notNull(): RuleApi {
 		return this.__rule.notNull();
 	}
 
-	notEmpty(): RuleApi {
+	public notEmpty(): RuleApi {
 		return this.__rule.notEmpty();
 	}
 
-	stopOnFirstFailure(): void {
+	public stopOnFirstFailure(): void {
 		return this.__rule.stopOnFirstFailure();
 	}
 
-	cascade(): void {
+	public cascade(): void {
 		return this.__rule.cascade();
 	}
 
-	using(validatable: IValidatable): any {
+	public using(validatable: IValidatable): any {
 		return this.__rule.using(validatable);
 	}
 
-	as(qualifierName: string) {
+	public as(qualifierName: string) {
 		this.__meta.name = qualifierName;
 		return this;
 	}
 
-	when(precondition: TPrecondition) {
+	public when(precondition: TPrecondition) {
 		this.__meta.precondition = precondition;
 		return this;
 	}
 
-	withMessage(message: string) {
+	public withMessage(message: string) {
 		this.__meta.message = message;
 		return this;
 	}

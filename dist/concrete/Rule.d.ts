@@ -15,11 +15,16 @@ export declare class Rule implements IValidatable {
     readonly validators: TValidatorCollection;
     constructor(name?: string);
     protected define(rule: Rule): void;
+    enum(allowedValues: Array<string | number>): RuleApi;
     length(min: number, max: number): RuleApi;
     lengthOrEmpty(min: number, max: number): RuleApi;
     matches(rx: RegExp): RuleApi;
     notNull(): RuleApi;
     notEmpty(): RuleApi;
+    max(num: number): RuleApi;
+    maxExclusiveOf(num: number): RuleApi;
+    min(num: number): RuleApi;
+    minExclusiveOf(num: number): RuleApi;
     must(qualifier: TQualifier): RuleApi;
     stopOnFirstFailure(): void;
     cascade(): void;

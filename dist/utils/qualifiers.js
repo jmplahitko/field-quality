@@ -54,6 +54,18 @@ function match(rx) {
   };
 }
 
+function max(num) {
+  return function beLessThan(val) {
+    return val <= num;
+  };
+}
+
+function min(num) {
+  return function beGreaterThan(val) {
+    return val >= num;
+  };
+}
+
 function notNull(value) {
   return !isNull(value);
 }
@@ -69,6 +81,8 @@ var qualifiers = {
   length: length,
   lengthOrEmpty: lengthOrEmpty,
   match: match,
+  max: max,
+  min: min,
   notNull: notNull,
   notEmpty: notEmpty
 };

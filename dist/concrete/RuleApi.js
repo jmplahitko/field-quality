@@ -28,6 +28,11 @@ function () {
   }
 
   _createClass(RuleApi, [{
+    key: "enum",
+    value: function _enum(allowedValues) {
+      return this.__rule.enum(allowedValues);
+    }
+  }, {
     key: "length",
     value: function length(min, max) {
       return this.__rule.length(min, max);
@@ -41,6 +46,26 @@ function () {
     key: "matches",
     value: function matches(rx) {
       return this.__rule.matches(rx);
+    }
+  }, {
+    key: "max",
+    value: function max(num) {
+      return this.__rule.max(num);
+    }
+  }, {
+    key: "maxExclusiveOf",
+    value: function maxExclusiveOf(num) {
+      return this.__rule.maxExclusiveOf(num);
+    }
+  }, {
+    key: "min",
+    value: function min(num) {
+      return this.__rule.min(num);
+    }
+  }, {
+    key: "minExclusiveOf",
+    value: function minExclusiveOf(num) {
+      return this.__rule.minExclusiveOf(num);
     }
   }, {
     key: "must",

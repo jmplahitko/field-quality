@@ -40,6 +40,18 @@ function match(rx: RegExp) {
 	}
 }
 
+function max(num: number) {
+	return function beLessThan(val: number) {
+		return val <= num;
+	}
+}
+
+function min(num: number) {
+	return function beGreaterThan(val: number) {
+		return val >= num;
+	}
+}
+
 function notNull(value: any) {
 	return !isNull(value);
 }
@@ -55,6 +67,8 @@ export const qualifiers = {
 	length,
 	lengthOrEmpty,
 	match,
+	max,
+	min,
 	notNull,
 	notEmpty
 }

@@ -35,8 +35,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var _length = _qualifiers.qualifiers.length,
     match = _qualifiers.qualifiers.match,
+    _max = _qualifiers.qualifiers.max,
+    _min = _qualifiers.qualifiers.min,
     _notEmpty = _qualifiers.qualifiers.notEmpty,
-    _notNull = _qualifiers.qualifiers.notNull;
+    _notNull = _qualifiers.qualifiers.notNull,
+    beValidEnum = _qualifiers.qualifiers.beValidEnum;
 var isEmpty = _quality.quality.isEmpty,
     isNull = _quality.quality.isNull;
 
@@ -74,13 +77,28 @@ function () {
     key: "define",
     value: function define(rule) {}
   }, {
+    key: "enum",
+    value: function _enum(allowedValues) {
+      var beEnumeratedValue = beValidEnum(allowedValues);
+      var meta = {
+        name: "beEnumeratedValue",
+        message: "".concat(this.name, " must be one of the following: \"").concat(allowedValues.join(', '), "\"."),
+        precondition: null,
+        isValidIfEmpty: true
+      };
+
+      this._qualifiers.set(beEnumeratedValue, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
+    }
+  }, {
     key: "length",
     value: function length(min, max) {
       var beBetween = _length(min, max);
 
       var meta = {
         name: "beBetween".concat(min, "and").concat(max),
-        message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max),
+        message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max, "."),
         precondition: null,
         isValidIfEmpty: true
       };
@@ -96,7 +114,7 @@ function () {
 
       var meta = {
         name: "beBetween".concat(min, "and").concat(max, "OrEmpty"),
-        message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max),
+        message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max, "."),
         precondition: null,
         isValidIfEmpty: true
       };
@@ -150,6 +168,70 @@ function () {
       };
 
       this._qualifiers.set(_notEmpty, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
+    }
+  }, {
+    key: "max",
+    value: function max(num) {
+      var beLessThanOrEqual = _max(num);
+
+      var meta = {
+        name: 'beLessThanOrEqual',
+        message: "".concat(this.name, " cannot be greater than or equal to ").concat(num, "."),
+        precondition: null,
+        isValidIfEmpty: false
+      };
+
+      this._qualifiers.set(beLessThanOrEqual, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
+    }
+  }, {
+    key: "maxExclusiveOf",
+    value: function maxExclusiveOf(num) {
+      var beLessThan = _max(num - 1);
+
+      var meta = {
+        name: 'beLessThan',
+        message: "".concat(this.name, " cannot be greater than ").concat(num, "."),
+        precondition: null,
+        isValidIfEmpty: false
+      };
+
+      this._qualifiers.set(beLessThan, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
+    }
+  }, {
+    key: "min",
+    value: function min(num) {
+      var beGreaterThanOrEqual = _min(num);
+
+      var meta = {
+        name: 'beGreaterThanOrEqual',
+        message: "".concat(this.name, " cannot be less than or equal to ").concat(num, "."),
+        precondition: null,
+        isValidIfEmpty: false
+      };
+
+      this._qualifiers.set(beGreaterThanOrEqual, meta);
+
+      return new _RuleApi.RuleApi(this, meta);
+    }
+  }, {
+    key: "minExclusiveOf",
+    value: function minExclusiveOf(num) {
+      var beGreaterThan = _min(num + 1);
+
+      var meta = {
+        name: 'beGreaterThan',
+        message: "".concat(this.name, " cannot be less than ").concat(num, "."),
+        precondition: null,
+        isValidIfEmpty: false
+      };
+
+      this._qualifiers.set(beGreaterThan, meta);
 
       return new _RuleApi.RuleApi(this, meta);
     }
