@@ -6,7 +6,6 @@
     "type": "git",
     "url": "ssh://git@code.ai.org:7999/~jplahitko/fieldquality.git"
   },
-  "private": true,
   "license": "MIT",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -27,5 +26,7 @@
     "type-check": "tsc",
     "watch": "tsc -p . --watch"
   },
-  "dependencies": {}
+	"publishConfig": {
+		"registry" : "https://registry.ai.org/repository/npm-hosted/"
+	}
 }
