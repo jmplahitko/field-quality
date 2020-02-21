@@ -1,32 +1,39 @@
 {
-  "name": "field-quality",
-  "version": "1.6.0",
-  "description": "Validation Library",
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@code.ai.org:7999/~jplahitko/fieldquality.git"
-  },
-  "license": "MIT",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
-  "devDependencies": {
-    "@types/node": "^11.9.0",
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/plugin-proposal-class-properties": "^7.3.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
-    "@babel/preset-env": "^7.3.1",
-    "@babel/preset-typescript": "^7.1.0",
-    "typescript": "^3.2.4",
-    "jshint": "^2.9.5",
-    "prettier": "1.9.2"
-  },
-  "scripts": {
-    "build": "rimraf dist/* && npm run type-check && babel src --out-dir dist --extensions \".ts,.tsx\"",
-    "type-check": "tsc",
-    "watch": "tsc -p . --watch"
-  },
+	"name": "field-quality",
+	"version": "1.6.0",
+	"description": "Validation Library",
+	"repository": {
+		"type": "git",
+		"url": "ssh://git@code.ai.org:7999/~jplahitko/fieldquality.git"
+	},
+	"license": "MIT",
+	"types": "dist/index.d.ts",
+	"main": "dist/index.js",
+	"devDependencies": {
+		"@babel/cli": "^7.2.3",
+		"@babel/core": "^7.2.2",
+		"@babel/plugin-proposal-class-properties": "^7.3.0",
+		"@babel/plugin-proposal-object-rest-spread": "^7.3.2",
+		"@babel/preset-env": "^7.3.1",
+		"@babel/preset-typescript": "^7.1.0",
+		"@types/jasmine": "^3.5.6",
+		"@types/node": "^11.9.0",
+		"eslint": "^5.16.0",
+		"jasmine": "^3.3.1",
+		"jasmine-ts": "^0.3.0",
+		"jasmine-ts-console-reporter": "^3.1.1",
+		"prettier": "1.9.2",
+		"ts-node": "^8.0.2",
+		"typescript": "^3.5.2"
+	},
+	"scripts": {
+		"build": "rimraf dist/* && npm run type-check && babel src --out-dir dist --extensions \".ts,.tsx\"",
+		"review": "npm run type-check && npm run test",
+		"test": "jasmine-ts \"spec/test.spec.js\"",
+		"type-check": "tsc --noEmit",
+		"watch": "tsc -p . --watch"
+	},
 	"publishConfig": {
-		"registry" : "https://registry.ai.org/repository/npm-hosted/"
+		"registry": "https://registry.ai.org/repository/npm-hosted/"
 	}
 }

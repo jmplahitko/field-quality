@@ -1,0 +1,19 @@
+{
+	"root": true,
+	"parserOptions": {
+		"parser": "babel-eslint"
+	},
+	"env": {
+		"browser": true,
+		"node": true
+	},
+	"extends": ["eslint:recommended"],
+	"rules": {
+		"generator-star-spacing": "off",
+		"no-debugger": "warn",
+		"semi": "error",
+		"no-template-curly-in-string": "error",
+		"curly": ["error", "all"],
+		"dot-location": ["error", "property"]
+	}
+}
