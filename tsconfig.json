@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"target": "es6",
-		"lib": ["es2016", "es2015"],
+		"target": "ES5",
+		"lib": ["ESNext", "DOM"],
 		"types": ["@types/jasmine"],
 		"module": "commonjs",
 		"moduleResolution": "node",
