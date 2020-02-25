@@ -1,6 +1,5 @@
-import { isUndefined } from 'util';
 import { quality } from './quality';
-const { isArray, isBoolean, isEmpty, isNull, isNumber, isString } = quality;
+const { isArray, isBoolean, isEmpty, isNull, isNumber, isString, isUndefined } = quality;
 
 function beBoolean(value: any) {
 	return isBoolean(value);

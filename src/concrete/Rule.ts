@@ -1,21 +1,22 @@
 import { IValidatable } from '../abstract/IValidatable';
 import { TQualifier } from '../abstract/TQualifier';
 import { TQualifierCollection } from '../abstract/TQualifierCollection';
-import { TValidationResult } from '../abstract/TValidationResult';
 import { TValidatorCollection } from '../abstract/TValidatorCollection';
 
-import { ValidationResult } from './ValidationResult';
+import ValidationResult from './ValidationResult';
 
 import copy from '../utils/copy';
 import { qualifiers } from '../utils/qualifiers';
 import { quality } from '../utils/quality';
 import { RuleApi } from './RuleApi';
 import { TPrecondition } from '../abstract/TPrecondition';
+import Severity from '../abstract/Severity';
+import ValidationResultList from './ValidationResultList';
 
 const { length, match, max, min, notEmpty, notNull, beValidEnum } = qualifiers;
 const { isEmpty, isNull } = quality;
 
-export class Rule implements IValidatable {
+export default class Rule implements IValidatable {
 	public name: string;
 	protected _qualifiers: TQualifierCollection = new Map();
 	protected _validators: TValidatorCollection = new Map();
@@ -31,10 +32,7 @@ export class Rule implements IValidatable {
 
 	constructor(name?: string) {
 		this.name = name || this.constructor.name;
-		this.define(this);
 	}
-
-	protected define(rule: Rule): void {}
 
 	public enum(allowedValues: Array<string|number>) {
 		let beEnumeratedValue = beValidEnum(allowedValues);
@@ -43,7 +41,8 @@ export class Rule implements IValidatable {
 			name: `beEnumeratedValue`,
 			message: `${this.name} must be one of the following: "${allowedValues.join(', ')}".`,
 			precondition: null,
-			isValidIfEmpty: true
+			isValidIfEmpty: true,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(beEnumeratedValue, meta);
@@ -57,7 +56,8 @@ export class Rule implements IValidatable {
 			name: `beBetween${min}and${max}`,
 			message: `${this.name} must be between ${min} and ${max}.`,
 			precondition: null,
-			isValidIfEmpty: true
+			isValidIfEmpty: true,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(beBetween, meta);
@@ -71,7 +71,8 @@ export class Rule implements IValidatable {
 			name: `beBetween${min}and${max}OrEmpty`,
 			message: `${this.name} must be between ${min} and ${max}.`,
 			precondition: null,
-			isValidIfEmpty: true
+			isValidIfEmpty: true,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(beBetween, meta);
@@ -86,7 +87,8 @@ export class Rule implements IValidatable {
 			name: matchRx.name,
 			message: `${this.name} is an invalid format.`,
 			precondition: null,
-			isValidIfEmpty: true
+			isValidIfEmpty: true,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(matchRx, meta);
@@ -99,7 +101,8 @@ export class Rule implements IValidatable {
 			name: notNull.name,
 			message: `${this.name} cannot be null.`,
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(notNull, meta);
@@ -112,7 +115,8 @@ export class Rule implements IValidatable {
 			name: notEmpty.name,
 			message: `${this.name} cannot be empty.`,
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(notEmpty, meta);
@@ -127,7 +131,8 @@ export class Rule implements IValidatable {
 			name: 'beLessThanOrEqual',
 			message: `${this.name} cannot be greater than or equal to ${num}.`,
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(beLessThanOrEqual, meta);
@@ -142,7 +147,8 @@ export class Rule implements IValidatable {
 			name: 'beLessThan',
 			message: `${this.name} cannot be greater than ${num}.`,
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(beLessThan, meta);
@@ -157,7 +163,8 @@ export class Rule implements IValidatable {
 			name: 'beGreaterThanOrEqual',
 			message: `${this.name} cannot be less than or equal to ${num}.`,
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(beGreaterThanOrEqual, meta);
@@ -172,7 +179,8 @@ export class Rule implements IValidatable {
 			name: 'beGreaterThan',
 			message: `${this.name} cannot be less than ${num}.`,
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(beGreaterThan, meta);
@@ -185,7 +193,8 @@ export class Rule implements IValidatable {
 			name: qualifier.name,
 			message: `${this.name} is invalid.`,
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._qualifiers.set(qualifier, meta);
@@ -207,7 +216,8 @@ export class Rule implements IValidatable {
 			name: validatable.name,
 			message: '',
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._validators.set(validatable, meta);
@@ -220,7 +230,8 @@ export class Rule implements IValidatable {
 			name: rule.name,
 			message: '',
 			precondition,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._validators.set(rule, meta);
@@ -229,25 +240,9 @@ export class Rule implements IValidatable {
 		return this;
 	}
 
-	// TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-	protected __getValidationResult(propValue: any, parentValue: any, customOptions: any): TValidationResult {
-		let result: TValidationResult = {
-			errors: {},
-			get isValid() { return isEmpty(this.errors) },
-			value: propValue
-		}
+	protected __runQualifiers(propValue: any, parentValue: any, customOptions: any): ValidationResult {
+		const result = new ValidationResult(this.name, propValue);
 
-		// Check qualifiers first
-		result = this.__runQualifiers(result, propValue, parentValue, customOptions);
-		if (result.isValid || !this._stopOnFirstFailure) {
-			result = this.__runValidators(result, propValue, parentValue, customOptions);
-		}
-
-
-		return result;
-	}
-
-	protected __runQualifiers(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): TValidationResult {
 		for (let [qualifier, meta] of this._qualifiers) {
 			// We check if we should run the validator based on whether the property has a value
 			if (isEmpty(propValue) && meta.isValidIfEmpty) {
@@ -259,7 +254,11 @@ export class Rule implements IValidatable {
 				let isValid = qualifier(propValue, parentValue, customOptions);
 
 				if (!isValid) {
-					result.errors[meta.name] = meta.message;
+					if (meta.severity === Severity.error) {
+						result.errors[meta.name] = meta.message;
+					} else {
+						result.warnings[meta.name] = meta.message;
+					}
 
 					// Short-circuit if we have to stopOnFirstFailure
 					if (this._stopOnFirstFailure) {
@@ -272,31 +271,38 @@ export class Rule implements IValidatable {
 		return result;
 	}
 
-	protected __runValidators(result: TValidationResult, propValue: any, parentValue: any, customOptions: any): TValidationResult {
+	protected __runValidators(propValue: any, parentValue: any, customOptions: any): ValidationResultList {
+		let resultList = new ValidationResultList();
+
 		for (let [validator, meta] of this._validators) {
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
-				let _result = validator.validate(propValue, parentValue, customOptions);
-				if (!_result.isValid) {
-					for (let ruleName in _result.errors) {
-						result.errors[ruleName] = _result.errors[ruleName];
-					}
+				let _resultList: ValidationResultList = validator.validate(propValue, parentValue, customOptions);
+				resultList = resultList.merge(_resultList);
 
-					if (this._stopOnFirstFailure) {
-						break;
-					}
+				if (!resultList.isValid && this._stopOnFirstFailure) {
+					break;
 				}
 			}
 		}
 
-		return result;
+		return resultList;
 	}
 
-	public validate(value: any, parentValue: any, customOptions?: any): ValidationResult {
+	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResult {
 		value = copy(value);
 		parentValue = copy(parentValue);
 
-		let result = this.__getValidationResult(value, parentValue, customOptions);
+		const result = this.__runQualifiers(value, parentValue, customOptions);
 
-		return new ValidationResult(result);
+		if (result.isValid || !this._stopOnFirstFailure) {
+			const resultList = this.__runValidators(value, parentValue, customOptions);
+			resultList.forEach((_result) => {
+				result.errors = { ...result.errors, ..._result.errors };
+				result.warnings = { ...result.warnings, ..._result.warnings };
+			});
+		}
+
+
+		return result;
 	}
 }

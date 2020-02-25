@@ -1,8 +1,9 @@
-import { Rule } from './Rule';
+import Rule from './Rule';
 import { TMeta } from '../abstract/TMeta';
 import { TPrecondition } from '../abstract/TPrecondition';
 import { IValidatable } from '../abstract/IValidatable';
 import { TQualifier } from '../abstract/TQualifier';
+import Severity from '../abstract/Severity';
 
 export class RuleApi {
 	protected __rule: Rule;
@@ -72,6 +73,10 @@ export class RuleApi {
 	public as(qualifierName: string) {
 		this.__meta.name = qualifierName;
 		return this;
+	}
+
+	public asWarning() {
+		this.__meta.severity = Severity.warning;
 	}
 
 	public when(precondition: TPrecondition) {

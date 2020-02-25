@@ -24,4 +24,15 @@ export default class ValidationResult {
 	public get warningCount(): number {
 		return Object.keys(this.warnings).length;
 	}
+
+	public merge(result: ValidationResult): ValidationResult {
+		return ValidationResult.merge(this, result);
+	}
+
+	static merge(result1: ValidationResult, result2: ValidationResult): ValidationResult {
+		const result = new ValidationResult(result1.propertyName, result1.value);
+		result.errors = { ...result1.errors, ...result2.errors };
+		result.warnings = { ...result1.warnings, ...result2.warnings };
+		return result;
+	}
 }

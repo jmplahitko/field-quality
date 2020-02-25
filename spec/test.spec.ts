@@ -77,3 +77,30 @@ describe('ValidationResultList', () => {
 		expect(Object.keys(resultsObject)).toEqual(['test1', 'test2', 'test3', 'test4'])
 	});
 });
+
+import Rule from '../src/concrete/Rule';
+
+class NumberRule extends Rule {
+	constructor(name?: string) {
+		super(name);
+
+		this
+			.max(5)
+			.min(2).asWarning()
+	}
+}
+
+const numberRule = new NumberRule('number');
+
+describe('Rule', () => {
+	it('should validate a max number range', () => {
+		const result = numberRule.validate(6);
+		expect(result.errorCount).toBe(1);
+	});
+
+	it('should validate a min number range', () => {
+		const result = numberRule.validate(1);
+		console.log(result);
+		expect(result.errorCount).toBe(1);
+	});
+});

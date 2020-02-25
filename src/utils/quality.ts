@@ -179,5 +179,6 @@ export const quality = {
 	isRegExp,
 	isString,
 	isTypedArray,
+	isUndefined,
 	isWindow
 }
