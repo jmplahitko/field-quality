@@ -50,6 +50,16 @@ describe('ValidationResult', () => {
 		expect(validationResult3.warningCount).toBe(1);
 		expect(validationResult4.warningCount).toBe(1);
 	});
+	it('should not merge the same instance into itself', () => {
+		let result = new ValidationResult('test1', 1);
+		expect(() => result.merge(result)).toThrow();
+	});
+	it('should not break reference from itself when merging another ValidationResult', () => {
+		let result1 = new ValidationResult('test1', 1);
+		let result2 = new ValidationResult('test1', 1);
+		let merged = result1.merge(result2);
+		expect(merged).toBe(result1);
+	});
 });
 
 
@@ -72,6 +82,11 @@ describe('ValidationResultList', () => {
 		expect(test1 === validationResult1);
 		expect(noResult).toBeUndefined();
 	});
+
+	it('should not merge the same instance into itself', () => {
+		let result = new ValidationResultList();
+		expect(() => result.merge(result)).toThrow();
+	});
 	it('should provide results as an object', () => {
 		const resultsObject = results.toObject();
 		expect(Object.keys(resultsObject)).toEqual(['test1', 'test2', 'test3', 'test4'])
@@ -80,27 +95,49 @@ describe('ValidationResultList', () => {
 
 import Rule from '../src/concrete/Rule';
 
-class NumberRule extends Rule {
+class MinMaxNumberRule extends Rule {
 	constructor(name?: string) {
 		super(name);
 
 		this
 			.max(5)
-			.min(2).asWarning()
+			.min(2)
+	}
+}
+class UsingMinMaxRule extends Rule {
+	constructor(name?: string) {
+		super(name);
+
+		this.using(new MinMaxNumberRule());
 	}
 }
 
-const numberRule = new NumberRule('number');
-
-describe('Rule', () => {
+describe('Rule#max', () => {
 	it('should validate a max number range', () => {
-		const result = numberRule.validate(6);
-		expect(result.errorCount).toBe(1);
-	});
-
-	it('should validate a min number range', () => {
-		const result = numberRule.validate(1);
-		console.log(result);
-		expect(result.errorCount).toBe(1);
+		const minmax = new MinMaxNumberRule('minmax');
+		const result = minmax.validate(6);
+		expect(result.withErrors.length).toBe(1);
 	});
 });
+
+describe('Rule#min', () => {
+	it('should validate a min number range', () => {
+		const minmax = new MinMaxNumberRule('minmax');
+		const result = minmax.validate(1);
+		expect(result.withErrors.length).toBe(1);
+	});
+});
+
+describe('Rule#using', () => {
+	it('should mix in other rules', () => {
+		const usingMinMax = new UsingMinMaxRule('usingMinmax');
+		const result = usingMinMax.validate(1);
+		expect(result.withErrors.length).toBe(1);
+	});
+
+	it('should set name on validatables to own name', () => {
+		const usingMinMax = new UsingMinMaxRule('usingMinmax');
+		const result = usingMinMax.validate(1);
+		expect(result.length).toBe(1);
+	});
+})

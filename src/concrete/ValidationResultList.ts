@@ -59,11 +59,15 @@ export default class ValidationResultList {
 	}
 
 	static merge(resultList1: ValidationResultList, resultList2: ValidationResultList): ValidationResultList {
-		const resultList = new ValidationResultList(resultList1.entries);
-		resultList2.forEach((result) => {
-			resultList.push(result);
-		});
+		if (resultList1 !== resultList2) {
+			const resultList = new ValidationResultList(resultList1.entries);
+			resultList2.forEach((result) => {
+				resultList.push(result);
+			});
 
-		return resultList;
+			return resultList;
+		} else {
+			throw new Error('ValidationResult cannot merge the same instance into itself.')
+		}
 	}
 }

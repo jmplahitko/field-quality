@@ -212,6 +212,8 @@ export default class Rule implements IValidatable {
 	}
 
 	public using(validatable: IValidatable): Rule {
+		validatable.name = this.name || validatable.name;
+
 		let meta = {
 			name: validatable.name,
 			message: '',
@@ -219,6 +221,8 @@ export default class Rule implements IValidatable {
 			isValidIfEmpty: false,
 			severity: Severity.default
 		};
+
+		validatable.name = this.name || validatable.name;
 
 		this._validators.set(validatable, meta);
 		return this;
@@ -240,7 +244,7 @@ export default class Rule implements IValidatable {
 		return this;
 	}
 
-	protected __runQualifiers(propValue: any, parentValue: any, customOptions: any): ValidationResult {
+	protected __runQualifiers(propValue: any, parentValue: any, customOptions: any): ValidationResultList {
 		const result = new ValidationResult(this.name, propValue);
 
 		for (let [qualifier, meta] of this._qualifiers) {
@@ -268,7 +272,7 @@ export default class Rule implements IValidatable {
 			}
 		}
 
-		return result;
+		return result.toValidationResultList();
 	}
 
 	protected __runValidators(propValue: any, parentValue: any, customOptions: any): ValidationResultList {
@@ -288,21 +292,18 @@ export default class Rule implements IValidatable {
 		return resultList;
 	}
 
-	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResult {
+	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
 		value = copy(value);
 		parentValue = copy(parentValue);
 
-		const result = this.__runQualifiers(value, parentValue, customOptions);
+		let resultList = this.__runQualifiers(value, parentValue, customOptions);
 
-		if (result.isValid || !this._stopOnFirstFailure) {
-			const resultList = this.__runValidators(value, parentValue, customOptions);
-			resultList.forEach((_result) => {
-				result.errors = { ...result.errors, ..._result.errors };
-				result.warnings = { ...result.warnings, ..._result.warnings };
-			});
+		if (resultList.isValid || !this._stopOnFirstFailure) {
+			const validatableResultList = this.__runValidators(value, parentValue, customOptions);
+			resultList = resultList.merge(validatableResultList);
 		}
 
 
-		return result;
+		return resultList;
 	}
 }

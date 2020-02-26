@@ -1,4 +1,5 @@
 import { quality } from '../utils/quality';
+import ValidationResultList from './ValidationResultList';
 
 const { isEmpty } = quality;
 
@@ -29,10 +30,17 @@ export default class ValidationResult {
 		return ValidationResult.merge(this, result);
 	}
 
+	public toValidationResultList(): ValidationResultList {
+		return new ValidationResultList([this]);
+	}
+
 	static merge(result1: ValidationResult, result2: ValidationResult): ValidationResult {
-		const result = new ValidationResult(result1.propertyName, result1.value);
-		result.errors = { ...result1.errors, ...result2.errors };
-		result.warnings = { ...result1.warnings, ...result2.warnings };
-		return result;
+		if (result1 !== result2) {
+			result1.errors = { ...result1.errors, ...result2.errors };
+			result1.warnings = { ...result1.warnings, ...result2.warnings };
+			return result1;
+		} else {
+			throw new Error('ValidationResult cannot merge the same instance into itself.')
+		}
 	}
 }
