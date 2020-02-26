@@ -6,7 +6,7 @@ const { isEmpty } = quality;
 export default class ValidationResult {
 	public errors: { [qualifierName: string]: string } = {};
 	public warnings: { [qualifierName: string]: string } = {};
-	readonly propertyName: string;
+	public propertyName: string;
 	readonly value: any;
 
 	constructor(propertyName: string, value: any) {

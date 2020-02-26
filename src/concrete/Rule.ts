@@ -292,10 +292,7 @@ export default class Rule implements IValidatable {
 		return resultList;
 	}
 
-	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
-		value = copy(value);
-		parentValue = copy(parentValue);
-
+	protected __getPropertyResults(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
 		let resultList = this.__runQualifiers(value, parentValue, customOptions);
 
 		if (resultList.isValid || !this._stopOnFirstFailure) {
@@ -303,7 +300,13 @@ export default class Rule implements IValidatable {
 			resultList = resultList.merge(validatableResultList);
 		}
 
-
 		return resultList;
+	}
+
+	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
+		value = copy(value);
+		parentValue = copy(parentValue);
+
+		return this.__getPropertyResults(value, parentValue, customOptions);
 	}
 }

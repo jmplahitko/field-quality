@@ -1,25 +1,29 @@
 import { IValidatable } from '../abstract/IValidatable';
-import { TValidationResult } from '../abstract/TValidationResult';
 
-import { Rule } from './Rule';
-import { ValidationResult } from './ValidationResult';
+import Rule from './Rule';
+import ValidationResult from './ValidationResult';
+import ValidationResultList from './ValidationResultList';
 
 import copy from '../utils/copy';
 import { quality } from '../utils/quality';
 import { TCollectionFilter } from '../abstract/TCollectionFilter';
 import { TSubsetRuleCollection } from '../abstract/TSubsetRuleCollection';
+import Severity from '../abstract/Severity';
 
-const { isArray, isEmpty } = quality;
+const { isArray } = quality;
 
-export class CollectionRule extends Rule {
+export default class CollectionRule extends Rule {
 	protected _subsetRules: TSubsetRuleCollection = new Map();
 
 	public using(validatable: IValidatable): CollectionRule {
+		validatable.name = this.name || validatable.name;
+
 		let meta = {
 			name: validatable.name,
 			message: '',
 			precondition: null,
-			isValidIfEmpty: false
+			isValidIfEmpty: false,
+			severity: Severity.default
 		};
 
 		this._validators.set(validatable, meta);
@@ -39,61 +43,46 @@ export class CollectionRule extends Rule {
 		return this;
 	}
 
-	protected __runSubsetRules(result: TValidationResult, collection: Array<any>, parentValue: any, customOptions: any): TValidationResult {
-		for (let [rule, meta] of this._subsetRules) {
-			let subset = collection.filter((value: any, index: number) => meta.filter(value, index, collection, parentValue, customOptions));
+	protected __runSubsetRules(collection: Array<any>, parentValue: any, customOptions: any): ValidationResultList {
+		let resultList = new ValidationResultList();
 
-			for (let value of subset) {
-				let _result = rule.validate(value, value, customOptions);
-				if (!_result.isValid) {
-					let _collectionIndex = collection.indexOf(value);
-					let errorKey = `[${_collectionIndex}]`;
-					if (result.errors[errorKey]) {
-						result.errors[errorKey] = copy(_result, result.errors[errorKey]);
-					} else {
-						result.errors[errorKey] = _result;
-					}
-				}
+		for (let [rule, meta] of this._subsetRules) {
+			let filteredCollection = collection.filter((value: any, index: number) => meta.filter(value, index, collection, parentValue, customOptions));
+
+			for (let value of filteredCollection) {
+				let index = value.indexOf(value);
+				let _results = rule.validate(value, value, customOptions);
+				_results.forEach((result: ValidationResult) => result.propertyName = `${result.propertyName}[${index}]`);
+				resultList = resultList.merge(_results);
 			}
 		}
 
-		return result;
+		return resultList;
 	}
 
-	public validate(value: any, parentValue: any, customOptions?: any): ValidationResult {
-		value = copy(value);
+	public validate(collection: any[], parentValue?: any, customOptions?: any): ValidationResultList {
+		collection = copy(collection);
 		parentValue = copy(parentValue);
+		let resultList = new ValidationResultList();
 
-		if (isArray(value)) {
-			let result: TValidationResult = {
-				errors: {},
-				get isValid() { return isEmpty(this.errors) },
-				value
-			};
-
-			value.map((_propValue: any, index: number) => {
-				let _result = this.__getValidationResult(_propValue, parentValue, customOptions);
-
-				if (!_result.isValid) {
-					result.errors[`[${index}]`] = _result;
-				}
-			});
-
-			if (result.isValid || !this._stopOnFirstFailure) {
-				result = this.__runSubsetRules(result, value, parentValue, customOptions);
+		if (isArray(collection)) {
+			for (let value of collection) {
+				let index = collection.indexOf(value);
+				let _results = this.__getPropertyResults(value, parentValue, customOptions);
+				_results.forEach(result => result.propertyName = `${result.propertyName}[${index}]`);
+				resultList = resultList.merge(_results);
 			}
 
-			return new ValidationResult(result);
+			if (resultList.isValid || !this._stopOnFirstFailure) {
+				const _results = this.__runSubsetRules(collection, parentValue, customOptions);
+				resultList = resultList.merge(_results);
+			}
 		} else {
-			// propValue is not a collection at this point, and cannot be validated.
-			// TODO: The beCollection error can be pulled out and defined as a qualifier.
-			return new ValidationResult({
-				errors: {
-					beCollection: 'Must be a collection.'
-				},
-				isValid: false,
-				value
-			});
+			const result = new ValidationResult(this.name, collection);
+			result.errors['beCollection'] = `${this.name} must be a collection.`;
+			resultList.push(result);
 		}
+
+		return resultList;
 	}
 }
