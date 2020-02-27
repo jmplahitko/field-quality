@@ -1,6 +1,5 @@
-import { quality } from './quality';
+import { isArray, isBufferArray, isBlankObject, isFunction, isObject, isTypedArray, isWindow } from './quality';
 
-const { isArray, isBufferArray, isBlankObject, isFunction, isObject, isTypedArray, isWindow } = quality;
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 export default function copy(source: any, destination?: any) {

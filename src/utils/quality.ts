@@ -1,4 +1,5 @@
-function hasAnyFlags(flags: any, mask: any) {
+
+export function hasAnyFlags(flags: any, mask: any) {
 	flags = parseInt(flags, 10);
 	mask = parseInt(mask, 10);
 
@@ -9,7 +10,7 @@ function hasAnyFlags(flags: any, mask: any) {
 	return (mask & flags) !== 0;
 }
 
-function hasFlags(flags: any, mask: any) {
+export function hasFlags(flags: any, mask: any) {
 	flags = parseInt(flags, 10);
 	mask = parseInt(mask, 10);
 
@@ -20,36 +21,36 @@ function hasFlags(flags: any, mask: any) {
 	return (mask & flags) === mask;
 }
 
-function is(val1: any, val2: any) {
+export function is(val1: any, val2: any) {
 	if (val1 === val2) return val1 !== 0 || 1 / val1 === 1 / val2;
 	return val1 !== val1 && val2 !== val2;
 }
 
-function isArray(val: any) {
+export function isArray(val: any) {
 	return null !== val && {}.toString.call(val) === '[object Array]';
 }
 
-function isBufferArray(val: any) {
+export function isBufferArray(val: any) {
 	return Object.prototype.toString.call(val) === '[object ArrayBuffer]';
 }
 
-function isBlankObject(val: any) {
+export function isBlankObject(val: any) {
 	return val !== null && typeof val === 'object' && !Object.getPrototypeOf(val);
 }
 
-function isBoolean(val: any) {
+export function isBoolean(val: any) {
 	return typeof val === 'boolean';
 }
 
-function isDate(val: any) {
+export function isDate(val: any) {
 	return val instanceof Date;
 }
 
-function isUndefined(val: any) {
+export function isUndefined(val: any) {
 	return typeof val === 'undefined';
 }
 
-function isEmpty(val: any) {
+export function isEmpty(val: any) {
 	let inheritedObjectRegex = /\[object [^\]]+\]/g;
 	if (isNull(val) || isUndefined(val) || isFunction(val)) {
 		return true;
@@ -83,7 +84,7 @@ function isEmpty(val: any) {
 	return true;
 }
 
-function isEqual(val1: any, val2: any) {
+export function isEqual(val1: any, val2: any) {
 	if (is(val1, val2)) return true;
 	if (isObject(val1) && isObject(val2)) {
 		if (!is(Object.keys(val1).length, Object.keys(val2).length)) return false;
@@ -112,73 +113,47 @@ function isEqual(val1: any, val2: any) {
 	return false;
 }
 
-function isFunction(val: any) {
+export function isFunction(val: any) {
 	return typeof val === 'function';
 }
 
-function isHash(val: any) {
+export function isHash(val: any) {
 	return isObject(val) && !isArray(val) && !isFunction(val);
 }
 
-function isInteger(val: any) {
+export function isInteger(val: any) {
 	return isNumber(val) && val % 1 === 0;
 }
 
-function isRegExp(val: any) {
+export function isRegExp(val: any) {
 	return val instanceof RegExp;
 }
 
-function isString(val: any) {
+export function isString(val: any) {
 	return typeof val === 'string';
 }
 
-function isTypedArray(val: any) {
+export function isTypedArray(val: any) {
 	const TYPED_ARRAY_REGEXP = new RegExp(/^\[object (?:Uint8|Uint8Clamped|Uint16|Uint32|Int8|Int16|Int32|Float32|Float64)Array\]$/);
 	return val && isNumber(val.length) && TYPED_ARRAY_REGEXP.test(Object.prototype.toString.call(val));
 }
 
-function isNull(val: any) {
+export function isNull(val: any) {
 	return val === null;
 }
 
-function isNumber(val: any) {
+export function isNumber(val: any) {
 	return typeof val === 'number' && !isNaN(val);
 }
 
-function isObject(val: any) {
+export function isObject(val: any) {
 	return null !== val && {}.toString.call(val) === '[object Object]';
 }
 
-function isPromise(val: any) {
+export function isPromise(val: any) {
 	return !!val && isFunction(val.then);
 }
 
-function isWindow(val: any) {
+export function isWindow(val: any) {
 	return val && val.window === val;
-}
-
-export const quality = {
-	hasAnyFlags,
-	hasFlags,
-	is,
-	isArray,
-	isBlankObject,
-	isBoolean,
-	isBufferArray,
-	isDate,
-	isEmpty,
-	isEqual,
-	isFunction,
-	isHash,
-	isInteger,
-	isNaN,
-	isNull,
-	isNumber,
-	isObject,
-	isPromise,
-	isRegExp,
-	isString,
-	isTypedArray,
-	isUndefined,
-	isWindow
 }

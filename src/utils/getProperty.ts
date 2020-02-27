@@ -1,5 +1,4 @@
-import { quality } from './quality';
-const { isObject } = quality;
+import { isObject } from './quality';
 
 export default function getProperty(obj: any, prop: string): any {
 	if (!isObject(obj)) {

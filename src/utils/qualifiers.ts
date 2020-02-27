@@ -1,29 +1,28 @@
-import { quality } from './quality';
-const { isArray, isBoolean, isEmpty, isNull, isNumber, isString, isUndefined } = quality;
+import { isArray, isBoolean, isEmpty, isNull, isNumber, isString, isUndefined } from './quality';
 
-function beBoolean(value: any) {
+export function beBoolean(value: any) {
 	return isBoolean(value);
 }
 
-function beInRange(num1: number, num2: number) {
+export function beInRange(num1: number, num2: number) {
 	return function beInRange(value: any) {
 		return (isNumber(value) && !isNaN(value)) ? (value >= num1 && value <= num2) : false;
 	}
 }
 
-function beValidEnum(arr: Array<string|number>) {
+export function beValidEnum(arr: Array<string|number>) {
 	return function beValidEnum(value: any) {
 		return arr.includes(value);
 	}
 }
 
-function length(num1: number, num2: number) {
+export function length(num1: number, num2: number) {
 	return function beValidLength(value: any) {
 		return ((isString(value) || isArray(value)) && isNumber(value.length)) ? (value.length >= num1 && value.length <= num2) : false;
 	}
 }
 
-function lengthOrEmpty(num1: number, num2: number) {
+export function lengthOrEmpty(num1: number, num2: number) {
 	return function beValidLengthOrEmpty(value: any) {
 		if (isNull(value) || isUndefined(value)) {
 			return true;
@@ -33,41 +32,28 @@ function lengthOrEmpty(num1: number, num2: number) {
 	}
 }
 
-function match(rx: RegExp) {
+export function match(rx: RegExp) {
 	return function matches(value: any) {
 		return rx.test(value);
 	}
 }
 
-function max(num: number) {
+export function max(num: number) {
 	return function beLessThan(val: number) {
 		return val <= num;
 	}
 }
 
-function min(num: number) {
+export function min(num: number) {
 	return function beGreaterThan(val: number) {
 		return val >= num;
 	}
 }
 
-function notNull(value: any) {
+export function notNull(value: any) {
 	return !isNull(value);
 }
 
-function notEmpty(value: any) {
+export function notEmpty(value: any) {
 	return isNull(value) || isUndefined(value) ? false : !isEmpty(value);
-}
-
-export const qualifiers = {
-	beBoolean,
-	beInRange,
-	beValidEnum,
-	length,
-	lengthOrEmpty,
-	match,
-	max,
-	min,
-	notNull,
-	notEmpty
 }
