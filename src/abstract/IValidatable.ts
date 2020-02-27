@@ -1,6 +1,6 @@
-import { TValidationResult } from './TValidationResult';
+import ValidationResultList from '../concrete/ValidationResultList'
 
 export interface IValidatable {
-	name: string;
-	validate(value: any, parentValue?: any, customOptions?: any): TValidationResult;
+	name?: string;
+	validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList;
 }

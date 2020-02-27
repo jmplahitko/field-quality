@@ -2,8 +2,12 @@ import ValidationResult from './ValidationResult';
 
 export default class ValidationResultList {
 	protected _entries: ValidationResult[] = [];
+	public propertyName: string;
+	public value: any;
 
-	constructor(args: ValidationResult[] = []) {
+	constructor(properytName: string, value: any, args: ValidationResult[] = []) {
+		this.propertyName = properytName;
+		this.value = value;
 		this._entries = this._entries.concat(args);
 	}
 
@@ -33,11 +37,11 @@ export default class ValidationResultList {
 	}
 
 	public get withErrors(): ValidationResultList {
-		return new ValidationResultList(this._entries.filter(x => x.errorCount > 0));
+		return new ValidationResultList(this.propertyName, this.value, this._entries.filter(x => x.errorCount > 0));
 	}
 
 	public get withWarnings(): ValidationResultList {
-		return new ValidationResultList(this._entries.filter(x => x.warningCount > 0));
+		return new ValidationResultList(this.propertyName, this.value, this._entries.filter(x => x.warningCount > 0));
 	}
 
 	public get(propertyName: string): ValidationResult | void {
@@ -58,14 +62,13 @@ export default class ValidationResultList {
 		return obj;
 	}
 
-	static merge(resultList1: ValidationResultList, resultList2: ValidationResultList): ValidationResultList {
-		if (resultList1 !== resultList2) {
-			const resultList = new ValidationResultList(resultList1.entries);
-			resultList2.forEach((result) => {
-				resultList.push(result);
+	static merge(dest: ValidationResultList, src: ValidationResultList): ValidationResultList {
+		if (dest !== src) {
+			src.forEach((result) => {
+				dest.push(result);
 			});
 
-			return resultList;
+			return dest;
 		} else {
 			throw new Error('ValidationResult cannot merge the same instance into itself.')
 		}

@@ -6,15 +6,12 @@ import { TValidatorCollection } from '../abstract/TValidatorCollection';
 import ValidationResult from './ValidationResult';
 
 import copy from '../utils/copy';
-import { qualifiers } from '../utils/qualifiers';
-import { quality } from '../utils/quality';
+import { length, match, max, min, notEmpty, notNull, beValidEnum } from '../utils/qualifiers';
+import { isEmpty, isNull } from '../utils/quality';
 import { RuleApi } from './RuleApi';
 import { TPrecondition } from '../abstract/TPrecondition';
 import Severity from '../abstract/Severity';
 import ValidationResultList from './ValidationResultList';
-
-const { length, match, max, min, notEmpty, notNull, beValidEnum } = qualifiers;
-const { isEmpty, isNull } = quality;
 
 export default class Rule implements IValidatable {
 	public name: string;
@@ -212,7 +209,7 @@ export default class Rule implements IValidatable {
 	}
 
 	public using(validatable: IValidatable): Rule {
-		validatable.name = this.name || validatable.name;
+		validatable.name = this.name || validatable.name || '';
 
 		let meta = {
 			name: validatable.name,
@@ -276,7 +273,7 @@ export default class Rule implements IValidatable {
 	}
 
 	protected __runValidators(propValue: any, parentValue: any, customOptions: any): ValidationResultList {
-		let resultList = new ValidationResultList();
+		let resultList = new ValidationResultList(this.name, propValue);
 
 		for (let [validator, meta] of this._validators) {
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {

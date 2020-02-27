@@ -1,28 +1,21 @@
 import { IValidatable } from '../abstract/IValidatable';
 import { TRuleCollection } from '../abstract/TRuleCollection';
-import { TValidationResult } from '../abstract/TValidationResult';
 
-import { CollectionRule } from './CollectionRule';
-import { Rule } from './Rule';
+import CollectionRule from './CollectionRule';
+import Rule from './Rule';
 
-import { quality } from '../utils/quality';
 import copy from '../utils/copy';
-import { ValidationResult } from './ValidationResult';
+import ValidationResultList from './ValidationResultList';
 import getProperty from '../utils/getProperty';
+import normalizeValidateArgs from '../utils/normalizeValidateArgs';
 
-const { isEmpty } = quality;
 
-export class Validator implements IValidatable {
-	public name: string;
+export default class Validator implements IValidatable {
+	public name!: string | undefined;
 	private _rules: TRuleCollection = {};
 
 	constructor() {
-		this.name = this.constructor.name.toLowerCase();
-		this.define(this);
-	}
 
-	protected define(validator: Validator) {
-		console.warn('define not implemented');
 	}
 
 	protected ruleFor(propertyName: string): Rule {
@@ -49,79 +42,37 @@ export class Validator implements IValidatable {
 		return rule;
 	}
 
-	private getValidationResult(propertyName: string, value: any, parentValue: any, customOptions?: any): TValidationResult {
+	public validateProperty(propertyName: string, parentValue: any, customOptions?: any): ValidationResultList {
+		const value = getProperty(parentValue, propertyName);
 		let rules = this._rules[propertyName];
-		let result: TValidationResult = {
-			errors: {},
-			get isValid() { return isEmpty(this.errors) },
-			value
-		};
 
-		for (let rule in rules) {
-			if (rules[rule] instanceof CollectionRule) {
-				let _result = rules[rule].validate(value, parentValue, customOptions);
+		let resultList = new ValidationResultList(propertyName, value);
 
-				if (!_result.isValid) {
-					for (let errorProp in _result.errors) {
-						let propName = `${propertyName}${errorProp}`;
-
-						if (_result.errors[errorProp] instanceof ValidationResult) {
-							if (result.errors.hasOwnProperty(propName)) {
-								result.errors[propName] = new ValidationResult(Object.assign(result.errors[propName], _result.errors[errorProp]));
-							} else {
-								result.errors[propName] = _result.errors[errorProp];
-							}
-						} else {
-							result.errors[propName] = new ValidationResult(_result.errors[errorProp]);
-						}
-					}
-				}
-			} else {
-				let _result = rules[rule].validate(value, parentValue, customOptions);
-
-				if (!_result.isValid) {
-					if (result.errors.hasOwnProperty(propertyName)) {
-						result.errors[propertyName] = new ValidationResult(Object.assign(result.errors[propertyName], _result));
-					} else {
-						result.errors[propertyName] = _result;
-					}
-				}
-			}
+		for (let rule of rules) {
+			let _results = rule.validate(value, parentValue, customOptions);
+			resultList = resultList.merge(_results);
 		}
 
-		return result;
+		return resultList;
 	}
 
-	public validate(value: any, customOptions?: any): ValidationResult;
-	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResult {
-		value = copy(value);
+	public validate(value: any, customOptions?: any): ValidationResultList;
+	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
+		let [_value, _parentValue, _customOptions] = normalizeValidateArgs(value, parentValue, customOptions);
+		_parentValue = _parentValue ?? copy(_value);
 
-		if (arguments.length === 3) {
-			parentValue = copy(value);
-			customOptions = copy(arguments[2]);
-		} else if (arguments.length === 2) {
-			parentValue = copy(value);
-			customOptions = copy(arguments[1]);
-		} else if (arguments.length === 1) {
-			parentValue = copy(value);
+		let resultList = new ValidationResultList(this.name || '', _value);
+
+		for (let propertyName in this._rules) {
+			let results = this.validateProperty(propertyName, _parentValue, _customOptions);
+			resultList = resultList.merge(results);
 		}
 
-		let errors: { [ruleName: string]: ValidationResult } = {};
-
-		for (let propName in this._rules) {
-			let result = this.getValidationResult(propName, getProperty(value, propName), parentValue, customOptions);
-
-			if (!result.isValid) {
-				for (let errorProp in result.errors) {
-					errors[errorProp] = result.errors[errorProp];
-				}
-			}
+		if (this.name) {
+			resultList.propertyName = this.name;
+			resultList.forEach(result => result.propertyName = `${this.name}.${result.propertyName}`);
 		}
 
-		return new ValidationResult({
-			errors,
-			isValid: isEmpty(errors),
-			value
-		});
+		return resultList;
 	}
 }

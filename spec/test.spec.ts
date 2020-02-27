@@ -1,4 +1,31 @@
 import 'jasmine';
+
+import normalizeValidateArgs from '../src/utils/normalizeValidateArgs';
+
+describe('normalizeValidateArgs', () => {
+	it('should return all arguments in order when given 3 arguments', () => {
+		const [value, parentValue, customOptions] = normalizeValidateArgs(1, 2, 3);
+		expect(value).toBe(1);
+		expect(parentValue).toBe(2);
+		expect(customOptions).toBe(3);
+	});
+
+	it('should return second parameter as customOptions when given 2 arguments', () => {
+		const [value, parentValue, customOptions] = normalizeValidateArgs(1, 2);
+		expect(value).toBe(1);
+		expect(parentValue).toBe(undefined);
+		expect(customOptions).toBe(2);
+	});
+
+	it('should return undefined parentValue and customOptions when given 1 argument', () => {
+		const [value, parentValue, customOptions] = normalizeValidateArgs(1);
+		expect(value).toBe(1);
+		expect(parentValue).toBe(undefined);
+		expect(customOptions).toBe(undefined);
+	});
+});
+
+
 import ValidationResultList from '../src/concrete/ValidationResultList';
 import ValidationResult from '../src/concrete/ValidationResult';
 
@@ -62,9 +89,7 @@ describe('ValidationResult', () => {
 	});
 });
 
-
-
-let results = new ValidationResultList(validationResults);
+let results = new ValidationResultList('test', null, validationResults);
 
 describe('ValidationResultList', () => {
 	it('should report correct validity', () => {
@@ -84,7 +109,7 @@ describe('ValidationResultList', () => {
 	});
 
 	it('should not merge the same instance into itself', () => {
-		let result = new ValidationResultList();
+		let result = new ValidationResultList('test', null);
 		expect(() => result.merge(result)).toThrow();
 	});
 	it('should provide results as an object', () => {
@@ -140,4 +165,154 @@ describe('Rule#using', () => {
 		const result = usingMinMax.validate(1);
 		expect(result.length).toBe(1);
 	});
-})
+});
+
+import CollectionRule from '../src/concrete/CollectionRule';
+class NumberCollectionRule extends CollectionRule {
+	constructor(name?: string) {
+		super(name);
+
+		// this.using(new MinMaxNumberRule());
+		this.min(2).max(5);
+	}
+}
+
+class UsingMinMaxCollectionRule extends CollectionRule {
+	constructor(name?: string) {
+		super(name);
+
+		this.using(new MinMaxNumberRule());
+	}
+}
+
+describe('CollectionRule', () => {
+	it('should run own qualifiers on all collection values', () => {
+		const minMaxCollection = new NumberCollectionRule('minmaxCollection');
+		const results = minMaxCollection.validate([1, 2, 3, 4, 5, 6]);
+		expect(results.withErrors.length).toBe(2);
+	});
+
+	it('should run rules on all collection values', () => {
+		const minMaxCollection = new UsingMinMaxCollectionRule('minmaxCollection');
+		const results = minMaxCollection.validate([1, 2, 3, 4, 5, 6]);
+		expect(results.withErrors.length).toBe(2);
+	});
+});
+
+import Validator from '../src/concrete/Validator';
+import * as rx from '../src/utils/rx'
+
+class AddressValidator extends Validator {
+	constructor() {
+		super();
+
+		this.ruleFor('line1')
+			.notEmpty()
+			.matches(rx.address);
+
+		this.ruleFor('line2')
+			.matches(rx.address);
+
+		this.ruleFor('city')
+			.notEmpty()
+			.matches(rx.city);
+
+		this.ruleFor('state')
+			.notEmpty();
+
+		this.ruleFor('zip')
+			.notEmpty()
+			.matches(rx.zipcode);
+	}
+}
+
+class PhoneValidator extends Validator {
+	constructor() {
+		super();
+
+		this.ruleFor('type')
+			.notEmpty()
+			.enum(['home', 'cell']);
+
+		this.ruleFor('value')
+			.notEmpty()
+			.matches(rx.domesticphone);
+
+		this.ruleFor('display')
+			.notEmpty()
+			.matches(rx.title);
+	}
+}
+
+class UserValidator extends Validator {
+	constructor(name?: string) {
+		super();
+		this.name = name;
+
+		this.ruleFor('address')
+			.notNull()
+			.using(new AddressValidator());
+
+		this.ruleFor('phone')
+			.notEmpty();
+
+		this.ruleForEach('phone')
+			.using(new PhoneValidator());
+
+	}
+}
+
+describe('Validator', () => {
+	it('should validate a simple object', () => {
+
+
+	});
+
+	it('should properly namespace propertyNames on results', () => {
+		const user = { address: {} };
+		const validator = new UserValidator();
+		const namedValidator = new UserValidator('user');
+
+		const unnamed = validator.validate(user);
+		const named = namedValidator.validate(user);
+
+		expect(Object.keys(unnamed.toObject())).toEqual([
+			'address',
+			'address.line1',
+			'address.line2',
+			'address.city',
+			'address.state',
+			'address.zip',
+			'phone'
+		]);
+
+		expect(Object.keys(named.toObject())).toEqual([
+			'user.address',
+			'user.address.line1',
+			'user.address.line2',
+			'user.address.city',
+			'user.address.state',
+			'user.address.zip',
+			'user.phone'
+		]);
+	});
+
+	it('should validate a single propery', () => {
+		const validator = new UserValidator();
+		const results = validator.validateProperty('address', {});
+
+		expect(results.length).toBe(6);
+		expect(results.propertyName).toBe('address');
+	});
+
+	it('should validate collections', () => {
+		const validator = new UserValidator();
+		const results = validator.validateProperty('phone', { phone: [{
+			type: 'work',
+		}] });
+
+		expect(Object.keys(results.toObject())).toEqual([
+			'phone', 'phone[0]', 'phone[0].type', 'phone[0].value', 'phone[0].display'
+		]);
+	});
+});

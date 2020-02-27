@@ -1,7 +1,6 @@
-import { quality } from '../utils/quality';
+import { isEmpty } from '../utils/quality';
 import ValidationResultList from './ValidationResultList';
 
-const { isEmpty } = quality;
 
 export default class ValidationResult {
 	public errors: { [qualifierName: string]: string } = {};
@@ -31,14 +30,14 @@ export default class ValidationResult {
 	}
 
 	public toValidationResultList(): ValidationResultList {
-		return new ValidationResultList([this]);
+		return new ValidationResultList(this.propertyName, this.value, [this]);
 	}
 
-	static merge(result1: ValidationResult, result2: ValidationResult): ValidationResult {
-		if (result1 !== result2) {
-			result1.errors = { ...result1.errors, ...result2.errors };
-			result1.warnings = { ...result1.warnings, ...result2.warnings };
-			return result1;
+	static merge(dest: ValidationResult, src: ValidationResult): ValidationResult {
+		if (dest !== src) {
+			dest.errors = { ...dest.errors, ...src.errors };
+			dest.warnings = { ...dest.warnings, ...src.warnings };
+			return dest;
 		} else {
 			throw new Error('ValidationResult cannot merge the same instance into itself.')
 		}
