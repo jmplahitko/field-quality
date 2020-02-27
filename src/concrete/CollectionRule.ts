@@ -5,18 +5,16 @@ import ValidationResult from './ValidationResult';
 import ValidationResultList from './ValidationResultList';
 
 import copy from '../utils/copy';
-import { quality } from '../utils/quality';
+import { isArray } from '../utils/quality';
 import { TCollectionFilter } from '../abstract/TCollectionFilter';
 import { TSubsetRuleCollection } from '../abstract/TSubsetRuleCollection';
 import Severity from '../abstract/Severity';
-
-const { isArray } = quality;
 
 export default class CollectionRule extends Rule {
 	protected _subsetRules: TSubsetRuleCollection = new Map();
 
 	public using(validatable: IValidatable): CollectionRule {
-		validatable.name = this.name || validatable.name;
+		validatable.name = '';
 
 		let meta = {
 			name: validatable.name,
@@ -44,13 +42,13 @@ export default class CollectionRule extends Rule {
 	}
 
 	protected __runSubsetRules(collection: Array<any>, parentValue: any, customOptions: any): ValidationResultList {
-		let resultList = new ValidationResultList();
+		let resultList = new ValidationResultList(this.name, collection);
 
 		for (let [rule, meta] of this._subsetRules) {
 			let filteredCollection = collection.filter((value: any, index: number) => meta.filter(value, index, collection, parentValue, customOptions));
 
 			for (let value of filteredCollection) {
-				let index = value.indexOf(value);
+				let index = collection.indexOf(value);
 				let _results = rule.validate(value, value, customOptions);
 				_results.forEach((result: ValidationResult) => result.propertyName = `${result.propertyName}[${index}]`);
 				resultList = resultList.merge(_results);
@@ -63,14 +61,20 @@ export default class CollectionRule extends Rule {
 	public validate(collection: any[], parentValue?: any, customOptions?: any): ValidationResultList {
 		collection = copy(collection);
 		parentValue = copy(parentValue);
-		let resultList = new ValidationResultList();
+		let resultList = new ValidationResultList(this.name, collection);
 
 		if (isArray(collection)) {
 			for (let value of collection) {
 				let index = collection.indexOf(value);
-				let _results = this.__getPropertyResults(value, parentValue, customOptions);
-				_results.forEach(result => result.propertyName = `${result.propertyName}[${index}]`);
-				resultList = resultList.merge(_results);
+				let qualifierResultList = this.__runQualifiers(value, parentValue, customOptions);
+				qualifierResultList.forEach(result => result.propertyName = `${this.name}[${index}]`);
+				resultList = resultList.merge(qualifierResultList);
+
+				if (qualifierResultList.isValid || !this._stopOnFirstFailure) {
+					const validatableResultList = this.__runValidators(value, parentValue, customOptions);
+					validatableResultList.forEach(result => result.propertyName = `${this.name}[${index}].${result.propertyName}`);
+					resultList = resultList.merge(validatableResultList);
+				}
 			}
 
 			if (resultList.isValid || !this._stopOnFirstFailure) {
