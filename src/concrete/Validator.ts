@@ -59,7 +59,7 @@ export default class Validator implements IValidatable {
 	public validate(value: any, customOptions?: any): ValidationResultList;
 	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
 		let [_value, _parentValue, _customOptions] = normalizeValidateArgs(value, parentValue, customOptions);
-		_parentValue = _parentValue ?? copy(_value);
+		_parentValue = copy(_value);
 
 		let resultList = new ValidationResultList(this.name || '', _value);
 
