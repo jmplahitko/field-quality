@@ -2,10 +2,10 @@ import ValidationResult from './ValidationResult';
 
 export default class ValidationResultList {
 	protected _entries: ValidationResult[] = [];
-	public propertyName: string;
+	public propertyName: string|undefined;
 	public value: any;
 
-	constructor(properytName: string, value: any, args: ValidationResult[] = []) {
+	constructor(args: ValidationResult[] = [], properytName?: string, value?: any) {
 		this.propertyName = properytName;
 		this.value = value;
 		this._entries = this._entries.concat(args);
@@ -37,11 +37,11 @@ export default class ValidationResultList {
 	}
 
 	public get withErrors(): ValidationResultList {
-		return new ValidationResultList(this.propertyName, this.value, this._entries.filter(x => x.errorCount > 0));
+		return new ValidationResultList(this._entries.filter(x => x.errorCount > 0), this.propertyName, this.value);
 	}
 
 	public get withWarnings(): ValidationResultList {
-		return new ValidationResultList(this.propertyName, this.value, this._entries.filter(x => x.warningCount > 0));
+		return new ValidationResultList(this._entries.filter(x => x.warningCount > 0), this.propertyName, this.value);
 	}
 
 	public get(propertyName: string): ValidationResult | void {

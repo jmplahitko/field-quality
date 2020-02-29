@@ -8,10 +8,12 @@ import copy from '../utils/copy';
 import ValidationResultList from './ValidationResultList';
 import getProperty from '../utils/getProperty';
 import normalizeValidateArgs from '../utils/normalizeValidateArgs';
+import ValidationResult from './ValidationResult';
 
 
 export default class Validator implements IValidatable {
 	public name!: string | undefined;
+	private _results: ValidationResultList = new ValidationResultList();
 	private _rules: TRuleCollection = {};
 
 	constructor() {
@@ -27,6 +29,8 @@ export default class Validator implements IValidatable {
 			this._rules[propertyName].push(rule);
 		}
 
+		this._results.push(new ValidationResult(propertyName, null));
+
 		return rule;
 	}
 
@@ -39,6 +43,8 @@ export default class Validator implements IValidatable {
 			this._rules[propertyName].push(rule);
 		}
 
+		this._results.push(new ValidationResult(propertyName, null));
+
 		return rule;
 	}
 
@@ -46,7 +52,7 @@ export default class Validator implements IValidatable {
 		const value = getProperty(parentValue, propertyName);
 		let rules = this._rules[propertyName];
 
-		let resultList = new ValidationResultList(propertyName, value);
+		let resultList = new ValidationResultList([], propertyName, value);
 
 		for (let rule of rules) {
 			let _results = rule.validate(value, parentValue, customOptions);
@@ -61,7 +67,7 @@ export default class Validator implements IValidatable {
 		let [_value, _parentValue, _customOptions] = normalizeValidateArgs(value, parentValue, customOptions);
 		_parentValue = copy(_value);
 
-		let resultList = new ValidationResultList(this.name || '', _value);
+		let resultList = new ValidationResultList([], this.name || '', _value);
 
 		for (let propertyName in this._rules) {
 			let results = this.validateProperty(propertyName, _parentValue, _customOptions);

@@ -42,7 +42,7 @@ export default class CollectionRule extends Rule {
 	}
 
 	protected __runSubsetRules(collection: Array<any>, parentValue: any, customOptions: any): ValidationResultList {
-		let resultList = new ValidationResultList(this.name, collection);
+		let resultList = new ValidationResultList([], this.name, collection);
 
 		for (let [rule, meta] of this._subsetRules) {
 			let filteredCollection = collection.filter((value: any, index: number) => meta.filter(value, index, collection, parentValue, customOptions));
@@ -61,7 +61,7 @@ export default class CollectionRule extends Rule {
 	public validate(collection: any[], parentValue?: any, customOptions?: any): ValidationResultList {
 		collection = copy(collection);
 		parentValue = copy(parentValue);
-		let resultList = new ValidationResultList(this.name, collection);
+		let resultList = new ValidationResultList([], this.name, collection);
 
 		if (isArray(collection)) {
 			for (let value of collection) {

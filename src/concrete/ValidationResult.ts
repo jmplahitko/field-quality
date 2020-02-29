@@ -30,7 +30,7 @@ export default class ValidationResult {
 	}
 
 	public toValidationResultList(): ValidationResultList {
-		return new ValidationResultList(this.propertyName, this.value, [this]);
+		return new ValidationResultList([this], this.propertyName, this.value);
 	}
 
 	static merge(dest: ValidationResult, src: ValidationResult): ValidationResult {

@@ -273,7 +273,7 @@ export default class Rule implements IValidatable {
 	}
 
 	protected __runValidators(propValue: any, parentValue: any, customOptions: any): ValidationResultList {
-		let resultList = new ValidationResultList(this.name, propValue);
+		let resultList = new ValidationResultList([], this.name, propValue);
 
 		for (let [validator, meta] of this._validators) {
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
