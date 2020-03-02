@@ -28,7 +28,7 @@ export default class Rule implements IValidatable {
 	}
 
 	constructor(name?: string) {
-		this.name = name || this.constructor.name;
+		this.name = name || '';
 	}
 
 	public enum(allowedValues: Array<string|number>) {
