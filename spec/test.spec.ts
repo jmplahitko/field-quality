@@ -67,6 +67,14 @@ class UsingMinMaxRule extends Rule {
 	}
 }
 
+class StringLengthRule extends Rule {
+	constructor(name?: string) {
+		super(name);
+
+		this.length(1, 4);
+	}
+}
+
 import CollectionRule from '../src/concrete/CollectionRule';
 class NumberCollectionRule extends CollectionRule {
 	constructor(name?: string) {
@@ -82,6 +90,49 @@ class UsingMinMaxCollectionRule extends CollectionRule {
 		super(name);
 
 		this.using(new MinMaxNumberRule());
+	}
+}
+
+class OnlyNumbersCollectionRule extends CollectionRule {
+	constructor(name?: string) {
+		super(name);
+
+		this.where(x => isNumber(x), (rule) => {
+			rule.using(new MinMaxNumberRule());
+		});
+	}
+}
+
+class MixedNumberStringCollectionRule extends CollectionRule {
+	constructor(name?: string) {
+		super(name);
+
+		this.where(x => isNumber(x), (rule) => {
+			rule.using(new MinMaxNumberRule());
+		});
+
+		this.where(x => isString(x), (rule) => {
+			rule.using(new StringLengthRule());
+		});
+	}
+}
+
+class CustomOptionsTestStringRule extends Rule {
+	constructor(name?: string) {
+		super(name);
+
+		this.must((val, parentValue, customOptions) => {
+			expect(customOptions).toBe('test');
+			return true;
+		});
+	}
+}
+
+class UsingCustomOptionsTestStringCollectionRule extends CollectionRule {
+	constructor(name?: string) {
+		super(name);
+
+		this.using(new CustomOptionsTestStringRule());
 	}
 }
 
@@ -185,6 +236,7 @@ class UserValidator extends Validator {
 
 import fs from 'fs';
 import path from 'path';
+import { isNumber, isString } from 'util';
 
 describe('ValidationResult', () => {
 	it('should have a propertyName', () => {
@@ -324,6 +376,11 @@ describe('Rule#using', () => {
 		const result = usingMinMax.validate(1);
 		expect(result.length).toBe(1);
 	});
+
+	it('should pass custom options to qualifiers', () => {
+		const rule = new CustomOptionsTestStringRule();
+		rule.validate(null, null, 'test');
+	});
 });
 
 describe('CollectionRule', () => {
@@ -337,6 +394,27 @@ describe('CollectionRule', () => {
 		const minMaxCollection = new UsingMinMaxCollectionRule('minmaxCollection');
 		const results = minMaxCollection.validate([1, 2, 3, 4, 5, 6]);
 		expect(results.withErrors.length).toBe(2);
+	});
+
+	it('should conditionally validate items in an array', () => {
+		const numbersOnlyValidator = new OnlyNumbersCollectionRule();
+		const numbersAndStringsValidator = new MixedNumberStringCollectionRule();
+		const collection = [1, 2, 3, 'test', 4, 'test1', {}, 5, 6];
+
+		const numberResult = numbersOnlyValidator.validate(collection);
+		expect(numberResult.length).toBe(9);
+		expect(numberResult.withErrors.length).toBe(2);
+		expect(Object.keys(numberResult.withErrors.toObject())).toEqual(jasmine.arrayWithExactContents(['[0]', '[8]']));
+
+		const numberAndStringResult = numbersAndStringsValidator.validate(collection);
+		expect(numberAndStringResult.length).toBe(9);
+		expect(numberAndStringResult.withErrors.length).toBe(3);
+		expect(Object.keys(numberAndStringResult.withErrors.toObject())).toEqual(jasmine.arrayWithExactContents(['[0]', '[5]', '[8]']));
+	});
+
+	it('should pass custom options to qualifiers', () => {
+		const rule = new UsingCustomOptionsTestStringCollectionRule();
+		rule.validate(null, null, 'test');
 	});
 });
 
@@ -392,7 +470,7 @@ describe('Validator', () => {
 		expect(result.withErrors.length).toBe(5);
 		expect(result.withWarnings.length).toBe(1);
 
-		fs.writeFile(path.join(__dirname, 'test-result.json'), JSON.stringify(result.toObject(), null, '\t'), () => {});
+		// fs.writeFile(path.join(__dirname, 'test-result.json'), JSON.stringify(result.toObject(), null, '\t'), () => {});
 	});
 
 	it('should properly namespace propertyNames on results', () => {
