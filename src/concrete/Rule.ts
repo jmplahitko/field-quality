@@ -241,7 +241,7 @@ export default class Rule implements IValidatable {
 		return this;
 	}
 
-	protected __runQualifiers(propValue: any, parentValue: any, customOptions: any): ValidationResultList {
+	protected __runQualifiers(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
 		const result = new ValidationResult(this.name, propValue);
 
 		for (let [qualifier, meta] of this._qualifiers) {
@@ -269,41 +269,43 @@ export default class Rule implements IValidatable {
 			}
 		}
 
-		return result.toValidationResultList();
+		results.push(result);
+
+		return results;
 	}
 
-	protected __runValidators(propValue: any, parentValue: any, customOptions: any): ValidationResultList {
-		let resultList = new ValidationResultList([], this.name, propValue);
-
+	protected __runValidators(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
 		for (let [validator, meta] of this._validators) {
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
 				let _resultList: ValidationResultList = validator.validate(propValue, parentValue, customOptions);
-				resultList = resultList.merge(_resultList);
+				results = results.merge(_resultList);
 
-				if (!resultList.isValid && this._stopOnFirstFailure) {
+				if (!results.isValid && this._stopOnFirstFailure) {
 					break;
 				}
 			}
 		}
 
-		return resultList;
+		return results;
 	}
 
-	protected __getPropertyResults(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
-		let resultList = this.__runQualifiers(value, parentValue, customOptions);
+	protected __getPropertyResults(value: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
+		results = this.__runQualifiers(value, parentValue, customOptions, results);
 
-		if (resultList.isValid || !this._stopOnFirstFailure) {
-			const validatableResultList = this.__runValidators(value, parentValue, customOptions);
-			resultList = resultList.merge(validatableResultList);
+		if (results.isValid || !this._stopOnFirstFailure) {
+			results = this.__runValidators(value, parentValue, customOptions, results);
 		}
 
-		return resultList;
+		return results;
 	}
 
 	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
 		value = copy(value);
 		parentValue = copy(parentValue);
 
-		return this.__getPropertyResults(value, parentValue, customOptions);
+		let results = new ValidationResultList([], this.name, value);
+
+		return this.__getPropertyResults(value, parentValue, customOptions, results);
+
 	}
 }

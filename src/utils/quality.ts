@@ -1,4 +1,9 @@
 
+
+function simpleCompare(a: any, b: any) {
+	return a === b || (a !== a && b !== b);
+}
+
 export function hasAnyFlags(flags: any, mask: any) {
 	flags = parseInt(flags, 10);
 	mask = parseInt(mask, 10);
@@ -46,6 +51,12 @@ export function isDate(val: any) {
 	return val instanceof Date;
 }
 
+export function isIso8601DateString(val: any): boolean {
+	const iso8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?(Z|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/i;
+
+	return iso8601.test(val);
+}
+
 export function isUndefined(val: any) {
 	return typeof val === 'undefined';
 }
@@ -84,32 +95,52 @@ export function isEmpty(val: any) {
 	return true;
 }
 
-export function isEqual(val1: any, val2: any) {
-	if (is(val1, val2)) return true;
-	if (isObject(val1) && isObject(val2)) {
-		if (!is(Object.keys(val1).length, Object.keys(val2).length)) return false;
-		for (let key in val1) {
-			if (isEqual(val1[key], val2[key])) continue;
-			return false;
-		}
-		return true;
+export function isEqual(o1: any, o2: any) {
+	if (o1 === o2) return true;
+	if (o1 === null || o2 === null) return false;
+	// eslint-disable-next-line no-self-compare
+	if (o1 !== o1 && o2 !== o2) return true; // NaN === NaN
+	if (isIso8601DateString(o1)) {
+		if (!isIso8601DateString(o2)) return false;
+		return simpleCompare(new Date(o1).getTime(), new Date(o2).getTime());
 	}
-	if (isArray(val1) && isArray(val2)) {
-		if (!is(val1.length, val2.length)) return false;
-		let length = val1.length;
-		for (let ndx = 0; ndx < length; ndx++) {
-			if (isEqual(val1[ndx], val2[ndx])) continue;
-			return false;
+	let t1 = typeof o1,
+		t2 = typeof o2,
+		length,
+		key,
+		keySet;
+
+	if (t1 === t2 && t1 === 'object') {
+		if (Array.isArray(o1)) {
+			if (!Array.isArray(o2)) return false;
+			if ((length = o1.length) === o2.length) {
+				for (key = 0; key < length; key++) {
+					if (!isEqual(o1[key], o2[key])) return false;
+				}
+				return true;
+			}
+		} else if (isDate(o1)) {
+			if (!isDate(o2)) return false;
+			// @ts-ignore
+			return simpleCompare(o1.getTime(), o2.getTime());
+		} else if (isRegExp(o1)) {
+			if (!isRegExp(o2)) return false;
+			return o1.toString() === o2.toString();
+		} else {
+			if (isWindow(o1) || isWindow(o2) || Array.isArray(o2) || isDate(o2) || isRegExp(o2)) return false;
+			keySet = Object.create(null);
+			for (let key in o1) {
+				if (key.charAt(0) === '$' || isFunction(o1[key])) continue;
+				// @ts-ignore
+				if (!isEqual(o1[key], o2[key])) return false;
+				keySet[key] = true;
+			}
+			for (key in o2) {
+				if (!(key in keySet) && key.charAt(0) !== '$' && !isUndefined(o2[key]) && !isFunction(o2[key])) return false;
+			}
+			return true;
 		}
-		return true;
 	}
-	if (isDate(val1) && isDate(val2)) return is(val1.getTime(), val2.getTime());
-	/** TODO:
-	 * Really not sure about this function check.
-	 * It works, but the intent isn't solid yet.
-	 * Keeping around for now...
-	 **/
-	if (isFunction(val1) && isFunction(val2)) return is(val1.toString(), val2.toString());
 	return false;
 }
 

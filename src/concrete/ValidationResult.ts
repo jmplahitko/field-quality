@@ -6,11 +6,11 @@ export default class ValidationResult {
 	public errors: { [qualifierName: string]: string } = {};
 	public warnings: { [qualifierName: string]: string } = {};
 	public propertyName: string;
-	readonly value: any;
+	public value: any;
 
-	constructor(propertyName: string, value: any) {
+	constructor(propertyName: string, value?: any) {
 		this.propertyName = propertyName;
-		this.value = value;
+		this.value = value ?? null;
 	}
 
 	public get isValid(): boolean {
@@ -39,7 +39,7 @@ export default class ValidationResult {
 			dest.warnings = { ...dest.warnings, ...src.warnings };
 			return dest;
 		} else {
-			throw new Error('ValidationResult cannot merge the same instance into itself.')
+			return dest;
 		}
 	}
 }

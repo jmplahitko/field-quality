@@ -8,16 +8,25 @@ import copy from '../utils/copy';
 import ValidationResultList from './ValidationResultList';
 import getProperty from '../utils/getProperty';
 import normalizeValidateArgs from '../utils/normalizeValidateArgs';
-import ValidationResult from './ValidationResult';
+import { isEqual } from '../utils/quality';
 
 
 export default class Validator implements IValidatable {
-	public name!: string | undefined;
+	private _name!: string | undefined;
 	private _results: ValidationResultList = new ValidationResultList();
 	private _rules: TRuleCollection = {};
 
 	constructor() {
 
+	}
+
+	public get name() {
+		return this._name;
+	}
+
+	public set name(name: string | undefined) {
+		this._name = name;
+		this._results.propertyName = name;
 	}
 
 	protected ruleFor(propertyName: string): Rule {
@@ -28,8 +37,6 @@ export default class Validator implements IValidatable {
 		} else {
 			this._rules[propertyName].push(rule);
 		}
-
-		this._results.push(new ValidationResult(propertyName, null));
 
 		return rule;
 	}
@@ -43,20 +50,24 @@ export default class Validator implements IValidatable {
 			this._rules[propertyName].push(rule);
 		}
 
-		this._results.push(new ValidationResult(propertyName, null));
-
 		return rule;
 	}
 
 	public validateProperty(propertyName: string, parentValue: any, customOptions?: any): ValidationResultList {
+		const prevResult = this._results.get(propertyName);
 		const value = getProperty(parentValue, propertyName);
-		let rules = this._rules[propertyName];
+		let resultList;
 
-		let resultList = new ValidationResultList([], propertyName, value);
+		if (prevResult && isEqual(prevResult.value, value)) {
+			resultList = this._results.getWithRelatedResults(propertyName);
+		} else {
+			const rules = this._rules[propertyName];
+			resultList = new ValidationResultList([], propertyName, value);
 
-		for (let rule of rules) {
-			let _results = rule.validate(value, parentValue, customOptions);
-			resultList = resultList.merge(_results);
+			for (let rule of rules) {
+				let _results = rule.validate(value, parentValue, customOptions);
+				resultList = resultList.merge(_results);
+			}
 		}
 
 		return resultList;
@@ -78,6 +89,8 @@ export default class Validator implements IValidatable {
 			resultList.propertyName = this.name;
 			resultList.forEach(result => result.propertyName = `${this.name}.${result.propertyName}`);
 		}
+
+		this._results = resultList;
 
 		return resultList;
 	}

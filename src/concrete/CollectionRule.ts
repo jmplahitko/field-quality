@@ -35,58 +35,53 @@ export default class CollectionRule extends Rule {
 			filter
 		};
 
-		this._subsetRules.set(rule, meta);
 		define(rule);
+		this._subsetRules.set(rule, meta);
 
 		return this;
 	}
 
-	protected __runSubsetRules(collection: Array<any>, parentValue: any, customOptions: any): ValidationResultList {
-		let resultList = new ValidationResultList([], this.name, collection);
-
+	protected __runSubsetRules(value: any, index: number, collection: [], parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
 		for (let [rule, meta] of this._subsetRules) {
-			let filteredCollection = collection.filter((value: any, index: number) => meta.filter(value, index, collection, parentValue, customOptions));
-
-			for (let value of filteredCollection) {
-				let index = collection.indexOf(value);
-				let _results = rule.validate(value, value, customOptions);
-				_results.forEach((result: ValidationResult) => result.propertyName = `${result.propertyName}[${index}]`);
-				resultList = resultList.merge(_results);
+			if (meta.filter(value, index, collection, parentValue, customOptions)) {
+				let resultList = rule.validate(value, parentValue, customOptions);
+				results.merge(resultList);
 			}
 		}
 
-		return resultList;
+		return results;
 	}
 
-	public validate(collection: any[], parentValue?: any, customOptions?: any): ValidationResultList {
-		collection = copy(collection);
-		parentValue = copy(parentValue);
-		let resultList = new ValidationResultList([], this.name, collection);
-
+	protected __getPropertyResults(collection: [], parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
 		if (isArray(collection)) {
 			for (let value of collection) {
-				let index = collection.indexOf(value);
-				let qualifierResultList = this.__runQualifiers(value, parentValue, customOptions);
-				qualifierResultList.forEach(result => result.propertyName = `${this.name}[${index}]`);
-				resultList = resultList.merge(qualifierResultList);
+				const index = collection.indexOf(value);
+				const propertyName = `${this.name}[${index}]`;
+				let resultList = new ValidationResultList([], propertyName);
+				this.__runQualifiers(value, parentValue, customOptions, resultList);
 
-				if (qualifierResultList.isValid || !this._stopOnFirstFailure) {
-					const validatableResultList = this.__runValidators(value, parentValue, customOptions);
-					validatableResultList.forEach(result => result.propertyName = `${this.name}[${index}].${result.propertyName}`);
-					resultList = resultList.merge(validatableResultList);
+				if (resultList.isValid || !this._stopOnFirstFailure) {
+					this.__runValidators(value, parentValue, customOptions, resultList);
+
+					if (resultList.isValid || !this._stopOnFirstFailure) {
+						this.__runSubsetRules(value, index, collection, parentValue, customOptions, resultList);
+					}
 				}
-			}
 
-			if (resultList.isValid || !this._stopOnFirstFailure) {
-				const _results = this.__runSubsetRules(collection, parentValue, customOptions);
-				resultList = resultList.merge(_results);
+				resultList.forEach((result, ndx) => {
+					// a little nasty, but at this time we know the first result in this._results describes the collection itself,
+					// and not the values it contains.
+					result.propertyName = `${propertyName}${ndx > 0 ? `.${result.propertyName}` : ''}`;
+				});
+
+				results = results.merge(resultList);
 			}
 		} else {
 			const result = new ValidationResult(this.name, collection);
 			result.errors['beCollection'] = `${this.name} must be a collection.`;
-			resultList.push(result);
+			results.push(result);
 		}
 
-		return resultList;
+		return results;
 	}
 }

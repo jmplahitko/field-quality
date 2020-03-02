@@ -19,6 +19,11 @@ export default class ValidationResultList {
 		return this._entries.length;
 	}
 
+	public clear() {
+		this._entries = [];
+		this.value = null;
+	}
+
 	public push(result: ValidationResult) {
 		let existingResult = this.get(result.propertyName);
 		if (existingResult) {
@@ -28,7 +33,7 @@ export default class ValidationResultList {
 		}
 	}
 
-	public forEach(cb: (result: ValidationResult) => void) {
+	public forEach(cb: (value: ValidationResult, index: number, array: ValidationResult[]) => void) {
 		this._entries.forEach(cb);
 	}
 
@@ -46,6 +51,25 @@ export default class ValidationResultList {
 
 	public get(propertyName: string): ValidationResult | void {
 		return this._entries.find(x => x.propertyName === propertyName);
+	}
+
+	public getWithRelatedResults(propertyName: string): ValidationResultList {
+		const found = new ValidationResultList([], propertyName);
+		const exactResult = this.get(propertyName);
+
+		if (exactResult) {
+			found.value = exactResult.value;
+			found.push(exactResult);
+		}
+
+		this._entries.forEach(x => {
+			const match = x.propertyName.match(new RegExp(`^${propertyName}[\.|\[]`));
+			if (match) {
+				found.push(x);
+			}
+		});
+
+		return found;
 	}
 
 	public merge(resultList: ValidationResultList) {
@@ -70,7 +94,7 @@ export default class ValidationResultList {
 
 			return dest;
 		} else {
-			throw new Error('ValidationResult cannot merge the same instance into itself.')
+			return dest;
 		}
 	}
 }
