@@ -9,7 +9,9 @@
 	"license": "MIT",
 	"types": "dist/index.d.ts",
 	"main": "dist/index.js",
-	"engines" : { "node" : ">=12.16.1" },
+	"engines": {
+		"node": ">=12.16.1"
+	},
 	"devDependencies": {
 		"@babel/cli": "^7.2.3",
 		"@babel/core": "^7.2.2",
@@ -19,6 +21,7 @@
 		"@babel/preset-typescript": "^7.1.0",
 		"@types/jasmine": "^3.5.6",
 		"@types/node": "^11.9.0",
+		"benchmark": "^2.1.4",
 		"eslint": "^5.16.0",
 		"jasmine": "^3.3.1",
 		"jasmine-ts": "^0.3.0",
