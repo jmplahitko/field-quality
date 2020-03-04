@@ -3,17 +3,10 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = copy;
+exports["default"] = copy;
 
 var _quality = require("./quality");
 
-var isArray = _quality.quality.isArray,
-    isBufferArray = _quality.quality.isBufferArray,
-    isBlankObject = _quality.quality.isBlankObject,
-    isFunction = _quality.quality.isFunction,
-    isObject = _quality.quality.isObject,
-    isTypedArray = _quality.quality.isTypedArray,
-    isWindow = _quality.quality.isWindow;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function copy(source, destination) {
@@ -21,7 +14,7 @@ function copy(source, destination) {
   var stackDest = [];
 
   if (destination) {
-    if (isTypedArray(destination) || isBufferArray(destination)) {
+    if ((0, _quality.isTypedArray)(destination) || (0, _quality.isBufferArray)(destination)) {
       throw new Error('copy: TypedArray destination cannot be mutated');
     }
 
@@ -30,7 +23,7 @@ function copy(source, destination) {
     } // Empty the destination object
 
 
-    if (isArray(destination)) {
+    if ((0, _quality.isArray)(destination)) {
       destination.length = 0;
     } else {
       Object.keys(destination).forEach(function (key) {
@@ -51,11 +44,11 @@ function copy(source, destination) {
     var h = destination.$$hashKey;
     var key;
 
-    if (isArray(source)) {
+    if ((0, _quality.isArray)(source)) {
       for (var i = 0, ii = source.length; i < ii; i++) {
         destination.push(copyElement(source[i]));
       }
-    } else if (isBlankObject(source)) {
+    } else if ((0, _quality.isBlankObject)(source)) {
       // createMap() fast path --- Safe to avoid hasOwnProperty check because prototype chain is empty
       for (key in source) {
         destination[key] = copyElement(source[key]);
@@ -81,7 +74,7 @@ function copy(source, destination) {
 
   function copyElement(source) {
     // Simple values
-    if (!isObject(source) && !isArray(source)) {
+    if (!(0, _quality.isObject)(source) && !(0, _quality.isArray)(source)) {
       return source;
     } // Already copied values
 
@@ -92,7 +85,7 @@ function copy(source, destination) {
       return stackDest[index];
     }
 
-    if (isWindow(source)) {
+    if ((0, _quality.isWindow)(source)) {
       throw new Error('copy: Cannot making copies of Window.');
     }
 
@@ -100,7 +93,7 @@ function copy(source, destination) {
     var destination = copyType(source);
 
     if (destination === undefined) {
-      destination = isArray(source) ? [] : Object.create(Object.getPrototypeOf(source));
+      destination = (0, _quality.isArray)(source) ? [] : Object.create(Object.getPrototypeOf(source));
       needsRecurse = true;
     }
 
@@ -149,7 +142,7 @@ function copy(source, destination) {
         });
     }
 
-    if (isFunction(source.cloneNode)) {
+    if ((0, _quality.isFunction)(source.cloneNode)) {
       return source.cloneNode(true);
     }
   }

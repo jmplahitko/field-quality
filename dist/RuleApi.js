@@ -3,7 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.RuleApi = void 0;
+exports["default"] = void 0;
+
+var _Severity = _interopRequireDefault(require("./Severity"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -13,9 +17,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var RuleApi =
-/*#__PURE__*/
-function () {
+var RuleApi = /*#__PURE__*/function () {
   function RuleApi(validatable, meta) {
     _classCallCheck(this, RuleApi);
 
@@ -30,7 +32,7 @@ function () {
   _createClass(RuleApi, [{
     key: "enum",
     value: function _enum(allowedValues) {
-      return this.__rule.enum(allowedValues);
+      return this.__rule["enum"](allowedValues);
     }
   }, {
     key: "length",
@@ -104,6 +106,11 @@ function () {
       return this;
     }
   }, {
+    key: "asWarning",
+    value: function asWarning() {
+      this.__meta.severity = _Severity["default"].warning;
+    }
+  }, {
     key: "when",
     value: function when(precondition) {
       this.__meta.precondition = precondition;
@@ -120,4 +127,4 @@ function () {
   return RuleApi;
 }();
 
-exports.RuleApi = RuleApi;
+exports["default"] = RuleApi;

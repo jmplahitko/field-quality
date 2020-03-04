@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = split;
+exports["default"] = split;
 
 function split(arr, ndx) {
   var head = arr.slice(0, ndx);

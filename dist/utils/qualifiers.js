@@ -3,26 +3,26 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.qualifiers = void 0;
-
-var _util = require("util");
+exports.beBoolean = beBoolean;
+exports.beInRange = beInRange;
+exports.beValidEnum = beValidEnum;
+exports.length = length;
+exports.lengthOrEmpty = lengthOrEmpty;
+exports.match = match;
+exports.max = max;
+exports.min = min;
+exports.notNull = notNull;
+exports.notEmpty = notEmpty;
 
 var _quality = require("./quality");
 
-var isArray = _quality.quality.isArray,
-    isBoolean = _quality.quality.isBoolean,
-    isEmpty = _quality.quality.isEmpty,
-    isNull = _quality.quality.isNull,
-    isNumber = _quality.quality.isNumber,
-    isString = _quality.quality.isString;
-
 function beBoolean(value) {
-  return isBoolean(value);
+  return (0, _quality.isBoolean)(value);
 }
 
 function beInRange(num1, num2) {
   return function beInRange(value) {
-    return isNumber(value) && !isNaN(value) ? value >= num1 && value <= num2 : false;
+    return (0, _quality.isNumber)(value) && !isNaN(value) ? value >= num1 && value <= num2 : false;
   };
 }
 
@@ -34,16 +34,16 @@ function beValidEnum(arr) {
 
 function length(num1, num2) {
   return function beValidLength(value) {
-    return (isString(value) || isArray(value)) && isNumber(value.length) ? value.length >= num1 && value.length <= num2 : false;
+    return ((0, _quality.isString)(value) || (0, _quality.isArray)(value)) && (0, _quality.isNumber)(value.length) ? value.length >= num1 && value.length <= num2 : false;
   };
 }
 
 function lengthOrEmpty(num1, num2) {
   return function beValidLengthOrEmpty(value) {
-    if (isNull(value) || (0, _util.isUndefined)(value)) {
+    if ((0, _quality.isNull)(value) || (0, _quality.isUndefined)(value)) {
       return true;
     } else {
-      return (isString(value) || isArray(value)) && isNumber(value.length) ? value.length >= num1 && value.length <= num2 : false;
+      return ((0, _quality.isString)(value) || (0, _quality.isArray)(value)) && (0, _quality.isNumber)(value.length) ? value.length >= num1 && value.length <= num2 : false;
     }
   };
 }
@@ -67,23 +67,9 @@ function min(num) {
 }
 
 function notNull(value) {
-  return !isNull(value);
+  return !(0, _quality.isNull)(value);
 }
 
 function notEmpty(value) {
-  return isNull(value) || (0, _util.isUndefined)(value) ? false : !isEmpty(value);
+  return (0, _quality.isNull)(value) || (0, _quality.isUndefined)(value) ? false : !(0, _quality.isEmpty)(value);
 }
-
-var qualifiers = {
-  beBoolean: beBoolean,
-  beInRange: beInRange,
-  beValidEnum: beValidEnum,
-  length: length,
-  lengthOrEmpty: lengthOrEmpty,
-  match: match,
-  max: max,
-  min: min,
-  notNull: notNull,
-  notEmpty: notEmpty
-};
-exports.qualifiers = qualifiers;

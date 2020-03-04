@@ -3,25 +3,29 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Rule = void 0;
+exports["default"] = void 0;
 
-var _ValidationResult = require("./ValidationResult");
+var _RuleApi = _interopRequireDefault(require("./RuleApi"));
 
-var _copy = _interopRequireDefault(require("../utils/copy"));
+var _Severity = _interopRequireDefault(require("./Severity"));
 
-var _qualifiers = require("../utils/qualifiers");
+var _ValidationResult = _interopRequireDefault(require("./ValidationResult"));
 
-var _quality = require("../utils/quality");
+var _ValidationResultList = _interopRequireDefault(require("./ValidationResultList"));
 
-var _RuleApi = require("./RuleApi");
+var _copy = _interopRequireDefault(require("./utils/copy"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _qualifiers = require("./utils/qualifiers");
+
+var _quality = require("./utils/quality");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -33,19 +37,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var _length = _qualifiers.qualifiers.length,
-    match = _qualifiers.qualifiers.match,
-    _max = _qualifiers.qualifiers.max,
-    _min = _qualifiers.qualifiers.min,
-    _notEmpty = _qualifiers.qualifiers.notEmpty,
-    _notNull = _qualifiers.qualifiers.notNull,
-    beValidEnum = _qualifiers.qualifiers.beValidEnum;
-var isEmpty = _quality.quality.isEmpty,
-    isNull = _quality.quality.isNull;
-
-var Rule =
-/*#__PURE__*/
-function () {
+var Rule = /*#__PURE__*/function () {
   _createClass(Rule, [{
     key: "qualifiers",
     get: function get() {
@@ -69,171 +61,171 @@ function () {
 
     _defineProperty(this, "_stopOnFirstFailure", true);
 
-    this.name = name || this.constructor.name;
-    this.define(this);
+    this.name = name || '';
   }
 
   _createClass(Rule, [{
-    key: "define",
-    value: function define(rule) {}
-  }, {
     key: "enum",
     value: function _enum(allowedValues) {
-      var beEnumeratedValue = beValidEnum(allowedValues);
+      var beEnumeratedValue = (0, _qualifiers.beValidEnum)(allowedValues);
       var meta = {
         name: "beEnumeratedValue",
         message: "".concat(this.name, " must be one of the following: \"").concat(allowedValues.join(', '), "\"."),
         precondition: null,
-        isValidIfEmpty: true
+        isValidIfEmpty: true,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(beEnumeratedValue, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "length",
     value: function length(min, max) {
-      var beBetween = _length(min, max);
-
+      var beBetween = (0, _qualifiers.length)(min, max);
       var meta = {
         name: "beBetween".concat(min, "and").concat(max),
         message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max, "."),
         precondition: null,
-        isValidIfEmpty: true
+        isValidIfEmpty: true,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(beBetween, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "lengthOrEmpty",
     value: function lengthOrEmpty(min, max) {
-      var beBetween = _length(min, max);
-
+      var beBetween = (0, _qualifiers.length)(min, max);
       var meta = {
         name: "beBetween".concat(min, "and").concat(max, "OrEmpty"),
         message: "".concat(this.name, " must be between ").concat(min, " and ").concat(max, "."),
         precondition: null,
-        isValidIfEmpty: true
+        isValidIfEmpty: true,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(beBetween, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "matches",
     value: function matches(rx) {
-      var matches = match(rx);
+      var matches = (0, _qualifiers.match)(rx);
 
       var matchRx = function matchRx(val) {
-        return isNull(val) || matches(val);
+        return (0, _quality.isNull)(val) || matches(val);
       };
 
       var meta = {
         name: matchRx.name,
         message: "".concat(this.name, " is an invalid format."),
         precondition: null,
-        isValidIfEmpty: true
+        isValidIfEmpty: true,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(matchRx, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "notNull",
     value: function notNull() {
       var meta = {
-        name: _notNull.name,
+        name: _qualifiers.notNull.name,
         message: "".concat(this.name, " cannot be null."),
         precondition: null,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
 
-      this._qualifiers.set(_notNull, meta);
+      this._qualifiers.set(_qualifiers.notNull, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "notEmpty",
     value: function notEmpty() {
       var meta = {
-        name: _notEmpty.name,
+        name: _qualifiers.notEmpty.name,
         message: "".concat(this.name, " cannot be empty."),
         precondition: null,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
 
-      this._qualifiers.set(_notEmpty, meta);
+      this._qualifiers.set(_qualifiers.notEmpty, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "max",
     value: function max(num) {
-      var beLessThanOrEqual = _max(num);
-
+      var beLessThanOrEqual = (0, _qualifiers.max)(num);
       var meta = {
         name: 'beLessThanOrEqual',
         message: "".concat(this.name, " cannot be greater than or equal to ").concat(num, "."),
         precondition: null,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(beLessThanOrEqual, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "maxExclusiveOf",
     value: function maxExclusiveOf(num) {
-      var beLessThan = _max(num - 1);
-
+      var beLessThan = (0, _qualifiers.max)(num - 1);
       var meta = {
         name: 'beLessThan',
         message: "".concat(this.name, " cannot be greater than ").concat(num, "."),
         precondition: null,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(beLessThan, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "min",
     value: function min(num) {
-      var beGreaterThanOrEqual = _min(num);
-
+      var beGreaterThanOrEqual = (0, _qualifiers.min)(num);
       var meta = {
         name: 'beGreaterThanOrEqual',
         message: "".concat(this.name, " cannot be less than or equal to ").concat(num, "."),
         precondition: null,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(beGreaterThanOrEqual, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "minExclusiveOf",
     value: function minExclusiveOf(num) {
-      var beGreaterThan = _min(num + 1);
-
+      var beGreaterThan = (0, _qualifiers.min)(num + 1);
       var meta = {
         name: 'beGreaterThan',
         message: "".concat(this.name, " cannot be less than ").concat(num, "."),
         precondition: null,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(beGreaterThan, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "must",
@@ -242,12 +234,13 @@ function () {
         name: qualifier.name,
         message: "".concat(this.name, " is invalid."),
         precondition: null,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
 
       this._qualifiers.set(qualifier, meta);
 
-      return new _RuleApi.RuleApi(this, meta);
+      return new _RuleApi["default"](this, meta);
     }
   }, {
     key: "stopOnFirstFailure",
@@ -263,12 +256,15 @@ function () {
   }, {
     key: "using",
     value: function using(validatable) {
+      validatable.name = this.name || validatable.name || '';
       var meta = {
         name: validatable.name,
         message: '',
         precondition: null,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
+      validatable.name = this.name || validatable.name;
 
       this._validators.set(validatable, meta);
 
@@ -282,39 +278,19 @@ function () {
         name: rule.name,
         message: '',
         precondition: precondition,
-        isValidIfEmpty: false
+        isValidIfEmpty: false,
+        severity: _Severity["default"]["default"]
       };
 
       this._validators.set(rule, meta);
 
       define(rule);
       return this;
-    } // TODO: This method is pretty gross. This is just a sketch of the appropriate algorithm, just needs refactored.
-
-  }, {
-    key: "__getValidationResult",
-    value: function __getValidationResult(propValue, parentValue, customOptions) {
-      var result = {
-        errors: {},
-
-        get isValid() {
-          return isEmpty(this.errors);
-        },
-
-        value: propValue // Check qualifiers first
-
-      };
-      result = this.__runQualifiers(result, propValue, parentValue, customOptions);
-
-      if (result.isValid || !this._stopOnFirstFailure) {
-        result = this.__runValidators(result, propValue, parentValue, customOptions);
-      }
-
-      return result;
     }
   }, {
     key: "__runQualifiers",
-    value: function __runQualifiers(result, propValue, parentValue, customOptions) {
+    value: function __runQualifiers(propValue, parentValue, customOptions, results) {
+      var result = new _ValidationResult["default"](this.name, propValue);
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -326,7 +302,7 @@ function () {
               meta = _step$value[1];
 
           // We check if we should run the validator based on whether the property has a value
-          if (isEmpty(propValue) && meta.isValidIfEmpty) {
+          if ((0, _quality.isEmpty)(propValue) && meta.isValidIfEmpty) {
             continue;
           } // We check for a precondition to exist for a qualifier before calling it
 
@@ -335,7 +311,12 @@ function () {
             var isValid = qualifier(propValue, parentValue, customOptions);
 
             if (!isValid) {
-              result.errors[meta.name] = meta.message; // Short-circuit if we have to stopOnFirstFailure
+              if (meta.severity === _Severity["default"].error) {
+                result.errors[meta.name] = meta.message;
+              } else {
+                result.warnings[meta.name] = meta.message;
+              } // Short-circuit if we have to stopOnFirstFailure
+
 
               if (this._stopOnFirstFailure) {
                 break;
@@ -348,8 +329,8 @@ function () {
         _iteratorError = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
           }
         } finally {
           if (_didIteratorError) {
@@ -358,11 +339,12 @@ function () {
         }
       }
 
-      return result;
+      results.push(result);
+      return results;
     }
   }, {
     key: "__runValidators",
-    value: function __runValidators(result, propValue, parentValue, customOptions) {
+    value: function __runValidators(propValue, parentValue, customOptions, results) {
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
@@ -374,16 +356,12 @@ function () {
               meta = _step2$value[1];
 
           if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
-            var _result = validator.validate(propValue, parentValue, customOptions);
+            var _resultList = validator.validate(propValue, parentValue, customOptions);
 
-            if (!_result.isValid) {
-              for (var ruleName in _result.errors) {
-                result.errors[ruleName] = _result.errors[ruleName];
-              }
+            results = results.merge(_resultList);
 
-              if (this._stopOnFirstFailure) {
-                break;
-              }
+            if (!results.isValid && this._stopOnFirstFailure) {
+              break;
             }
           }
         }
@@ -392,8 +370,8 @@ function () {
         _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-            _iterator2.return();
+          if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+            _iterator2["return"]();
           }
         } finally {
           if (_didIteratorError2) {
@@ -402,21 +380,30 @@ function () {
         }
       }
 
-      return result;
+      return results;
+    }
+  }, {
+    key: "__getPropertyResults",
+    value: function __getPropertyResults(value, parentValue, customOptions, results) {
+      results = this.__runQualifiers(value, parentValue, customOptions, results);
+
+      if (results.isValid || !this._stopOnFirstFailure) {
+        results = this.__runValidators(value, parentValue, customOptions, results);
+      }
+
+      return results;
     }
   }, {
     key: "validate",
     value: function validate(value, parentValue, customOptions) {
-      value = (0, _copy.default)(value);
-      parentValue = (0, _copy.default)(parentValue);
-
-      var result = this.__getValidationResult(value, parentValue, customOptions);
-
-      return new _ValidationResult.ValidationResult(result);
+      value = (0, _copy["default"])(value);
+      parentValue = (0, _copy["default"])(parentValue);
+      var results = new _ValidationResultList["default"]([], this.name, value);
+      return this.__getPropertyResults(value, parentValue, customOptions, results);
     }
   }]);
 
   return Rule;
 }();
 
-exports.Rule = Rule;
+exports["default"] = Rule;

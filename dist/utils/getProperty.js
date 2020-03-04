@@ -3,14 +3,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = getProperty;
+exports["default"] = getProperty;
 
 var _quality = require("./quality");
 
-var isObject = _quality.quality.isObject;
-
 function getProperty(obj, prop) {
-  if (!isObject(obj)) {
+  if (!(0, _quality.isObject)(obj)) {
     return;
   }
 
