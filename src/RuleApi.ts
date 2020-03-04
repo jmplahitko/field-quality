@@ -75,6 +75,7 @@ export default class RuleApi {
 
 	public asWarning() {
 		this.__meta.severity = Severity.warning;
+		return this;
 	}
 
 	public when(precondition: TPrecondition) {
