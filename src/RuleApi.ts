@@ -1,11 +1,9 @@
 import Rule from './Rule';
-import { TMeta } from '../abstract/TMeta';
-import { TPrecondition } from '../abstract/TPrecondition';
-import { IValidatable } from '../abstract/IValidatable';
-import { TQualifier } from '../abstract/TQualifier';
-import Severity from '../abstract/Severity';
+import Severity from './Severity';
 
-export class RuleApi {
+import { IValidatable, TMeta, TPrecondition, TQualifier } from './types';
+
+export default class RuleApi {
 	protected __rule: Rule;
 	protected __meta: TMeta;
 

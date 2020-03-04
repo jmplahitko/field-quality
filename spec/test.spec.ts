@@ -26,8 +26,8 @@ describe('normalizeValidateArgs', () => {
 });
 
 
-import ValidationResultList from '../src/concrete/ValidationResultList';
-import ValidationResult from '../src/concrete/ValidationResult';
+import ValidationResultList from '../src/ValidationResultList';
+import ValidationResult from '../src/ValidationResult';
 
 const validationResult1 = new ValidationResult('test1', 1);
 const validationResult2 = new ValidationResult('test2', 2);
@@ -48,7 +48,7 @@ const validationResults = [
 
 let results = new ValidationResultList(validationResults, 'test');
 
-import Rule from '../src/concrete/Rule';
+import Rule from '../src/Rule';
 
 class MinMaxNumberRule extends Rule {
 	constructor(name?: string) {
@@ -75,7 +75,7 @@ class StringLengthRule extends Rule {
 	}
 }
 
-import CollectionRule from '../src/concrete/CollectionRule';
+import CollectionRule from '../src/CollectionRule';
 class NumberCollectionRule extends CollectionRule {
 	constructor(name?: string) {
 		super(name);
@@ -136,7 +136,7 @@ class UsingCustomOptionsTestStringCollectionRule extends CollectionRule {
 	}
 }
 
-import Validator from '../src/concrete/Validator';
+import Validator from '../src/Validator';
 import * as rx from '../src/utils/rx'
 
 class AddressValidator extends Validator {

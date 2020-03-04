@@ -1,15 +1,12 @@
-import { IValidatable } from '../abstract/IValidatable';
-import { TRuleCollection } from '../abstract/TRuleCollection';
-
 import CollectionRule from './CollectionRule';
 import Rule from './Rule';
-
-import copy from '../utils/copy';
 import ValidationResultList from './ValidationResultList';
-import getProperty from '../utils/getProperty';
-import normalizeValidateArgs from '../utils/normalizeValidateArgs';
-import { isEqual } from '../utils/quality';
+import { IValidatable, TRuleCollection } from './types';
 
+import copy from './utils/copy';
+import getProperty from './utils/getProperty';
+import { isEqual } from './utils/quality';
+import normalizeValidateArgs from './utils/normalizeValidateArgs';
 
 export default class Validator implements IValidatable {
 	private _name!: string | undefined;

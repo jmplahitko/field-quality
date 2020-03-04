@@ -1,14 +1,11 @@
-import { IValidatable } from '../abstract/IValidatable';
-
 import Rule from './Rule';
+import Severity from './Severity';
 import ValidationResult from './ValidationResult';
 import ValidationResultList from './ValidationResultList';
 
-import copy from '../utils/copy';
-import { isArray } from '../utils/quality';
-import { TCollectionFilter } from '../abstract/TCollectionFilter';
-import { TSubsetRuleCollection } from '../abstract/TSubsetRuleCollection';
-import Severity from '../abstract/Severity';
+import { IValidatable, TCollectionFilter, TSubsetRuleCollection } from './types';
+
+import { isArray } from './utils/quality';
 
 export default class CollectionRule extends Rule {
 	protected _subsetRules: TSubsetRuleCollection = new Map();

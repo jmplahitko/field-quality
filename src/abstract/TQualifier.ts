@@ -1,1 +1,0 @@
-export type TQualifier = (val: any, entity?: any, customOptions?: any) => boolean;

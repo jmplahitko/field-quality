@@ -1,17 +1,13 @@
-import { IValidatable } from '../abstract/IValidatable';
-import { TQualifier } from '../abstract/TQualifier';
-import { TQualifierCollection } from '../abstract/TQualifierCollection';
-import { TValidatorCollection } from '../abstract/TValidatorCollection';
-
+import RuleApi from './RuleApi';
+import Severity from './Severity';
 import ValidationResult from './ValidationResult';
-
-import copy from '../utils/copy';
-import { length, match, max, min, notEmpty, notNull, beValidEnum } from '../utils/qualifiers';
-import { isEmpty, isNull } from '../utils/quality';
-import { RuleApi } from './RuleApi';
-import { TPrecondition } from '../abstract/TPrecondition';
-import Severity from '../abstract/Severity';
 import ValidationResultList from './ValidationResultList';
+
+import { IValidatable, TPrecondition, TQualifier, TQualifierCollection, TValidatorCollection } from './types';
+
+import copy from './utils/copy';
+import { length, match, max, min, notEmpty, notNull, beValidEnum } from './utils/qualifiers';
+import { isEmpty, isNull } from './utils/quality';
 
 export default class Rule implements IValidatable {
 	public name: string;

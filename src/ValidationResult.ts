@@ -1,6 +1,6 @@
-import { isEmpty } from '../utils/quality';
 import ValidationResultList from './ValidationResultList';
 
+import { isEmpty } from './utils/quality';
 
 export default class ValidationResult {
 	public errors: { [qualifierName: string]: string } = {};

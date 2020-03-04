@@ -1,1 +1,0 @@
-export type TPrecondition = (parentValue?: any, customOptions?: any) => boolean;
