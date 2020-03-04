@@ -1,7 +1,7 @@
 import Rule from './Rule';
 import Severity from './Severity';
 
-import { IValidatable, TMeta, TPrecondition, TQualifier } from './types';
+import { IValidatable, TMessageFactory, TMeta, TPrecondition, TQualifier } from './types';
 
 export default class RuleApi {
 	protected __rule: Rule;
@@ -82,7 +82,7 @@ export default class RuleApi {
 		return this;
 	}
 
-	public withMessage(message: string) {
+	public withMessage(message: TMessageFactory) {
 		this.__meta.message = message;
 		return this;
 	}

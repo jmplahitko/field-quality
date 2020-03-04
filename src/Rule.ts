@@ -32,7 +32,7 @@ export default class Rule implements IValidatable {
 
 		let meta = {
 			name: `beEnumeratedValue`,
-			message: `${this.name} must be one of the following: "${allowedValues.join(', ')}".`,
+			message: () =>  `${this.name} must be one of the following: "${allowedValues.join(', ')}".`,
 			precondition: null,
 			isValidIfEmpty: true,
 			severity: Severity.default
@@ -47,7 +47,7 @@ export default class Rule implements IValidatable {
 		let beBetween = length(min, max);
 		let meta = {
 			name: `beBetween${min}and${max}`,
-			message: `${this.name} must be between ${min} and ${max}.`,
+			message: () =>  `${this.name} must be between ${min} and ${max}.`,
 			precondition: null,
 			isValidIfEmpty: true,
 			severity: Severity.default
@@ -62,7 +62,7 @@ export default class Rule implements IValidatable {
 		let beBetween = length(min, max);
 		let meta = {
 			name: `beBetween${min}and${max}OrEmpty`,
-			message: `${this.name} must be between ${min} and ${max}.`,
+			message: () =>  `${this.name} must be between ${min} and ${max}.`,
 			precondition: null,
 			isValidIfEmpty: true,
 			severity: Severity.default
@@ -78,7 +78,7 @@ export default class Rule implements IValidatable {
 		let matchRx = (val: any) => isNull(val) || matches(val);
 		let meta = {
 			name: matchRx.name,
-			message: `${this.name} is an invalid format.`,
+			message: () =>  `${this.name} is an invalid format.`,
 			precondition: null,
 			isValidIfEmpty: true,
 			severity: Severity.default
@@ -92,7 +92,7 @@ export default class Rule implements IValidatable {
 	public notNull() {
 		let meta = {
 			name: notNull.name,
-			message: `${this.name} cannot be null.`,
+			message: () =>  `${this.name} cannot be null.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -106,7 +106,7 @@ export default class Rule implements IValidatable {
 	public notEmpty() {
 		let meta = {
 			name: notEmpty.name,
-			message: `${this.name} cannot be empty.`,
+			message: () =>  `${this.name} cannot be empty.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -122,7 +122,7 @@ export default class Rule implements IValidatable {
 
 		let meta = {
 			name: 'beLessThanOrEqual',
-			message: `${this.name} cannot be greater than or equal to ${num}.`,
+			message: () =>  `${this.name} cannot be greater than or equal to ${num}.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -138,7 +138,7 @@ export default class Rule implements IValidatable {
 
 		let meta = {
 			name: 'beLessThan',
-			message: `${this.name} cannot be greater than ${num}.`,
+			message: () =>  `${this.name} cannot be greater than ${num}.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -154,7 +154,7 @@ export default class Rule implements IValidatable {
 
 		let meta = {
 			name: 'beGreaterThanOrEqual',
-			message: `${this.name} cannot be less than or equal to ${num}.`,
+			message: () =>  `${this.name} cannot be less than or equal to ${num}.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -170,7 +170,7 @@ export default class Rule implements IValidatable {
 
 		let meta = {
 			name: 'beGreaterThan',
-			message: `${this.name} cannot be less than ${num}.`,
+			message: () =>  `${this.name} cannot be less than ${num}.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -184,7 +184,7 @@ export default class Rule implements IValidatable {
 	public must(qualifier: TQualifier) {
 		let meta = {
 			name: qualifier.name,
-			message: `${this.name} is invalid.`,
+			message: () =>  `${this.name} is invalid.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -209,7 +209,7 @@ export default class Rule implements IValidatable {
 
 		let meta = {
 			name: validatable.name,
-			message: '',
+			message: () =>  '',
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -225,7 +225,7 @@ export default class Rule implements IValidatable {
 		let rule = new Rule(this.name);
 		let meta = {
 			name: rule.name,
-			message: '',
+			message: () =>  '',
 			precondition,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -252,9 +252,9 @@ export default class Rule implements IValidatable {
 
 				if (!isValid) {
 					if (meta.severity === Severity.error) {
-						result.errors[meta.name] = meta.message;
+						result.errors[meta.name] = meta.message(propValue, parentValue, customOptions);
 					} else {
-						result.warnings[meta.name] = meta.message;
+						result.warnings[meta.name] = meta.message(propValue, parentValue, customOptions);
 					}
 
 					// Short-circuit if we have to stopOnFirstFailure

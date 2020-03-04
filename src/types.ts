@@ -14,9 +14,11 @@ export type TErrorCollection = {
 	[ruleName: string]: string;
 };
 
+export type TMessageFactory = (value?: any, parentValue?: any, customOptions?: any) => string;
+
 export type TMeta = {
 	name: string;
-	message: string;
+	message: TMessageFactory;
 	precondition: TPrecondition | null;
 	isValidIfEmpty: boolean;
 	severity: Severity;

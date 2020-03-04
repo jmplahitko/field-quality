@@ -15,7 +15,7 @@ export default class CollectionRule extends Rule {
 
 		let meta = {
 			name: validatable.name,
-			message: '',
+			message: () => '',
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
