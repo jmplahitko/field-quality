@@ -53,16 +53,22 @@ export default class Validator implements IValidatable {
 		return rule;
 	}
 
-	public validateProperty(propertyName: string, parentValue: any, customOptions?: any): ValidationResultList {
+	public validateProperty(propertyName: string, parentValue: any, customOptions?: any, outResultList?: ValidationResultList): ValidationResultList {
 		const prevResult = this._results.get(propertyName);
 		const value = getProperty(parentValue, propertyName);
 		let resultList;
 
+		if (outResultList) {
+			resultList = outResultList;
+			resultList.removeWithRelatedResults(propertyName);
+		} else {
+			resultList = new ValidationResultList([], propertyName, value);
+		}
+
 		if (prevResult && isEqual(prevResult.value, value)) {
-			resultList = this._results.getWithRelatedResults(propertyName);
+			resultList.merge(this._results.getWithRelatedResults(propertyName));
 		} else {
 			const rules = this._rules[propertyName];
-			resultList = new ValidationResultList([], propertyName, value);
 
 			for (let rule of rules) {
 				let _results = rule.validate(value, parentValue, customOptions);
@@ -90,7 +96,9 @@ export default class Validator implements IValidatable {
 			resultList.forEach(result => result.propertyName = `${this.name}.${result.propertyName}`);
 		}
 
-		this._results = resultList;
+		this._results.clear();
+		this._results.value = _value;
+		this._results.merge(resultList);
 
 		return resultList;
 	}

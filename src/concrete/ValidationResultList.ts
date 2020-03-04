@@ -19,20 +19,6 @@ export default class ValidationResultList {
 		return this._entries.length;
 	}
 
-	public clear() {
-		this._entries = [];
-		this.value = null;
-	}
-
-	public push(result: ValidationResult) {
-		let existingResult = this.get(result.propertyName);
-		if (existingResult) {
-			existingResult = existingResult.merge(result);
-		} else {
-			this._entries.push(result);
-		}
-	}
-
 	public forEach(cb: (value: ValidationResult, index: number, array: ValidationResult[]) => void) {
 		this._entries.forEach(cb);
 	}
@@ -47,6 +33,10 @@ export default class ValidationResultList {
 
 	public get withWarnings(): ValidationResultList {
 		return new ValidationResultList(this._entries.filter(x => x.warningCount > 0), this.propertyName, this.value);
+	}
+	public clear() {
+		this._entries = [];
+		this.value = null;
 	}
 
 	public get(propertyName: string): ValidationResult | void {
@@ -63,8 +53,8 @@ export default class ValidationResultList {
 		}
 
 		this._entries.forEach(x => {
-			const match = x.propertyName.match(new RegExp(`^${propertyName}[\.|\[]`));
-			if (match) {
+			const matches = new RegExp(`^${propertyName}[\.|\[]`).test(x.propertyName);
+			if (matches) {
 				found.push(x);
 			}
 		});
@@ -74,6 +64,46 @@ export default class ValidationResultList {
 
 	public merge(resultList: ValidationResultList) {
 		return ValidationResultList.merge(this, resultList);
+	}
+
+	public push(result: ValidationResult) {
+		let existingResult = this.get(result.propertyName);
+		if (existingResult) {
+			existingResult = existingResult.merge(result);
+		} else {
+			this._entries.push(result);
+		}
+	}
+
+	public remove(propertyName: string): ValidationResult | null {
+		const index = this._entries.findIndex((entry) => entry.propertyName === propertyName);
+		let removed = null;
+
+		if (index !== null) {
+			removed = this._entries.splice(index, 1);
+			return removed[0];
+		}
+
+		return removed;
+	}
+
+	public removeWithRelatedResults(propertyName: string): ValidationResultList {
+		const removed = new ValidationResultList([], propertyName);
+		const exactMatch = this.remove(propertyName);
+		if (exactMatch) {
+			removed.value = exactMatch.value;
+			removed.push(exactMatch);
+		}
+
+		this._entries = this._entries.filter(x => {
+			const matches = new RegExp(`^${propertyName}[\.|\[]`).test(x.propertyName);
+			if (matches) {
+				removed.push(x);
+			}
+			return !matches;
+		});
+
+		return removed;
 	}
 
 	public toArray(): ValidationResult[] {

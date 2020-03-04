@@ -342,9 +342,90 @@ describe('ValidationResultList', () => {
 			'phone[1].display',
 		]))
 	});
+
 	it('should provide results as an object', () => {
 		const resultsObject = results.toObject();
 		expect(Object.keys(resultsObject)).toEqual(['test1', 'test2', 'test3', 'test4'])
+	});
+
+	it('should remove a specific property result', () => {
+		const validator = new ContactValidator();
+		const contact = {
+			address: {
+				line1: '100 E Street',
+				line2: 'P.O. Box 3',
+				city: 'Indianapolis',
+				state: 'IN',
+				zip: 46234
+			},
+			phone: [
+				{
+					type: 'cell',
+					value: 3175555555,
+					display: 'Work'
+				},
+				{
+					type: 'home',
+					value: 3175555555,
+					display: 'Work'
+				}
+			]
+		}
+		const result = validator.validate(contact);
+		const removed = result.remove('phone');
+		expect(Object.keys(result.toObject())).not.toContain('phone');
+		expect(removed).not.toEqual(null);
+		//@ts-ignore
+		expect(removed.propertyName).toEqual('phone');
+		//@ts-ignore
+		expect(removed.value).toEqual(contact.phone);
+	});
+
+	it('should remove a result and its related results', () => {
+		const validator = new ContactValidator();
+		const contact = {
+			address: {
+				line1: '100 E Street',
+				line2: 'P.O. Box 3',
+				city: 'Indianapolis',
+				state: 'IN',
+				zip: 46234
+			},
+			phone: [
+				{
+					type: 'cell',
+					value: 3175555555,
+					display: 'Work'
+				},
+				{
+					type: 'home',
+					value: 3175555555,
+					display: 'Work'
+				}
+			]
+		}
+		const result = validator.validate(contact);
+		const removed = result.removeWithRelatedResults('address');
+		expect(Object.keys(result.toObject())).not.toContain(jasmine.arrayWithExactContents([
+			'address',
+			'address.line1',
+			'address.line2',
+			'address.city',
+			'address.state',
+			'address.zip',
+		]));
+
+		expect(Object.keys(removed.toObject())).toEqual(jasmine.arrayWithExactContents([
+			'address',
+			'address.line1',
+			'address.line2',
+			'address.city',
+			'address.state',
+			'address.zip',
+		]));
+
+		expect(removed.propertyName).toBe('address');
+		expect(removed.value).toEqual(contact.address);
 	});
 });
 
@@ -583,5 +664,63 @@ describe('Validator', () => {
 		expect(results1.get('phone[0]')).not.toBe(results2.get('phone[0]'));
 		expect(results1.get('phone[1]')).not.toBe(results2.get('phone[1]'));
 		expect(results2.get('phone[2]')).toBeUndefined();
+	});
+
+	it('should update an existing result list when validating a property', () => {
+		const validator = new ContactValidator();
+		const contact = {
+			address: {
+				line1: '100 E Street',
+				line2: 'P.O. Box 3',
+				city: 'Indianapolis',
+				state: 'IN',
+			},
+			phone: [
+				{
+					type: 'work',
+					value: 3175555555,
+					display: 'Work'
+				},
+				{
+					type: 'cell',
+					value: 3175555555,
+					display: 'Work'
+				},
+				{
+					type: 'home',
+					value: 3175555555,
+					display: 'Work'
+				}
+			]
+		};
+
+		const withNewPhoneValue = {
+			address: {
+				line1: '100 E Street',
+				line2: 'P.O. Box 3',
+				city: 'Indianapolis',
+				state: 'IN',
+			},
+			phone: [
+				{
+					type: 'cell',
+					value: 3175555555,
+					display: 'Work'
+				},
+				{
+					type: 'home',
+					value: 3175555555,
+					display: 'Work'
+				}
+			]
+		};
+
+		const result1 = validator.validate(contact);
+		expect(result1.getWithRelatedResults('phone').isValid).toBe(false);
+
+		const result2 = validator.validateProperty('phone', withNewPhoneValue, null, result1);
+
+		expect(result2.getWithRelatedResults('phone').isValid).toBe(true);
+		expect(result1).toBe(result2);
 	});
 });
