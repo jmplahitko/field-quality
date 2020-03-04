@@ -1,0 +1,10 @@
+export declare function beBoolean(value: any): boolean;
+export declare function beInRange(num1: number, num2: number): (value: any) => boolean;
+export declare function beValidEnum(arr: Array<string | number>): (value: any) => boolean;
+export declare function length(num1: number, num2: number): (value: any) => boolean;
+export declare function lengthOrEmpty(num1: number, num2: number): (value: any) => boolean;
+export declare function match(rx: RegExp): (value: any) => boolean;
+export declare function max(num: number): (val: number) => boolean;
+export declare function min(num: number): (val: number) => boolean;
+export declare function notNull(value: any): boolean;
+export declare function notEmpty(value: any): boolean;

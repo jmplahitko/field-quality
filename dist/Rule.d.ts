@@ -1,0 +1,31 @@
+import RuleApi from './RuleApi';
+import ValidationResultList from './ValidationResultList';
+import { IValidatable, TPrecondition, TQualifier, TQualifierCollection, TValidatorCollection } from './types';
+export default class Rule implements IValidatable {
+    name: string;
+    protected _qualifiers: TQualifierCollection;
+    protected _validators: TValidatorCollection;
+    protected _stopOnFirstFailure: boolean;
+    get qualifiers(): TQualifierCollection;
+    get validators(): TValidatorCollection;
+    constructor(name?: string);
+    enum(allowedValues: Array<string | number>): RuleApi;
+    length(min: number, max: number): RuleApi;
+    lengthOrEmpty(min: number, max: number): RuleApi;
+    matches(rx: RegExp): RuleApi;
+    notNull(): RuleApi;
+    notEmpty(): RuleApi;
+    max(num: number): RuleApi;
+    maxExclusiveOf(num: number): RuleApi;
+    min(num: number): RuleApi;
+    minExclusiveOf(num: number): RuleApi;
+    must(qualifier: TQualifier): RuleApi;
+    stopOnFirstFailure(): void;
+    cascade(): void;
+    using(validatable: IValidatable): Rule;
+    if(precondition: TPrecondition, define: (rule: Rule) => void): Rule;
+    protected __runQualifiers(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList;
+    protected __runValidators(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList;
+    protected __getPropertyResults(value: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList;
+    validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList;
+}

@@ -12,7 +12,9 @@
 		"strict": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators" : true,
-		"downlevelIteration": true
+		"downlevelIteration": true,
+		"baseUrl": "./",
+		"paths": {}
 	},
 	"include": ["src/**/*"]
 }

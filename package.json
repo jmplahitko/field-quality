@@ -31,7 +31,9 @@
 		"typescript": "^3.8.2"
 	},
 	"scripts": {
-		"build": "rimraf dist/* && npm run type-check && babel src --out-dir dist --extensions \".ts,.tsx\"",
+		"build": "rimraf dist/* && npm run build:types && npm run build:js",
+		"build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
+		"build:types": "tsc --emitDeclarationOnly",
 		"review": "npm run type-check && npm run test",
 		"test": "jasmine-ts \"spec/test.spec.js\"",
 		"type-check": "tsc --noEmit",
