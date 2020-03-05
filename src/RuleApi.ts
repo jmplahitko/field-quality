@@ -1,13 +1,13 @@
 import Rule from './Rule';
 import Severity from './Severity';
 
-import { IValidatable, TMessageFactory, TMeta, TPrecondition, TQualifier } from './types';
+import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TQualifier } from './types';
 
-export default class RuleApi {
+export default class RuleApi<TParentValue, TCustomOptions> {
 	protected __rule: Rule;
-	protected __meta: TMeta;
+	protected __meta: TValidatableMetadata;
 
-	constructor(validatable: Rule, meta: TMeta) {
+	constructor(validatable: Rule<TParentValue, TCustomOptions>, meta: TValidatableMetadata<TParentValue, TCustomOptions>) {
 		this.__rule = validatable;
 		this.__meta = meta;
 	}
@@ -16,15 +16,15 @@ export default class RuleApi {
 		return this.__rule.enum(allowedValues);
 	}
 
-	public length(min: number, max: number): RuleApi {
+	public length(min: number, max: number): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.length(min, max);
 	}
 
-	public lengthOrEmpty(min: number, max: number): RuleApi {
+	public lengthOrEmpty(min: number, max: number): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.lengthOrEmpty(min, max)
 	}
 
-	public matches(rx: RegExp): RuleApi {
+	public matches(rx: RegExp): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.matches(rx);
 	}
 
@@ -44,20 +44,16 @@ export default class RuleApi {
 		return this.__rule.minExclusiveOf(num);
 	}
 
-	public must(qualifier: TQualifier): RuleApi {
+	public must(qualifier: TQualifier): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.must(qualifier);
 	}
 
-	public notNull(): RuleApi {
+	public notNull(): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.notNull();
 	}
 
-	public notEmpty(): RuleApi {
+	public notEmpty(): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.notEmpty();
-	}
-
-	public stopOnFirstFailure(): void {
-		return this.__rule.stopOnFirstFailure();
 	}
 
 	public cascade(): void {
@@ -78,12 +74,12 @@ export default class RuleApi {
 		return this;
 	}
 
-	public when(precondition: TPrecondition) {
+	public when(precondition: TPrecondition<TParentValue, TCustomOptions>) {
 		this.__meta.precondition = precondition;
 		return this;
 	}
 
-	public withMessage(message: TMessageFactory) {
+	public withMessage(message: TMessageFactory<TParentValue, TCustomOptions>) {
 		this.__meta.message = message;
 		return this;
 	}

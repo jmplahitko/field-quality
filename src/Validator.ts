@@ -3,31 +3,26 @@ import Rule from './Rule';
 import ValidationResultList from './ValidationResultList';
 import { IValidatable, TRuleCollection } from './types';
 
-import copy from './utils/copy';
 import getProperty from './utils/getProperty';
 import { isEqual } from './utils/quality';
 import normalizeValidateArgs from './utils/normalizeValidateArgs';
 
-export default class Validator implements IValidatable {
-	private _name!: string | undefined;
+export default abstract class Validator<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
+	private _propertyName!: string | undefined;
 	private _results: ValidationResultList = new ValidationResultList();
-	private _rules: TRuleCollection = {};
+	private _rules: TRuleCollection<TParentValue, TCustomOptions> = {};
 
-	constructor() {
-
+	public get propertyName() {
+		return this._propertyName;
 	}
 
-	public get name() {
-		return this._name;
+	public set propertyName(propertyName: string | undefined) {
+		this._propertyName = propertyName;
+		this._results.propertyName = propertyName;
 	}
 
-	public set name(name: string | undefined) {
-		this._name = name;
-		this._results.propertyName = name;
-	}
-
-	protected ruleFor(propertyName: string): Rule {
-		let rule = new Rule(propertyName);
+	protected ruleFor(propertyName: string): Rule<TParentValue, TCustomOptions> {
+		let rule = new Rule<TParentValue, TCustomOptions>(propertyName);
 
 		if (!this._rules[propertyName]) {
 			this._rules[propertyName] = [rule];
@@ -38,8 +33,8 @@ export default class Validator implements IValidatable {
 		return rule;
 	}
 
-	protected ruleForEach(propertyName: string): CollectionRule {
-		let rule = new CollectionRule(propertyName);
+	protected ruleForEach(propertyName: string): CollectionRule<TParentValue, TCustomOptions> {
+		let rule = new CollectionRule<TParentValue, TCustomOptions>(propertyName);
 
 		if (!this._rules[propertyName]) {
 			this._rules[propertyName] = [rule];
@@ -50,7 +45,7 @@ export default class Validator implements IValidatable {
 		return rule;
 	}
 
-	public validateProperty(propertyName: string, parentValue: any, customOptions?: any, outResultList?: ValidationResultList): ValidationResultList {
+	public validateProperty(propertyName: string, parentValue: TParentValue, customOptions?: TCustomOptions, outResultList?: ValidationResultList): ValidationResultList {
 		const prevResult = this._results.get(propertyName);
 		const value = getProperty(parentValue, propertyName);
 		let resultList;
@@ -76,21 +71,23 @@ export default class Validator implements IValidatable {
 		return resultList;
 	}
 
-	public validate(value: any, customOptions?: any): ValidationResultList;
-	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
-		let [_value, _parentValue, _customOptions] = normalizeValidateArgs(value, parentValue, customOptions);
-		_parentValue = copy(_value);
+	// The overload is used internally in order to allow for Validator and Rule instances to be grouped together in
+	// a TValidatorCollection. Note that if used externally, parentValue will be ignored and the third argument supplied
+	// will be used as customOptions.
+	public validate(value: any, parentValue?: TParentValue | TCustomOptions, customOptions?: TCustomOptions): ValidationResultList;
+	public validate(value: any, customOptions?: TCustomOptions): ValidationResultList {
+		let [_value, _parentValue, _customOptions] = normalizeValidateArgs<TParentValue, TCustomOptions>(value, arguments[1], arguments[2]);
 
-		let resultList = new ValidationResultList([], this.name || '', _value);
+		let resultList = new ValidationResultList([], this.propertyName || '', _value);
 
 		for (let propertyName in this._rules) {
 			let results = this.validateProperty(propertyName, _parentValue, _customOptions);
 			resultList = resultList.merge(results);
 		}
 
-		if (this.name) {
-			resultList.propertyName = this.name;
-			resultList.forEach(result => result.propertyName = `${this.name}.${result.propertyName}`);
+		if (this.propertyName) {
+			resultList.propertyName = this.propertyName;
+			resultList.forEach(result => result.propertyName = `${this.propertyName}.${result.propertyName}`);
 		}
 
 		this._results.clear();

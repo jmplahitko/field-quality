@@ -7,14 +7,14 @@ import { IValidatable, TCollectionFilter, TSubsetRuleCollection } from './types'
 
 import { isArray } from './utils/quality';
 
-export default class CollectionRule extends Rule {
-	protected _subsetRules: TSubsetRuleCollection = new Map();
+export default class CollectionRule<TParentValue = any, TCustomOptions = any> extends Rule<TParentValue, TCustomOptions> {
+	protected _subsetRules: TSubsetRuleCollection<TParentValue, TCustomOptions> = new Map();
 
-	public using(validatable: IValidatable): CollectionRule {
-		validatable.name = '';
+	public using(validatable: IValidatable<TParentValue, TCustomOptions>): CollectionRule<TParentValue, TCustomOptions> {
+		validatable.propertyName = '';
 
 		let meta = {
-			name: validatable.name,
+			name: validatable.propertyName,
 			message: () => '',
 			precondition: null,
 			isValidIfEmpty: false,
@@ -25,10 +25,10 @@ export default class CollectionRule extends Rule {
 		return this;
 	}
 
-	public where(filter: TCollectionFilter, define: (rule: Rule) => void): CollectionRule {
-		let rule = new Rule(this.name);
+	public where(filter: TCollectionFilter<TParentValue, TCustomOptions>, define: (rule: Rule<TParentValue, TCustomOptions>) => void): CollectionRule<TParentValue, TCustomOptions> {
+		let rule = new Rule<TParentValue, TCustomOptions>(this.propertyName);
 		let meta = {
-			name: rule.name,
+			name: rule.propertyName,
 			filter
 		};
 
@@ -53,7 +53,7 @@ export default class CollectionRule extends Rule {
 		if (isArray(collection)) {
 			for (let value of collection) {
 				const index = collection.indexOf(value);
-				const propertyName = `${this.name}[${index}]`;
+				const propertyName = `${this.propertyName}[${index}]`;
 				let resultList = new ValidationResultList([], propertyName);
 				this.__runQualifiers(value, parentValue, customOptions, resultList);
 
@@ -74,8 +74,8 @@ export default class CollectionRule extends Rule {
 				results = results.merge(resultList);
 			}
 		} else {
-			const result = new ValidationResult(this.name, collection);
-			result.errors['beCollection'] = `${this.name} must be a collection.`;
+			const result = new ValidationResult(this.propertyName, collection);
+			result.errors['beCollection'] = `${this.propertyName} must be a collection.`;
 			results.push(result);
 		}
 

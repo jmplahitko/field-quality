@@ -3,40 +3,40 @@ import Rule from './Rule';
 import Severity from './Severity';
 import ValidationResultList from './ValidationResultList'
 
-export interface IValidatable {
-	name?: string;
-	validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList;
+export interface IValidatable<TParentValue = any, TCustomOptions = any> {
+	propertyName?: string;
+	validate(value: any, parentValue?: TParentValue, customOptions?: TCustomOptions): ValidationResultList;
 }
 
-export type TCollectionFilter = (value?: any, index?: number, collection?: Array<any>, parentValue?: any, customOptions?: any) => boolean;
+export type TCollectionFilter<TParentValue, TCustomOptions> = (value?: any, index?: number, collection?: Array<any>, parentValue?: TParentValue, customOptions?: TCustomOptions) => boolean;
 
 export type TErrorCollection = {
 	[ruleName: string]: string;
 };
 
-export type TMessageFactory = (value?: any, parentValue?: any, customOptions?: any) => string;
+export type TMessageFactory<TParentValue = any, TCustomOptions = any> = (value?: any, parentValue?: TParentValue, customOptions?: TCustomOptions) => string;
 
-export type TMeta = {
+export type TValidatableMetadata<TParentValue = any, TCustomOptions = any> = {
 	name: string;
-	message: TMessageFactory;
-	precondition: TPrecondition | null;
+	message: TMessageFactory<TParentValue, TCustomOptions>;
+	precondition: TPrecondition<TParentValue, TCustomOptions> | null;
 	isValidIfEmpty: boolean;
 	severity: Severity;
 };
 
-export type TPrecondition = (parentValue?: any, customOptions?: any) => boolean;
+export type TPrecondition<TParentValue = any, TCustomOptions = any> = (parentValue?: TParentValue, customOptions?: TCustomOptions) => boolean;
 
-export type TQualifier = (val: any, entity?: any, customOptions?: any) => boolean;
+export type TQualifier<TParentValue = any, TCustomOptions = any> = (value: any, parentValue?: TParentValue, customOptions?: TCustomOptions) => boolean;
 
-export type TQualifierCollection = Map<TQualifier, TMeta>;
+export type TQualifierCollection<TParentValue, TCustomOptions> = Map<TQualifier<TParentValue, TCustomOptions>, TValidatableMetadata<TParentValue, TCustomOptions>>;
 
-export type TRuleCollection = { [ruleName: string]: Array<Rule> };
+export type TRuleCollection<TParentValue, TCustomOptions> = { [ruleName: string]: Array<Rule<TParentValue, TCustomOptions>> };
 
-export type TSubsetRuleCollection = Map<IValidatable, TSubsetRuleMeta>;
+export type TSubsetRuleCollection<TParentValue, TCustomOptions> = Map<IValidatable<TParentValue, TCustomOptions>, TSubsetRuleMetadata<TParentValue, TCustomOptions>>;
 
-export type TSubsetRuleMeta = {
+export type TSubsetRuleMetadata<TParentValue = any, TCustomOptions = any> = {
 	name: string,
-	filter: TCollectionFilter
+	filter: TCollectionFilter<TParentValue, TCustomOptions>
 }
 
-export type TValidatorCollection = Map<IValidatable, TMeta>;
+export type TValidatorCollection<TParentValue, TCustomOptions> = Map<IValidatable<TParentValue, TCustomOptions>, TValidatableMetadata<TParentValue, TCustomOptions>>;

@@ -9,30 +9,30 @@ import copy from './utils/copy';
 import { length, match, max, min, notEmpty, notNull, beValidEnum } from './utils/qualifiers';
 import { isEmpty, isNull } from './utils/quality';
 
-export default class Rule implements IValidatable {
-	public name: string;
-	protected _qualifiers: TQualifierCollection = new Map();
-	protected _validators: TValidatorCollection = new Map();
+export default class Rule<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
+	public propertyName: string;
+	protected _qualifiers: TQualifierCollection<TParentValue, TCustomOptions> = new Map();
+	protected _validators: TValidatorCollection<TParentValue, TCustomOptions> = new Map();
 	protected _stopOnFirstFailure: boolean = true;
 
-	get qualifiers(): TQualifierCollection {
+	get qualifiers(): TQualifierCollection<TParentValue, TCustomOptions> {
 		return this._qualifiers;
 	}
 
-	get validators(): TValidatorCollection {
+	get validators(): TValidatorCollection<TParentValue, TCustomOptions> {
 		return this._validators;
 	}
 
-	constructor(name?: string) {
-		this.name = name || '';
+	constructor(propertyName?: string) {
+		this.propertyName = propertyName || '';
 	}
 
-	public enum(allowedValues: Array<string|number>) {
+	public enum(allowedValues: Array<string|number>): RuleApi<TParentValue, TCustomOptions> {
 		let beEnumeratedValue = beValidEnum(allowedValues);
 
 		let meta = {
 			name: `beEnumeratedValue`,
-			message: () =>  `${this.name} must be one of the following: "${allowedValues.join(', ')}".`,
+			message: () =>  `${this.propertyName} must be one of the following: "${allowedValues.join(', ')}".`,
 			precondition: null,
 			isValidIfEmpty: true,
 			severity: Severity.default
@@ -40,14 +40,14 @@ export default class Rule implements IValidatable {
 
 		this._qualifiers.set(beEnumeratedValue, meta);
 
-		return new RuleApi(this, meta)
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public length(min: number, max: number) {
+	public length(min: number, max: number): RuleApi<TParentValue, TCustomOptions> {
 		let beBetween = length(min, max);
 		let meta = {
 			name: `beBetween${min}and${max}`,
-			message: () =>  `${this.name} must be between ${min} and ${max}.`,
+			message: () =>  `${this.propertyName} must be between ${min} and ${max}.`,
 			precondition: null,
 			isValidIfEmpty: true,
 			severity: Severity.default
@@ -55,14 +55,14 @@ export default class Rule implements IValidatable {
 
 		this._qualifiers.set(beBetween, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public lengthOrEmpty(min: number, max: number) {
+	public lengthOrEmpty(min: number, max: number): RuleApi<TParentValue, TCustomOptions> {
 		let beBetween = length(min, max);
 		let meta = {
 			name: `beBetween${min}and${max}OrEmpty`,
-			message: () =>  `${this.name} must be between ${min} and ${max}.`,
+			message: () =>  `${this.propertyName} must be between ${min} and ${max}.`,
 			precondition: null,
 			isValidIfEmpty: true,
 			severity: Severity.default
@@ -70,15 +70,15 @@ export default class Rule implements IValidatable {
 
 		this._qualifiers.set(beBetween, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public matches(rx: RegExp) {
+	public matches(rx: RegExp): RuleApi<TParentValue, TCustomOptions> {
 		let matches = match(rx);
 		let matchRx = (val: any) => isNull(val) || matches(val);
 		let meta = {
 			name: matchRx.name,
-			message: () =>  `${this.name} is an invalid format.`,
+			message: () =>  `${this.propertyName} is an invalid format.`,
 			precondition: null,
 			isValidIfEmpty: true,
 			severity: Severity.default
@@ -86,13 +86,13 @@ export default class Rule implements IValidatable {
 
 		this._qualifiers.set(matchRx, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public notNull() {
+	public notNull(): RuleApi<TParentValue, TCustomOptions> {
 		let meta = {
 			name: notNull.name,
-			message: () =>  `${this.name} cannot be null.`,
+			message: () =>  `${this.propertyName} cannot be null.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -100,13 +100,13 @@ export default class Rule implements IValidatable {
 
 		this._qualifiers.set(notNull, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public notEmpty() {
+	public notEmpty(): RuleApi<TParentValue, TCustomOptions> {
 		let meta = {
 			name: notEmpty.name,
-			message: () =>  `${this.name} cannot be empty.`,
+			message: () =>  `${this.propertyName} cannot be empty.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -114,77 +114,77 @@ export default class Rule implements IValidatable {
 
 		this._qualifiers.set(notEmpty, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public max(num: number) {
+	public max(num: number): RuleApi<TParentValue, TCustomOptions> {
 		let beLessThanOrEqual = max(num);
 
 		let meta = {
 			name: 'beLessThanOrEqual',
-			message: () =>  `${this.name} cannot be greater than or equal to ${num}.`,
+			message: () =>  `${this.propertyName} cannot be greater than or equal to ${num}.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beLessThanOrEqual, meta);
+		this._qualifiers.set(beLessThanOrEqual as TQualifier, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public maxExclusiveOf(num: number) {
+	public maxExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions> {
 		let beLessThan = max(num - 1);
 
 		let meta = {
 			name: 'beLessThan',
-			message: () =>  `${this.name} cannot be greater than ${num}.`,
+			message: () =>  `${this.propertyName} cannot be greater than ${num}.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beLessThan, meta);
+		this._qualifiers.set(beLessThan as TQualifier, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public min(num: number) {
+	public min(num: number): RuleApi<TParentValue, TCustomOptions> {
 		let beGreaterThanOrEqual = min(num);
 
 		let meta = {
 			name: 'beGreaterThanOrEqual',
-			message: () =>  `${this.name} cannot be less than or equal to ${num}.`,
+			message: () =>  `${this.propertyName} cannot be less than or equal to ${num}.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beGreaterThanOrEqual, meta);
+		this._qualifiers.set(beGreaterThanOrEqual as TQualifier, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public minExclusiveOf(num: number) {
+	public minExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions> {
 		let beGreaterThan = min(num + 1);
 
 		let meta = {
 			name: 'beGreaterThan',
-			message: () =>  `${this.name} cannot be less than ${num}.`,
+			message: () =>  `${this.propertyName} cannot be less than ${num}.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beGreaterThan, meta);
+		this._qualifiers.set(beGreaterThan as TQualifier, meta);
 
-		return new RuleApi(this, meta);
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public must(qualifier: TQualifier) {
+	public must(qualifier: TQualifier<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions> {
 		let meta = {
 			name: qualifier.name,
-			message: () =>  `${this.name} is invalid.`,
+			message: () =>  `${this.propertyName} is invalid.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
@@ -192,39 +192,32 @@ export default class Rule implements IValidatable {
 
 		this._qualifiers.set(qualifier, meta);
 
-		return new RuleApi(this, meta);
-	}
-
-	public stopOnFirstFailure(): void {
-		this._stopOnFirstFailure = true;
-		console.warn(`FieldQuality Deprecation Warning: As of version 1.4.0, rules default stopOnFirstFailure to true. You can safely remove your call to .stopOnFirstFailure() on ${this.name}, or use the .cascade() method to change stopOnFirstFailure to false.`)
+		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
 	public cascade(): void {
 		this._stopOnFirstFailure = false;
 	}
 
-	public using(validatable: IValidatable): Rule {
-		validatable.name = this.name || validatable.name || '';
+	public using(validatable: IValidatable<TParentValue, TCustomOptions>): Rule {
+		validatable.propertyName = this.propertyName || validatable.propertyName || '';
 
 		let meta = {
-			name: validatable.name,
+			name: validatable.propertyName,
 			message: () =>  '',
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
 		};
 
-		validatable.name = this.name || validatable.name;
-
 		this._validators.set(validatable, meta);
 		return this;
 	}
 
-	public if(precondition: TPrecondition, define: (rule: Rule) => void): Rule {
-		let rule = new Rule(this.name);
+	public if(precondition: TPrecondition<TParentValue, TCustomOptions>, define: (rule: Rule) => void): Rule {
+		let rule = new Rule(this.propertyName);
 		let meta = {
-			name: rule.name,
+			name: rule.propertyName,
 			message: () =>  '',
 			precondition,
 			isValidIfEmpty: false,
@@ -238,7 +231,7 @@ export default class Rule implements IValidatable {
 	}
 
 	protected __runQualifiers(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
-		const result = new ValidationResult(this.name, propValue);
+		const result = new ValidationResult(this.propertyName, propValue);
 
 		for (let [qualifier, meta] of this._qualifiers) {
 			// We check if we should run the validator based on whether the property has a value
@@ -295,11 +288,11 @@ export default class Rule implements IValidatable {
 		return results;
 	}
 
-	public validate(value: any, parentValue?: any, customOptions?: any): ValidationResultList {
+	public validate(value: any, parentValue?: TParentValue, customOptions?: TCustomOptions): ValidationResultList {
 		value = copy(value);
 		parentValue = copy(parentValue);
 
-		let results = new ValidationResultList([], this.name, value);
+		let results = new ValidationResultList([], this.propertyName, value);
 
 		return this.__getPropertyResults(value, parentValue, customOptions, results);
 
