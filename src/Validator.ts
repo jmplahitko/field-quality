@@ -7,7 +7,7 @@ import getProperty from './utils/getProperty';
 import { isEqual } from './utils/quality';
 import normalizeValidateArgs from './utils/normalizeValidateArgs';
 
-export default abstract class Validator<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
+export default class Validator<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
 	private _propertyName!: string | undefined;
 	private _results: ValidationResultList = new ValidationResultList();
 	private _rules: TRuleCollection<TParentValue, TCustomOptions> = {};
