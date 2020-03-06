@@ -3,24 +3,24 @@ import 'jasmine';
 import normalizeValidateArgs from '../src/utils/normalizeValidateArgs';
 
 describe('normalizeValidateArgs', () => {
-	it('should return all arguments in order when given 3 arguments', () => {
+	it('should return value as parentValue when given 3 arguments', () => {
 		const [value, parentValue, customOptions] = normalizeValidateArgs(1, 2, 3);
 		expect(value).toBe(1);
-		expect(parentValue).toBe(2);
+		expect(parentValue).toBe(1);
 		expect(customOptions).toBe(3);
 	});
 
-	it('should return second parameter as customOptions when given 2 arguments', () => {
+	it('should return parentValue as customOptions when given 2 arguments', () => {
 		const [value, parentValue, customOptions] = normalizeValidateArgs(1, 2);
 		expect(value).toBe(1);
-		expect(parentValue).toBe(undefined);
+		expect(parentValue).toBe(1);
 		expect(customOptions).toBe(2);
 	});
 
-	it('should return undefined parentValue and customOptions when given 1 argument', () => {
+	it('should return value as parentValue and undefined customOptions when given 1 argument', () => {
 		const [value, parentValue, customOptions] = normalizeValidateArgs(1);
 		expect(value).toBe(1);
-		expect(parentValue).toBe(undefined);
+		expect(parentValue).toBe(1);
 		expect(customOptions).toBe(undefined);
 	});
 });
@@ -184,7 +184,7 @@ class PhoneValidator extends Validator {
 class ContactValidator extends Validator {
 	constructor(name?: string) {
 		super();
-		this.name = name;
+		this.propertyName = name;
 
 		this.ruleFor('address')
 			.notNull()
@@ -202,7 +202,7 @@ class ContactValidator extends Validator {
 class ProfileValidator extends Validator {
 	constructor(name?: string) {
 		super();
-		this.name = name;
+		this.propertyName = name;
 
 		this.ruleFor('firstName')
 			.notEmpty()
@@ -222,7 +222,7 @@ class ProfileValidator extends Validator {
 class UserValidator extends Validator {
 	constructor(name?: string) {
 		super();
-		this.name = name;
+		this.propertyName = name;
 
 		this.ruleFor('profile')
 			.must((val => val.missingProp))
