@@ -1,7 +1,9 @@
 import { Validator, rx } from '../../../src';
 import PhoneValidator from './PhoneValidator';
+import AddressValidator from './AddressValidator';
+import Contact from '../model/Contact';
 
-export default class ContactValidator extends Validator {
+export default class ContactValidator extends Validator<Contact> {
 	constructor() {
 		super();
 
@@ -43,6 +45,6 @@ export default class ContactValidator extends Validator {
 			.using(new PhoneValidator());
 
 		this.ruleFor('address')
-			.using()
+			.using(new AddressValidator());
 	}
 }

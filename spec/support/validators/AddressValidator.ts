@@ -1,6 +1,7 @@
 import { Validator, rx } from '../../../src';
+import Address from '../model/Address';
 
-export default class AddressValidator extends Validator {
+export default class AddressValidator extends Validator<Address> {
 	constructor() {
 		super();
 

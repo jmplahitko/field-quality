@@ -1,4 +1,8 @@
-export const valid1 = {
+import Customer from '../model/Customer';
+import PhoneType from '../model/PhoneType';
+import { validCustomer1Orders, validCustomer2Orders } from './order';
+
+export const validCustomer1: Customer = {
 	companyName: 'Customer NRZBB',
 	contact: {
 		firstName: 'Michael',
@@ -6,13 +10,13 @@ export const valid1 = {
 		title: 'Sales Representative',
 		phone: [
 			{
-				type: 'work',
-				value: 3175555555,
+				type: PhoneType.work,
+				value: '3175555555',
 				display: 'Work'
 			},
 			{
-				type: 'mobile',
-				value: 3175656666,
+				type: PhoneType.mobile,
+				value: '3175656666',
 				display: 'Cell'
 			}
 		]
@@ -25,9 +29,10 @@ export const valid1 = {
 		postalCode: '46201',
 		country: 'USA'
 	},
+	orders: validCustomer1Orders
 };
 
-export const valid2 = {
+export const validCustomer2: Customer = {
 	companyName: 'Customer EEALV',
 	contact: {
 		firstName: 'Scott',
@@ -36,9 +41,9 @@ export const valid2 = {
 		title: 'Account Manager',
 		phone: [
 			{
-				type: 'work',
-				value: 6049012345,
-				display: 'Work'
+				type: PhoneType.work,
+				value: '6049012345',
+				display: 'Work',
 			}
 		]
 	},
@@ -49,4 +54,5 @@ export const valid2 = {
 		postalCode: '10111',
 		country: 'Canada'
 	},
+	orders: validCustomer2Orders
 };
