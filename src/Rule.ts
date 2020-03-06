@@ -49,7 +49,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			name: `beBetween${min}and${max}`,
 			message: () =>  `${this.propertyName} must be between ${min} and ${max}.`,
 			precondition: null,
-			isValidIfEmpty: true,
+			isValidIfEmpty: false,
 			severity: Severity.default
 		};
 
