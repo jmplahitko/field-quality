@@ -4,8 +4,8 @@ import Severity from './Severity';
 import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TQualifier } from './types';
 
 export default class RuleApi<TParentValue, TCustomOptions> {
-	protected __rule: Rule;
-	protected __meta: TValidatableMetadata;
+	protected __rule: Rule<TParentValue, TCustomOptions>;
+	protected __meta: TValidatableMetadata<TParentValue, TCustomOptions>;
 
 	constructor(validatable: Rule<TParentValue, TCustomOptions>, meta: TValidatableMetadata<TParentValue, TCustomOptions>) {
 		this.__rule = validatable;
@@ -28,23 +28,23 @@ export default class RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.matches(rx);
 	}
 
-	public max(num: number) {
+	public max(num: number): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.max(num);
 	}
 
-	public maxExclusiveOf(num: number) {
+	public maxExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.maxExclusiveOf(num);
 	}
 
-	public min(num: number) {
+	public min(num: number): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.min(num);
 	}
 
-	public minExclusiveOf(num: number) {
+	public minExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.minExclusiveOf(num);
 	}
 
-	public must(qualifier: TQualifier): RuleApi<TParentValue, TCustomOptions> {
+	public must(qualifier: TQualifier<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.must(qualifier);
 	}
 
@@ -60,26 +60,26 @@ export default class RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.cascade();
 	}
 
-	public using(validatable: IValidatable): any {
+	public using(validatable: IValidatable) {
 		return this.__rule.using(validatable);
 	}
 
-	public as(qualifierName: string) {
+	public as(qualifierName: string): RuleApi<TParentValue, TCustomOptions> {
 		this.__meta.name = qualifierName;
 		return this;
 	}
 
-	public asWarning() {
+	public asWarning(): RuleApi<TParentValue, TCustomOptions> {
 		this.__meta.severity = Severity.warning;
 		return this;
 	}
 
-	public when(precondition: TPrecondition<TParentValue, TCustomOptions>) {
+	public when(precondition: TPrecondition<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions> {
 		this.__meta.precondition = precondition;
 		return this;
 	}
 
-	public withMessage(message: TMessageFactory<TParentValue, TCustomOptions>) {
+	public withMessage(message: TMessageFactory<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions> {
 		this.__meta.message = message;
 		return this;
 	}
