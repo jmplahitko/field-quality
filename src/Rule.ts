@@ -246,13 +246,13 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 				if (!isValid) {
 					if (meta.severity === Severity.error) {
 						result.errors[meta.name] = meta.message(propValue, parentValue, customOptions);
+
+						// Short-circuit if we have to stopOnFirstFailure
+						if (this._stopOnFirstFailure) {
+							break;
+						}
 					} else {
 						result.warnings[meta.name] = meta.message(propValue, parentValue, customOptions);
-					}
-
-					// Short-circuit if we have to stopOnFirstFailure
-					if (this._stopOnFirstFailure) {
-						break;
 					}
 				}
 			}
