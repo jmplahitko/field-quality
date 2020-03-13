@@ -256,7 +256,7 @@ describe('Rule#maxExclusiveOf', () => {
 });
 
 describe('Rule#must', () => {
-	it('should describe a custom rule, to be executed when calling Rule#validate', () => {
+	it('should describe a custom qualifier to be executed when calling Rule#validate', () => {
 		const rule = new Rule('must');
 		function returnFalse() {
 			return false;
@@ -269,24 +269,10 @@ describe('Rule#must', () => {
 		// @ts-ignore - propertyResult exists
 		expect(propertyResult.errors.returnFalse).not.toBeUndefined();
 	});
-
-	it('should provide value, parentValue, and customOptions passed to Rule#validate as parameters, in respective order, to provided qualifier function', () => {
-		const rule = new Rule('must');
-		const parentValue = { must: 'test' };
-		const customOptions = { someProp: true };
-		rule.must((val, parent, customOpts) => {
-			expect(val).toEqual(parentValue.must);
-			expect(parent).toEqual(parentValue);
-			expect(customOpts).toEqual(customOptions);
-			return true;
-		})
-
-		rule.validate(parentValue.must, parentValue, customOptions);
-	});
 });
 
 describe('Rule#using', () => {
-	it('should use a different rule to validate a value', () => {
+	it('should define a rule to use a different rule to validate a value', () => {
 		const rule = new Rule('using');
 		rule.using(new PositiveNumberRule());
 
@@ -297,7 +283,7 @@ describe('Rule#using', () => {
 		expect(result.errors.beGreaterThanOrEqual).toBeDefined();
 	});
 
-	it('should use a validator to validate a value', () => {
+	it('should define a rule use a validator to validate a value', () => {
 		const rule = new Rule('using');
 		rule.using(new PhoneValidator());
 
@@ -308,7 +294,7 @@ describe('Rule#using', () => {
 });
 
 describe('Rule#if', () => {
-	it('should only run a rule if a condition is met', () => {
+	it('should define a rule to run only if a condition is met', () => {
 		const rule = new Rule('if');
 		rule.if((parentValue) => parentValue.validate, rule => rule.must(function returnFalse1() { return false; }));
 		rule.if((parentValue) => !parentValue.validate, rule => rule.must(function returnFalse2() { return false; }));
@@ -324,4 +310,37 @@ describe('Rule#if', () => {
 		// @ts-ignore
 		expect(result2.get('if').errors.returnFalse2).toBeDefined();
 	});
+});
+
+describe('Rule#validate', () => {
+	it('should pass the correct parameters for value, parentValue, and customOptions to qualifiers', () => {
+		const rule = new Rule('must');
+		const parentValue = { value: 'test' };
+		const customOptions = { someProp: true };
+		rule.must((val, parent, customOpts) => {
+			expect(val).toEqual(parentValue.value);
+			expect(parent).toEqual(parentValue);
+			expect(customOpts).toEqual(customOptions);
+			return true;
+		})
+
+		rule.validate(parentValue.value, parentValue, customOptions);
+	});
+
+	it('should pass the correct parameters for parentValue and customOptions to preconditions', () => {
+		const rule = new Rule('if');
+		const parentValue = { value: 'parentValue' };
+		const customOptions = { value: 'customOptions' };
+
+		rule.if((_parentValue, _customOptions) => {
+			expect(_parentValue).toEqual(parentValue);
+			expect(_customOptions).toEqual(customOptions);
+
+			return true;
+		}, () => {});
+
+		rule.validate(parentValue.value, parentValue, customOptions);
+	});
+
+
 });
