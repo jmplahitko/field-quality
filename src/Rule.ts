@@ -214,7 +214,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 		return this;
 	}
 
-	public if(precondition: TPrecondition<TParentValue, TCustomOptions>, define: (rule: Rule) => void): Rule {
+	public if(precondition: TPrecondition<TParentValue, TCustomOptions>, define: (rule: Rule<TParentValue, TCustomOptions>) => void): Rule {
 		let rule = new Rule(this.propertyName);
 		let meta = {
 			name: rule.propertyName,

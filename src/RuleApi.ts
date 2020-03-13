@@ -16,6 +16,10 @@ export default class RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.enum(allowedValues);
 	}
 
+	public if(precondition: TPrecondition<TParentValue, TCustomOptions>, define: (rule: Rule<TParentValue, TCustomOptions>) => void): Rule<TParentValue, TCustomOptions> {
+		return this.__rule.if(precondition, define);
+	}
+
 	public length(min: number, max: number): RuleApi<TParentValue, TCustomOptions> {
 		return this.__rule.length(min, max);
 	}
