@@ -34,6 +34,7 @@ export default class ValidationResultList {
 	public get withWarnings(): ValidationResultList {
 		return new ValidationResultList(this._entries.filter(x => x.warningCount > 0), this.propertyName, this.value);
 	}
+
 	public clear() {
 		this._entries = [];
 		this.value = null;

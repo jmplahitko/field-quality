@@ -429,41 +429,6 @@ describe('ValidationResultList', () => {
 	});
 });
 
-describe('Rule#max', () => {
-	it('should validate a max number range', () => {
-		const minmax = new MinMaxNumberRule('minmax');
-		const result = minmax.validate(6);
-		expect(result.withErrors.length).toBe(1);
-	});
-});
-
-describe('Rule#min', () => {
-	it('should validate a min number range', () => {
-		const minmax = new MinMaxNumberRule('minmax');
-		const result = minmax.validate(1);
-		expect(result.withErrors.length).toBe(1);
-	});
-});
-
-describe('Rule#using', () => {
-	it('should mix in other rules', () => {
-		const usingMinMax = new UsingMinMaxRule('usingMinmax');
-		const result = usingMinMax.validate(1);
-		expect(result.withErrors.length).toBe(1);
-	});
-
-	it('should set name on validatables to own name', () => {
-		const usingMinMax = new UsingMinMaxRule('usingMinmax');
-		const result = usingMinMax.validate(1);
-		expect(result.length).toBe(1);
-	});
-
-	it('should pass custom options to qualifiers', () => {
-		const rule = new CustomOptionsTestStringRule();
-		rule.validate(null, null, 'test');
-	});
-});
-
 describe('CollectionRule', () => {
 	it('should run own qualifiers on all collection values', () => {
 		const minMaxCollection = new NumberCollectionRule('minmaxCollection');
