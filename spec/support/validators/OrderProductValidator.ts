@@ -14,11 +14,11 @@ export default class OrderProductValidator extends Validator {
 		this.ruleFor('unitPrice')
 			.notEmpty()
 			.withMessage(() => `Unit price is required`)
-			.using(new PositiveNumberRule('Unit price'));
+			.using(new PositiveNumberRule('unitPrice', 'Unit price'));
 
 		this.ruleFor('quantity')
 			.notEmpty()
 			.withMessage(() => `Quantity is required`)
-			.using(new PositiveNumberRule('Quantity'));
+			.using(new PositiveNumberRule('quantity', 'Quantity'));
 	}
 }

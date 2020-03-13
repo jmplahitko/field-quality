@@ -32,7 +32,7 @@ export default class OrderValidator extends Validator<Order> {
 			this.ruleFor('freight')
 				.notEmpty()
 				.withMessage(() => 'Freight is required.')
-				.using(new PositiveNumberRule('Freight'));
+				.using(new PositiveNumberRule('freight', 'Freight'));
 
 			this.ruleFor('shipAddress')
 				.using(new AddressValidator());

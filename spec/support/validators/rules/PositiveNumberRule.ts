@@ -1,11 +1,11 @@
 import { Rule, rx } from '../../../../src'
 
 export default class PositiveNumberRule extends Rule {
-	constructor(displayPropertyName?: string) {
-		super()
+	constructor(propertyName?: string, displayPropertyName?: string) {
+		super(propertyName);
 
 		this
-			.min(0)
+			.min(1)
 			.withMessage(() => `${displayPropertyName} must be positive.`);
 	}
 }
