@@ -1,5 +1,5 @@
 import 'jasmine';
-import { Rule, rx } from '../src';
+import { Rule, rx, ValidationResultList } from '../src';
 import PositiveNumberRule from './support/validators/rules/PositiveNumberRule';
 import PhoneValidator from './support/validators/PhoneValidator';
 
@@ -313,6 +313,26 @@ describe('Rule#if', () => {
 });
 
 describe('Rule#validate', () => {
+	it('should return an accurate ValidationResultList', () => {
+		const rule = new PositiveNumberRule('number');
+		let validResult = rule.validate(1);
+		let numberResult = validResult.get('number');
+		expect(validResult).toBeInstanceOf(ValidationResultList);
+		expect(validResult.isValid).toBeTrue();
+		expect(numberResult).toBeDefined();
+		// @ts-ignore
+		expect(numberResult.isValid).toBeTrue();
+
+		let invalidResult = rule.validate(-1);
+		numberResult = invalidResult.get('number');
+		expect(invalidResult.isValid).toBeFalse();
+		expect(numberResult).toBeDefined();
+		// @ts-ignore
+		expect(numberResult.isValid).toBeFalse();
+		// @ts-ignore
+		expect(numberResult.errors.beGreaterThanOrEqual).toBeDefined();
+	});
+
 	it('should pass the correct parameters for value, parentValue, and customOptions to qualifiers', () => {
 		const rule = new Rule('must');
 		const parentValue = { value: 'test' };
@@ -332,15 +352,96 @@ describe('Rule#validate', () => {
 		const parentValue = { value: 'parentValue' };
 		const customOptions = { value: 'customOptions' };
 
-		rule.if((_parentValue, _customOptions) => {
-			expect(_parentValue).toEqual(parentValue);
-			expect(_customOptions).toEqual(customOptions);
-
-			return true;
-		}, () => {});
+		rule
+			.must(() => false)
+			.when((_parentValue, _customOptions) => {
+				expect(_parentValue).toEqual(parentValue);
+				expect(_customOptions).toEqual(customOptions);
+				return true;
+			})
+			.if((_parentValue, _customOptions) => {
+				expect(_parentValue).toEqual(parentValue);
+				expect(_customOptions).toEqual(customOptions);
+				return true;
+			}, () => {});
 
 		rule.validate(parentValue.value, parentValue, customOptions);
 	});
 
+	it('should pass the correct parameters for value, parentValue, and customOptions to message factories', () => {
+		const rule = new Rule('withMessage');
+		const parentValue = { value: 0 };
+		const customOptions = { value: 'customOptions' };
 
+		rule.min(0).withMessage((value, _parentValue, _customOptions) => {
+			expect(value).toEqual(parentValue.value);
+			expect(_parentValue).toEqual(parentValue);
+			expect(_customOptions).toEqual(customOptions);
+			return '';
+		});
+
+		rule.validate(parentValue.value, parentValue, customOptions);
+	});
 });
+
+describe('RuleApi#as', () => {
+	it('should rename a qualifier', () => {
+		const rule = new Rule('as');
+		rule.min(1).as('min');
+		const result = rule.validate(0);
+		const minResult = result.get('as');
+
+		// @ts-ignore
+		expect(minResult.errors.min).toBeDefined();
+		// @ts-ignore
+		expect(minResult.errors.beGreaterThanOrEqual).toBeUndefined();
+	});
+
+	it('should name custom qualifiers defined with arrow functions', () => {
+		const rule = new Rule('as');
+		rule.must(() => false).as('returnFalse');
+
+		const result = rule.validate(null);
+		const propResult = result.get('as');
+		// @ts-ignore
+		expect(propResult.errors.returnFalse).toBeDefined();
+	});
+});
+
+describe('RuleApi#asWarning', () => {
+	it('should mark the severity of a qualifier as a warning', () => {
+		const rule = new Rule('warning');
+		rule.min(1).asWarning();
+
+		const result = rule.validate(0);
+		expect(result.withErrors.length).toBe(0);
+		expect(result.withWarnings.length).toBe(1);
+		expect(result.isValid).toBeTrue();
+	});
+});
+
+describe('RuleApi#when', () => {
+	it('should mark an individual qualifier only to be run if a condition is met', () => {
+		const rule = new Rule('when');
+		const willValidate = { value: 0, validate: true };
+		const wontValidate = { value: 0, validate: false };
+		rule.min(1).when((_parentValue) => _parentValue.validate);
+
+		const didValidate = rule.validate(willValidate.value, willValidate);
+		const didntValidate = rule.validate(wontValidate.value, wontValidate);
+		expect(didValidate.isValid).toBeFalse();
+		expect(didntValidate.isValid).toBeTrue();
+	});
+});
+
+describe('RuleApi#withMessage', () => {
+	it('should define a custom message for a qualifier', () => {
+		const rule = new Rule('withMessage');
+		const invalidQualifierMessage = 'Pirates be passin bad numberrrrrrsss';
+		rule.min(1).withMessage(() => invalidQualifierMessage);
+
+		const result = rule.validate(0).get('withMessage');
+		// @ts-ignore
+		expect(result.errors.beGreaterThanOrEqual).toBe(invalidQualifierMessage);
+	});
+})
