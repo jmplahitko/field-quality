@@ -13,21 +13,21 @@ export default class PhoneValidator extends Validator<Phone> {
 		.enum([PhoneType.mobile, PhoneType.work])
 		.withMessage(() => 'Type must be "home" or "cell".');
 
-	this.ruleFor('value')
-		.notEmpty()
-		.withMessage(() => 'Value is required.')
-		.matches(rx.domesticphone)
-		.when(phone => !phone.isInternational)
-		.withMessage(() => 'Invalid domestic phone number.')
-		.matches(rx.foreignphone)
-		.when(phone => phone.isInternational)
-		.withMessage(() => 'Invalid international phone number.');
+		this.ruleFor('value')
+			.notEmpty()
+			.withMessage(() => 'Value is required.')
+			.matches(rx.domesticphone)
+			.when(phone => phone && !phone.isInternational)
+			.withMessage(() => 'Invalid domestic phone number.')
+			.matches(rx.foreignphone)
+			.when(phone => phone && phone.isInternational)
+			.withMessage(() => 'Invalid international phone number.');
 
-	this.ruleFor('display')
-		.notEmpty()
-		.withMessage(() => 'Display is required')
-		.matches(rx.title)
-		.withMessage(() => 'Invalid display value.');
+		this.ruleFor('display')
+			.notEmpty()
+			.withMessage(() => 'Display is required')
+			.matches(rx.title)
+			.withMessage(() => 'Invalid display value.');
 
 		this.ruleFor('isInternational')
 			.must(beBoolean);

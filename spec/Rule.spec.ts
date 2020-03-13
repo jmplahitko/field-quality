@@ -1,6 +1,7 @@
 import 'jasmine';
-import { Rule, ValidationResult, rx } from '../src';
-import AddressValidator from './support/validators/AddressValidator';
+import { Rule, rx } from '../src';
+import PositiveNumberRule from './support/validators/rules/PositiveNumberRule';
+import PhoneValidator from './support/validators/PhoneValidator';
 
 describe('Rule#cascade', () => {
 	it('should run all qualifiers and contained rules regardless of validity', () => {
@@ -255,13 +256,72 @@ describe('Rule#maxExclusiveOf', () => {
 });
 
 describe('Rule#must', () => {
+	it('should describe a custom rule, to be executed when calling Rule#validate', () => {
+		const rule = new Rule('must');
+		function returnFalse() {
+			return false;
+		}
+		rule.must(returnFalse);
 
+		let result = rule.validate(null);
+		expect(result.isValid).toBe(false);
+		let propertyResult = result.get('must');
+		// @ts-ignore - propertyResult exists
+		expect(propertyResult.errors.returnFalse).not.toBeUndefined();
+	});
+
+	it('should provide value, parentValue, and customOptions passed to Rule#validate as parameters, in respective order, to provided qualifier function', () => {
+		const rule = new Rule('must');
+		const parentValue = { must: 'test' };
+		const customOptions = { someProp: true };
+		rule.must((val, parent, customOpts) => {
+			expect(val).toEqual(parentValue.must);
+			expect(parent).toEqual(parentValue);
+			expect(customOpts).toEqual(customOptions);
+			return true;
+		})
+
+		rule.validate(parentValue.must, parentValue, customOptions);
+	});
 });
 
 describe('Rule#using', () => {
+	it('should use a different rule to validate a value', () => {
+		const rule = new Rule('using');
+		rule.using(new PositiveNumberRule());
 
+		const result = rule.validate(-1).get('using');
+		// @ts-ignore
+		expect(result.isValid).toBeFalse();
+		// @ts-ignore
+		expect(result.errors.beGreaterThanOrEqual).toBeDefined();
+	});
+
+	it('should use a validator to validate a value', () => {
+		const rule = new Rule('using');
+		rule.using(new PhoneValidator());
+
+		const result = rule.validate({});
+		expect(result.length).toBe(5);
+		expect(result.withErrors.length).toBe(4);
+	});
 });
 
 describe('Rule#if', () => {
+	it('should only run a rule if a condition is met', () => {
+		const rule = new Rule('if');
+		rule.if((parentValue) => parentValue.validate, rule => rule.must(function returnFalse1() { return false; }));
+		rule.if((parentValue) => !parentValue.validate, rule => rule.must(function returnFalse2() { return false; }));
 
+		const result1 = rule.validate(null, { validate: true });
+		const result2 = rule.validate(null, { validate: false });
+		// @ts-ignore
+		expect(result1.get('if').errors.returnFalse1).toBeDefined();
+		// @ts-ignore
+		expect(result1.get('if').errors.returnFalse2).toBeUndefined();
+		// @ts-ignore
+		expect(result2.get('if').errors.returnFalse1).toBeUndefined();
+		// @ts-ignore
+		expect(result2.get('if').errors.returnFalse2).toBeDefined();
+	});
 });

@@ -12,12 +12,14 @@ export const validCustomer1: Customer = {
 			{
 				type: PhoneType.work,
 				value: '3175555555',
-				display: 'Work'
+				display: 'Work',
+				isInternational: false
 			},
 			{
 				type: PhoneType.mobile,
 				value: '3175656666',
-				display: 'Cell'
+				display: 'Cell',
+				isInternational: false
 			}
 		]
 	},
@@ -44,6 +46,7 @@ export const validCustomer2: Customer = {
 				type: PhoneType.work,
 				value: '6049012345',
 				display: 'Work',
+				isInternational: false
 			}
 		]
 	},

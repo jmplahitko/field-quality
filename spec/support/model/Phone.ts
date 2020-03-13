@@ -4,5 +4,5 @@ export default class Phone {
 	public type: PhoneType;
 	public value: string;
 	public display: string;
-	public isInternational?: boolean;
+	public isInternational: boolean;
 }

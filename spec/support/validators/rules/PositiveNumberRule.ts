@@ -5,8 +5,6 @@ export default class PositiveNumberRule extends Rule {
 		super()
 
 		this
-			.matches(rx.numbersonly)
-			.withMessage((value) => `${value} is not a valid number.`)
 			.min(0)
 			.withMessage(() => `${displayPropertyName} must be positive.`);
 	}
