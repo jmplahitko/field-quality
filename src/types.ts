@@ -8,13 +8,13 @@ export interface IValidatable<TParentValue = any, TCustomOptions = any> {
 	validate(value: any, parentValue?: TParentValue, customOptions?: TCustomOptions): ValidationResultList;
 }
 
-export type TCollectionFilter<TParentValue, TCustomOptions> = (value?: any, index?: number, collection?: Array<any>, parentValue?: TParentValue, customOptions?: TCustomOptions) => boolean;
+export type TCollectionFilter<TParentValue, TCustomOptions> = (value: any, index: number, collection: Array<any>, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 
 export type TErrorCollection = {
 	[ruleName: string]: string;
 };
 
-export type TMessageFactory<TParentValue = any, TCustomOptions = any> = (value?: any, parentValue?: TParentValue, customOptions?: TCustomOptions) => string;
+export type TMessageFactory<TParentValue = any, TCustomOptions = any> = (value: any, parentValue: TParentValue, customOptions: TCustomOptions) => string;
 
 export type TValidatableMetadata<TParentValue = any, TCustomOptions = any> = {
 	name: string;
@@ -24,9 +24,9 @@ export type TValidatableMetadata<TParentValue = any, TCustomOptions = any> = {
 	severity: Severity;
 };
 
-export type TPrecondition<TParentValue = any, TCustomOptions = any> = (parentValue?: TParentValue, customOptions?: TCustomOptions) => boolean;
+export type TPrecondition<TParentValue = any, TCustomOptions = any> = (parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 
-export type TQualifier<TParentValue = any, TCustomOptions = any> = (value: any, parentValue?: TParentValue, customOptions?: TCustomOptions) => boolean;
+export type TQualifier<TParentValue = any, TCustomOptions = any> = (value: any, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 
 export type TQualifierCollection<TParentValue, TCustomOptions> = Map<TQualifier<TParentValue, TCustomOptions>, TValidatableMetadata<TParentValue, TCustomOptions>>;
 
