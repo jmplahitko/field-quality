@@ -1,6 +1,7 @@
 import Customer from '../model/Customer';
 import PhoneType from '../model/PhoneType';
 import { validCustomer1Orders, validCustomer2Orders } from './order';
+import Phone from '../model/Phone';
 
 export const validCustomer1: Customer = {
 	companyName: 'Customer NRZBB',
@@ -34,7 +35,7 @@ export const validCustomer1: Customer = {
 	orders: validCustomer1Orders
 };
 
-const invalidPhoneCustomer1: Customer = Object.assign(validCustomer1);
+const invalidPhoneCustomer1: Customer = { ...validCustomer1 };
 invalidPhoneCustomer1.contact.phone = [
 	{
 		// @ts-ignore
@@ -66,6 +67,12 @@ export const validCustomer2: Customer = {
 				value: '6049012345',
 				display: 'Work',
 				isInternational: false
+			},
+			{
+				type: PhoneType.mobile,
+				value: '+44 7911 123456',
+				display: 'Cell',
+				isInternational: true
 			}
 		]
 	},
@@ -78,3 +85,20 @@ export const validCustomer2: Customer = {
 	},
 	orders: validCustomer2Orders
 };
+
+const invalidPhoneForCustomer2: Phone[] = [
+	{
+		type: PhoneType.work,
+		value: '6049012345',
+		display: 'Work',
+		isInternational: false
+	},
+	{
+		type: PhoneType.mobile,
+		value: '+44 7911 123456',
+		display: 'Cell',
+		isInternational: false
+	}
+];
+
+export { invalidPhoneForCustomer2 };

@@ -26,7 +26,7 @@ export default class CollectionRule<TParentValue = any, TCustomOptions = any> ex
 	}
 
 	public where(filter: TCollectionFilter<TParentValue, TCustomOptions>, define: (rule: Rule<TParentValue, TCustomOptions>) => void): CollectionRule<TParentValue, TCustomOptions> {
-		let rule = new Rule<TParentValue, TCustomOptions>(this.propertyName);
+		let rule = new Rule<TParentValue, TCustomOptions>('');
 		let meta = {
 			name: rule.propertyName,
 			filter
@@ -68,7 +68,9 @@ export default class CollectionRule<TParentValue = any, TCustomOptions = any> ex
 				resultList.forEach((result, ndx) => {
 					// a little nasty, but at this time we know the first result in this._results describes the collection itself,
 					// and not the values it contains.
-					result.propertyName = `${propertyName}${(ndx > 0 && result.propertyName) ? `.${result.propertyName}` : ''}`;
+					const _propertyName = `${propertyName}${(ndx > 0 && result.propertyName) ? `.${result.propertyName}` : ''}`;
+					const cleanedPropertyName = _propertyName.replace(/\]\.\[/g, '][');
+					result.propertyName = cleanedPropertyName;
 				});
 
 				results = results.merge(resultList);
