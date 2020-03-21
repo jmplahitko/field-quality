@@ -272,7 +272,7 @@ describe('Rule#must', () => {
 });
 
 describe('Rule#using', () => {
-	it('should define a rule to use a different rule to validate a value', () => {
+	it('should delegate validation to another rule', () => {
 		const rule = new Rule('using');
 		rule.using(new PositiveNumberRule());
 
@@ -283,7 +283,7 @@ describe('Rule#using', () => {
 		expect(result.errors.beGreaterThanOrEqual).toBeDefined();
 	});
 
-	it('should define a rule use a validator to validate a value', () => {
+	it('should delegate validation to a validator', () => {
 		const rule = new Rule('using');
 		rule.using(new PhoneValidator());
 
@@ -294,7 +294,7 @@ describe('Rule#using', () => {
 });
 
 describe('Rule#if', () => {
-	it('should define a rule to run only if a condition is met', () => {
+	it('should tell a rule to run only if a condition is met', () => {
 		const rule = new Rule('if');
 		rule.if((parentValue) => parentValue.validate, rule => rule.must(function returnFalse1() { return false; }));
 		rule.if((parentValue) => !parentValue.validate, rule => rule.must(function returnFalse2() { return false; }));
