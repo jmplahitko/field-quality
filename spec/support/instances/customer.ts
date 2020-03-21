@@ -34,6 +34,25 @@ export const validCustomer1: Customer = {
 	orders: validCustomer1Orders
 };
 
+const invalidPhoneCustomer1: Customer = Object.assign(validCustomer1);
+invalidPhoneCustomer1.contact.phone = [
+	{
+		// @ts-ignore
+		type: 'badType',
+		value: '3175555555',
+		display: 'Work',
+		isInternational: false
+	},
+	{
+		type: PhoneType.mobile,
+		value: '3175656666',
+		display: 'Cell',
+		isInternational: false
+	}
+];
+
+export { invalidPhoneCustomer1 };
+
 export const validCustomer2: Customer = {
 	companyName: 'Customer EEALV',
 	contact: {
