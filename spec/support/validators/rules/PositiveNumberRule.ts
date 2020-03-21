@@ -6,6 +6,6 @@ export default class PositiveNumberRule extends Rule {
 
 		this
 			.min(1)
-			.withMessage(() => `${displayPropertyName} must be positive.`);
+			.withMessage(() => `${displayPropertyName || this.propertyName} must be positive.`);
 	}
 }
