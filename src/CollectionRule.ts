@@ -68,7 +68,7 @@ export default class CollectionRule<TParentValue = any, TCustomOptions = any> ex
 				resultList.forEach((result, ndx) => {
 					// a little nasty, but at this time we know the first result in this._results describes the collection itself,
 					// and not the values it contains.
-					result.propertyName = `${propertyName}${ndx > 0 ? `.${result.propertyName}` : ''}`;
+					result.propertyName = `${propertyName}${(ndx > 0 && result.propertyName) ? `.${result.propertyName}` : ''}`;
 				});
 
 				results = results.merge(resultList);
