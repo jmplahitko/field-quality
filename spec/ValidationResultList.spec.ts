@@ -1,62 +1,136 @@
 import 'jasmine';
+import { ValidationResultList, ValidationResult } from '../src';
 
 describe('ValidationResultList#isValid', () => {
 	it('should be true when #withErrors().length is 0', () => {
-
+		const resultList = new ValidationResultList();
+		expect(resultList.withErrors.length).toBe(0);
+		expect(resultList.isValid).toBeTrue();
 	});
 
 	it('should be false when #withErrors().length is greater than 0', () => {
+		const resultList = new ValidationResultList();
+		const result = new ValidationResult('test', 1);
+		result.errors['bad'] = 'This is bad';
+		resultList.push(result);
 
+		expect(resultList.withErrors.length).toBe(1);
+		expect(resultList.isValid).toBeFalse();
 	});
 
 	it('should be true when #withWarnings().length is greater than 0', () => {
+		const resultList = new ValidationResultList();
+		const result = new ValidationResult('test', 1);
+		result.warnings['possiblyBad'] = 'This might be bad';
+		resultList.push(result);
 
+		expect(resultList.withWarnings.length).toBe(1);
+		expect(resultList.isValid).toBeTrue();
 	});
 });
 
 describe('ValidationResultList#withErrors', () => {
-	it('should return a new ValidationResultList', () => {
+	const resultList = new ValidationResultList();
+	const result = new ValidationResult('test', 1);
+	result.errors['bad1'] = 'This is bad';
+	result.errors['bad2'] = 'This is bad';
+	result.errors['bad3'] = 'This is bad';
+	result.warnings['possiblyBad1'] = 'This might be bad';
+	result.warnings['possiblyBad2'] = 'This might be bad';
+	resultList.push(result);
 
+	it('should return a new ValidationResultList', () => {
+		expect(resultList.withErrors).toBeInstanceOf(ValidationResultList);
 	});
 
-	it('should return a new ValidationResultList who\'s entries all contain errors', () => {
-
+	it('should return a new ValidationResultList who\'s entries all contain warnings', () => {
+		const withErrors = resultList.entries.filter((result) => result.errorCount > 0);
+		expect(resultList.length).toBe(withErrors.length);
 	});
 });
 
 describe('ValidationResultList#withWarnings', () => {
-	it('should return a new ValidationResultList', () => {
+	const resultList = new ValidationResultList();
+	const result = new ValidationResult('test', 1);
+	result.errors['bad1'] = 'This is bad';
+	result.errors['bad2'] = 'This is bad';
+	result.errors['bad3'] = 'This is bad';
+	result.warnings['possiblyBad1'] = 'This might be bad';
+	result.warnings['possiblyBad2'] = 'This might be bad';
+	resultList.push(result);
 
+	it('should return a new ValidationResultList', () => {
+		expect(resultList.withWarnings).toBeInstanceOf(ValidationResultList);
 	});
 
-	it('should return a new ValidationResultList who\'s entries all contain warnings', () => {
-
+	it('should return a new ValidationResultList who\'s entries all contain errors', () => {
+		const withWarnings = resultList.entries.filter((result) => result.warningCount > 0);
+		expect(resultList.length).toBe(withWarnings.length);
 	});
 });
 
 describe('ValidationResultList#clear', () => {
 	it('should remove all entries', () => {
+		const resultList = new ValidationResultList();
+		const resultCount = 5;
 
+		for(let i = 0, j = resultCount; i < j; i++) {
+			resultList.push(new ValidationResult(`test${i}`, i));
+		}
+
+		expect(resultList.length).toBe(resultCount);
+
+		resultList.clear();
+
+		expect(resultList.length).toBe(0);
 	});
 });
 
 describe('ValidationResultList#get', () => {
-	it('should return a ValidationResult if found, null if not found', () => {
+	it('should return a ValidationResult if found, undefined if not found', () => {
+		const resultList = new ValidationResultList();
+		const result = new ValidationResult('test', 1);
+		result.errors['bad1'] = 'This is bad';
 
+		resultList.push(result);
+
+		expect(resultList.get('test')).toBeInstanceOf(ValidationResult);
+		expect(resultList.get('test1')).toBeUndefined();
 	});
 });
 
 describe('ValidationResultList#getWithRelatedResults', () => {
-	it('should return a new ValidationResultList', () => {
+	const resultList = new ValidationResultList([
+		new ValidationResult('arr', [0, 1, 2, 3]),
+		new ValidationResult('arr[0]', 0),
+		new ValidationResult('arr[1]', 1),
+		new ValidationResult('arr[2]', 2),
+		new ValidationResult('arr[3]', 3),
+		new ValidationResult('obj', { test0: 0, test1: 1, test2: 2, test3: 3}),
+		new ValidationResult('obj.test0', 0),
+		new ValidationResult('obj.test1', 1),
+		new ValidationResult('obj.test2', 2),
+		new ValidationResult('obj.test3', 3),
+	]);
 
+	const arrResultList = resultList.getWithRelatedResults('arr');
+	const arrResultListKeys = ['arr', 'arr[0]', 'arr[1]', 'arr[2]', 'arr[3]'];
+	const objResultList = resultList.getWithRelatedResults('obj');
+	const objResultListKeys = ['obj', 'obj.test0', 'obj.test1', 'obj.test2', 'obj.test3']
+
+	it('should return a new ValidationResultList', () => {
+		expect(arrResultList).toBeInstanceOf(ValidationResultList);
+		expect(objResultList).toBeInstanceOf(ValidationResultList);
 	});
 
 	it('should return a ValidationResultList containing a ValidationResult for an array property and for each of its contained elements', () => {
-
+		expect(arrResultList.length).toBe(5);
+		expect(Object.keys(arrResultList.toObject())).toEqual(jasmine.arrayWithExactContents(arrResultListKeys));
 	});
 
 	it('should return a ValidationResultList containing a ValidationResult for an object property and for each of its own keys', () => {
-
+		expect(objResultList.length).toBe(5);
+		expect(Object.keys(objResultList.toObject())).toEqual(jasmine.arrayWithExactContents(objResultListKeys));
 	});
 });
 
