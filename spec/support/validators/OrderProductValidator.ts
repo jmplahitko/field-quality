@@ -1,7 +1,8 @@
 import { Validator, rx } from '../../../src';
 import PositiveNumberRule from './rules/PositiveNumberRule';
+import OrderProduct from '../model/OrderProduct';
 
-export default class OrderProductValidator extends Validator {
+export default class OrderProductValidator extends Validator<OrderProduct> {
 	constructor() {
 		super();
 
