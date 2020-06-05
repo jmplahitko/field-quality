@@ -37,9 +37,8 @@ export default class ValidationResult {
 		if (dest !== src) {
 			dest.errors = { ...dest.errors, ...src.errors };
 			dest.warnings = { ...dest.warnings, ...src.warnings };
-			return dest;
-		} else {
-			return dest;
 		}
+
+		return dest;
 	}
 }

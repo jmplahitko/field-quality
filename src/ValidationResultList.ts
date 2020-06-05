@@ -122,10 +122,8 @@ export default class ValidationResultList {
 			src.forEach((result) => {
 				dest.push(result);
 			});
-
-			return dest;
-		} else {
-			return dest;
 		}
+
+		return dest;
 	}
 }
