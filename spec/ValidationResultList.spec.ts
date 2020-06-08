@@ -186,12 +186,25 @@ describe('ValidationResultList#merge', () => {
 });
 
 describe('ValidationResultList#push', () => {
-	it('should increase entry length by one when an entry with matching propertyName does not exist', () => {
+	const test1Result = new ValidationResult('test1', 1);
+	const test2Result = new ValidationResult('test2', 2);
+	const anotherTest1Result = new ValidationResult('test1', 1);
 
+
+	it('should increase entry length by one when an entry with matching propertyName does not exist', () => {
+		const resultList = new ValidationResultList([ test1Result ]);
+
+		expect(resultList.length).toBe(1);
+
+		resultList.push(test2Result);
+		expect(resultList.length).toBe(2);
 	});
 
 	it('should merge a push candidate with an existing entry when propertyName matches', () => {
+		const resultList = new ValidationResultList([ test1Result ]);
 
+		resultList.push(anotherTest1Result);
+		expect(resultList.length).toBe(1);
 	});
 });
 
