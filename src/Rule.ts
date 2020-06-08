@@ -15,14 +15,6 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 	protected _validators: TValidatorCollection<TParentValue, TCustomOptions> = new Map();
 	protected _stopOnFirstFailure: boolean = true;
 
-	get qualifiers(): TQualifierCollection<TParentValue, TCustomOptions> {
-		return this._qualifiers;
-	}
-
-	get validators(): TValidatorCollection<TParentValue, TCustomOptions> {
-		return this._validators;
-	}
-
 	constructor(propertyName?: string) {
 		this.propertyName = propertyName || '';
 	}
