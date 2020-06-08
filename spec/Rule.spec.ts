@@ -1,5 +1,5 @@
 import 'jasmine';
-import { Rule, rx, ValidationResultList } from '../src';
+import { Rule, rx, ValidationResultList, ValidationResult } from '../src';
 import PositiveNumberRule from './support/validators/rules/PositiveNumberRule';
 import PhoneValidator from './support/validators/PhoneValidator';
 
@@ -15,8 +15,7 @@ describe('Rule#cascade', () => {
 
 		const result = rule.validate(null).get('cascade');
 
-		// @ts-ignore
-		expect(result.errorCount).toBe(3);
+		expect((<ValidationResult>result).errorCount).toBe(3);
 	});
 });
 
@@ -266,8 +265,8 @@ describe('Rule#must', () => {
 		let result = rule.validate(null);
 		expect(result.isValid).toBe(false);
 		let propertyResult = result.get('must');
-		// @ts-ignore - propertyResult exists
-		expect(propertyResult.errors.returnFalse).not.toBeUndefined();
+
+		expect((<ValidationResult>propertyResult).errors.returnFalse).not.toBeUndefined();
 	});
 });
 
@@ -277,10 +276,9 @@ describe('Rule#using', () => {
 		rule.using(new PositiveNumberRule());
 
 		const result = rule.validate(-1).get('using');
-		// @ts-ignore
-		expect(result.isValid).toBeFalse();
-		// @ts-ignore
-		expect(result.errors.beGreaterThanOrEqual).toBeDefined();
+
+		expect((<ValidationResult>result).isValid).toBeFalse();
+		expect((<ValidationResult>result).errors.beGreaterThanOrEqual).toBeDefined();
 	});
 
 	it('should delegate validation to a validator', () => {
@@ -301,14 +299,11 @@ describe('Rule#if', () => {
 
 		const result1 = rule.validate(null, { validate: true });
 		const result2 = rule.validate(null, { validate: false });
-		// @ts-ignore
-		expect(result1.get('if').errors.returnFalse1).toBeDefined();
-		// @ts-ignore
-		expect(result1.get('if').errors.returnFalse2).toBeUndefined();
-		// @ts-ignore
-		expect(result2.get('if').errors.returnFalse1).toBeUndefined();
-		// @ts-ignore
-		expect(result2.get('if').errors.returnFalse2).toBeDefined();
+
+		expect((<ValidationResult>(<ValidationResultList>result1).get('if')).errors.returnFalse1).toBeDefined();
+		expect((<ValidationResult>(<ValidationResultList>result1).get('if')).errors.returnFalse2).toBeUndefined();
+		expect((<ValidationResult>(<ValidationResultList>result2).get('if')).errors.returnFalse1).toBeUndefined();
+		expect((<ValidationResult>(<ValidationResultList>result2).get('if')).errors.returnFalse2).toBeDefined();
 	});
 });
 
@@ -317,20 +312,19 @@ describe('Rule#validate', () => {
 		const rule = new PositiveNumberRule('number');
 		let validResult = rule.validate(1);
 		let numberResult = validResult.get('number');
+
 		expect(validResult).toBeInstanceOf(ValidationResultList);
 		expect(validResult.isValid).toBeTrue();
 		expect(numberResult).toBeDefined();
-		// @ts-ignore
-		expect(numberResult.isValid).toBeTrue();
+		expect((<ValidationResult>numberResult).isValid).toBeTrue();
 
 		let invalidResult = rule.validate(-1);
 		numberResult = invalidResult.get('number');
+
 		expect(invalidResult.isValid).toBeFalse();
 		expect(numberResult).toBeDefined();
-		// @ts-ignore
-		expect(numberResult.isValid).toBeFalse();
-		// @ts-ignore
-		expect(numberResult.errors.beGreaterThanOrEqual).toBeDefined();
+		expect((<ValidationResult>numberResult).isValid).toBeFalse();
+		expect((<ValidationResult>numberResult).errors.beGreaterThanOrEqual).toBeDefined();
 	});
 
 	it('should pass the correct parameters for value, parentValue, and customOptions to qualifiers', () => {
@@ -391,10 +385,8 @@ describe('RuleApi#as', () => {
 		const result = rule.validate(0);
 		const minResult = result.get('as');
 
-		// @ts-ignore
-		expect(minResult.errors.min).toBeDefined();
-		// @ts-ignore
-		expect(minResult.errors.beGreaterThanOrEqual).toBeUndefined();
+		expect((<ValidationResult>minResult).errors.min).toBeDefined();
+		expect((<ValidationResult>minResult).errors.beGreaterThanOrEqual).toBeUndefined();
 	});
 
 	it('should name custom qualifiers defined with arrow functions', () => {
@@ -403,8 +395,8 @@ describe('RuleApi#as', () => {
 
 		const result = rule.validate(null);
 		const propResult = result.get('as');
-		// @ts-ignore
-		expect(propResult.errors.returnFalse).toBeDefined();
+
+		expect((<ValidationResult>propResult).errors.returnFalse).toBeDefined();
 	});
 });
 
@@ -441,7 +433,7 @@ describe('RuleApi#withMessage', () => {
 		rule.min(1).withMessage(() => invalidQualifierMessage);
 
 		const result = rule.validate(0).get('withMessage');
-		// @ts-ignore
-		expect(result.errors.beGreaterThanOrEqual).toBe(invalidQualifierMessage);
+
+		expect((<ValidationResult>result).errors.beGreaterThanOrEqual).toBe(invalidQualifierMessage);
 	});
 })

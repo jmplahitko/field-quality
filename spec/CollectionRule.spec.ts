@@ -1,5 +1,5 @@
 import 'jasmine';
-import { CollectionRule, rx } from '../src';
+import { CollectionRule, rx, ValidationResult } from '../src';
 import PositiveNumberRule from './support/validators/rules/PositiveNumberRule';
 import PhoneValidator from './support/validators/PhoneValidator';
 import { invalidPhoneCustomer1 } from './support/instances/customer';
@@ -67,10 +67,8 @@ describe('CollectionRule#using', () => {
 	});
 
 	it('should delegate validation to another rule for each value in a collection', () => {
-		// @ts-ignore
-		expect(singleNumberResult.isValid).toBeFalse();
-		// @ts-ignore
-		expect(singleNumberResult.errors.beGreaterThanOrEqual).toBeDefined();
+		expect((<ValidationResult>singleNumberResult).isValid).toBeFalse();
+		expect((<ValidationResult>singleNumberResult).errors.beGreaterThanOrEqual).toBeDefined();
 
 
 		expect(multipleNumberResult.length).toBe(3);

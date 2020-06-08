@@ -38,7 +38,7 @@ export const validCustomer1: Customer = {
 const invalidPhoneCustomer1: Customer = { ...validCustomer1 };
 invalidPhoneCustomer1.contact.phone = [
 	{
-		// @ts-ignore
+		// @ts-ignore - We are intentionally setting a bad enum value here.
 		type: 'badType',
 		value: '3175555555',
 		display: 'Work',
