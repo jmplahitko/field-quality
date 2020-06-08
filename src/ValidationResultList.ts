@@ -80,7 +80,7 @@ export default class ValidationResultList {
 		const index = this._entries.findIndex((entry) => entry.propertyName === propertyName);
 		let removed = null;
 
-		if (index !== null) {
+		if (index > -1) {
 			removed = this._entries.splice(index, 1);
 			return removed[0];
 		}

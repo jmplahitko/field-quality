@@ -209,16 +209,26 @@ describe('ValidationResultList#push', () => {
 });
 
 describe('ValidationResultList#remove', () => {
-	it('should remove a ValidationResult from its entries', () => {
+	const test1Result = new ValidationResult('test1', 1);
+	const resultList = new ValidationResultList([ test1Result ]);
+	const resultListInitialLength = resultList.length;
 
+	const successfullyRemoved = resultList.remove('test1');
+	const unsuccessfullyRemoved = resultList.remove('test2');
+
+	it('should remove a ValidationResult from its entries', () => {
+		expect(resultListInitialLength).toBe(1);
+		expect(resultList.length).toBe(0);
 	});
 
 	it('should return the ValidationResult when successfully removed', () => {
-
+		expect(successfullyRemoved).toBeInstanceOf(ValidationResult);
+		expect((<ValidationResult>successfullyRemoved).propertyName).toBe('test1');
+		expect((<ValidationResult>successfullyRemoved).value).toBe(1);
 	});
 
 	it('should return null when ValidationResult is not successfully removed', () => {
-
+		expect(unsuccessfullyRemoved).toBe(null);
 	});
 });
 
