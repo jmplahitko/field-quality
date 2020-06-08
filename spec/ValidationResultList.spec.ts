@@ -135,12 +135,53 @@ describe('ValidationResultList#getWithRelatedResults', () => {
 });
 
 describe('ValidationResultList#merge', () => {
-	it('should not break reference from itself when merging another ValidationResultList', () => {
+	const result1 = new ValidationResult('test1', 1);
+	const result2 = new ValidationResult('test2', 2);
+	const result3 = new ValidationResult('test1', 1);
+	const result4 = new ValidationResult('test2', 2);
 
+	const badMessage1 = 'One bad';
+	const badMessage2 = 'Two bad';
+	const badMessage3 = 'Three bad';
+	const badMessage4 = 'Four bad';
+
+	const maybeBadMessage1 = 'One might be bad';
+	const maybeBadMessage2 = 'Two might be bad';
+	const maybeBadMessage3 = 'Three might be bad';
+	const maybeBadMessage4 = 'Four might be bad';
+
+	result1.errors['bad'] = badMessage1;
+	result2.errors['alsoBad'] = badMessage2;
+	result3.errors['bad'] = badMessage3;
+	result4.errors['alsoBad'] = badMessage4;
+
+	result1.warnings['maybeBad1'] = maybeBadMessage1;
+	result2.warnings['maybeBad2'] = maybeBadMessage2;
+	result3.warnings['maybeBad3'] = maybeBadMessage3;
+	result4.warnings['maybeBad4'] = maybeBadMessage4;
+
+	const resultList1 = new ValidationResultList([ result1, result2 ]);
+	const resultList2 = new ValidationResultList([ result3, result4 ]);
+
+	const merged = resultList1.merge(resultList2);
+
+	it('should not break reference from itself when merging another ValidationResultList', () => {
+		expect(merged).toBe(resultList1);
 	});
 
 	it('should merge entries of two ValidationResultLists', () => {
+		const withErrors = merged.withErrors;
+		const withWarnings = merged.withWarnings;
+		let withErrorsTotalCount = 0;
+		let withWarningsTotalCount = 0;
 
+		withErrors.forEach(result => withErrorsTotalCount += result.errorCount);
+		withWarnings.forEach(result => withWarningsTotalCount += result.warningCount);
+
+		expect(withErrors.length).toBe(2);
+		expect(withWarnings.length).toBe(2);
+		expect(withErrorsTotalCount).toBe(2);
+		expect(withWarningsTotalCount).toBe(4);
 	});
 });
 
