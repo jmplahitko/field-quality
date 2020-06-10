@@ -1,5 +1,5 @@
 import 'jasmine';
-import { CollectionRule, rx, ValidationResult } from '../src';
+import { CollectionRule, rx, ValidationResult, ValidationResultList } from '../src';
 import PositiveNumberRule from './support/validators/rules/PositiveNumberRule';
 import PhoneValidator from './support/validators/PhoneValidator';
 import { invalidPhoneCustomer1 } from './support/instances/customer';
@@ -90,74 +90,101 @@ describe('CollectionRule#where', () => {
 	it('should run a rule on elements that match a condition', () => {
 		const collection = [-1, 0, 1, '1', 'two'];
 		const rule = new CollectionRule('where');
+		const usingRule = new PositiveNumberRule();
+		const ruleSpy = spyOn(usingRule, 'validate').and.returnValue(new ValidationResultList());
+		const qualifierSpy = jasmine.createSpy('qualifierSpy').and.returnValue(true);
+
 		rule
-			.where(x => Number.isInteger(x), _rule => _rule.using(new PositiveNumberRule()));
+			.where(x => Number.isInteger(x), _rule => _rule.using(usingRule))
+			.where(x => q.isString(x), rule => rule.must(qualifierSpy));
 
-		const numbersOnlyResult = rule.validate(collection);
+		rule.validate(collection);
 
-		expect(numbersOnlyResult.length).toBe(5)
-		expect(numbersOnlyResult.isValid).toBeFalse();
-		expect(numbersOnlyResult.withErrors.length).toBe(2);
-
-		rule.where(x => q.isString(x), rule => rule.matches(rx.numbersonly));
-
-		const stringsAndNumbersResult = rule.validate(collection);
-
-		expect(stringsAndNumbersResult.length).toBe(5);
-		expect(stringsAndNumbersResult.isValid).toBeFalse();
-		expect(stringsAndNumbersResult.withErrors.length).toBe(3);
+		expect(ruleSpy).toHaveBeenCalledTimes(3);
+		expect(qualifierSpy).toHaveBeenCalledTimes(2);
 	});
 });
 
 describe('CollectionRule#validate', () => {
+	xit('should return an accurate ValidationResultList', () => {
+		// TODO:
+	});
+
 	it('should pass the correct parameters for value, parentValue, and customOptions to qualifiers', () => {
 		const rule = new CollectionRule('must');
 		const parentValue = { value: [1, 2, 3, 4, 5] };
 		const customOptions = { someProp: true };
-		let expectedValue = 1;
-		rule.must((val, parent, customOpts) => {
-			expect(val).toEqual(expectedValue++);
-			expect(parent).toEqual(parentValue);
-			expect(customOpts).toEqual(customOptions);
-			return true;
-		})
+		const mustSpy = jasmine.createSpy('mustSpy').and.returnValue(true);
+
+		rule.must(mustSpy)
 
 		rule.validate(parentValue.value, parentValue, customOptions);
+
+		expect(mustSpy).toHaveBeenCalledTimes(5);
+
+		mustSpy.calls.all().forEach((call, ndx) => {
+			expect(call.args).toEqual([parentValue.value[ndx], parentValue, customOptions]);
+		});
 	});
 
 	it('should pass the correct parameters for parentValue and customOptions to preconditions', () => {
 		const rule = new CollectionRule('if');
 		const parentValue = { value: [1, 2, 3, 4, 5] };
 		const customOptions = { value: 'customOptions' };
+		const whenSpy = jasmine.createSpy('whenSpy').and.returnValue(true);
+		const ifSpy = jasmine.createSpy('ifSpy').and.returnValue(true);
 
 		rule
-			.must(() => false)
-			.when((_parentValue, _customOptions) => {
-				expect(_parentValue).toEqual(parentValue);
-				expect(_customOptions).toEqual(customOptions);
-				return true;
-			})
-			.if((_parentValue, _customOptions) => {
-				expect(_parentValue).toEqual(parentValue);
-				expect(_customOptions).toEqual(customOptions);
-				return true;
-			}, () => {});
+			.must(() => true)
+			.when(whenSpy)
+			.if(ifSpy, () => {});
 
 		rule.validate(parentValue.value, parentValue, customOptions);
+
+		expect(whenSpy).toHaveBeenCalledTimes(5);
+		expect(ifSpy).toHaveBeenCalledTimes(5);
+
+		whenSpy.calls.all().forEach((call, ndx) => {
+			expect(call.args).toEqual([parentValue, customOptions]);
+		});
+
+		ifSpy.calls.all().forEach((call, ndx) => {
+			expect(call.args).toEqual([parentValue, customOptions]);
+		});
 	});
 
 	it('should pass the correct parameters for value, parentValue, and customOptions to message factories', () => {
 		const rule = new CollectionRule('withMessage');
 		const parentValue = { value: [1, 2, 3, 4, 5] };
 		const customOptions = { value: 'customOptions' };
+		const messageSpy = jasmine.createSpy('messageSpy').and.returnValue('');
 
-		rule.min(0).withMessage((value, _parentValue, _customOptions) => {
-			expect(value).toEqual(parentValue.value);
-			expect(_parentValue).toEqual(parentValue);
-			expect(_customOptions).toEqual(customOptions);
-			return '';
-		});
+		rule.must(() => false).withMessage(messageSpy);
 
 		rule.validate(parentValue.value, parentValue, customOptions);
+
+		expect(messageSpy).toHaveBeenCalledTimes(5);
+
+		messageSpy.calls.all().forEach((call, ndx) => {
+			expect(call.args).toEqual([parentValue.value[ndx], parentValue, customOptions]);
+		});
+	});
+
+	it('should pass the correct parameters for value, index, collection, parentValue, and customOptions to CollectionRule#where filters', () => {
+		const collection = [1, 2, 3];
+		const parent = { collection };
+		const customOptions = { value: 'customOptions' };
+		const rule = new CollectionRule('where');
+		const filterSpy = jasmine.createSpy('filterSpy').and.returnValue(true);
+
+		rule.where(filterSpy, () => true);
+
+		rule.validate(collection, parent, customOptions);
+
+		expect(filterSpy).toHaveBeenCalledTimes(3);
+
+		filterSpy.calls.all().forEach((call, ndx) => {
+			expect(call.args).toEqual([parent.collection[ndx], ndx, collection, parent, customOptions]);
+		});
 	});
 });

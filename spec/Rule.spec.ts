@@ -331,13 +331,13 @@ describe('Rule#validate', () => {
 		const rule = new Rule('must');
 		const parentValue = { value: 'test' };
 		const customOptions = { someProp: true };
-		const spy = jasmine.createSpy('receiveArgs').and.returnValue(true);
+		const mustSpy = jasmine.createSpy('mustSpy').and.returnValue(true);
 
-		rule.must(spy);
+		rule.must(mustSpy);
 
 		rule.validate(parentValue.value, parentValue, customOptions);
 
-		expect(spy).toHaveBeenCalledWith(parentValue.value, parentValue, customOptions);
+		expect(mustSpy).toHaveBeenCalledWith(parentValue.value, parentValue, customOptions);
 	});
 
 	it('should pass the correct parameters for parentValue and customOptions to preconditions', () => {
@@ -417,6 +417,8 @@ describe('RuleApi#when', () => {
 		rule.validate(parent.value, parent, willValidate);
 		expect(qualifierSpy).toHaveBeenCalled();
 
+		// we are being explicit with our test here, so not enough to check how many times the spy was called,
+		// we want to know that it was called in the right circumstance
 		qualifierSpy.calls.reset();
 
 		rule.validate(parent.value, parent, wontValidate);
