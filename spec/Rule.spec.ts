@@ -407,14 +407,20 @@ describe('RuleApi#asWarning', () => {
 describe('RuleApi#when', () => {
 	it('should mark an individual qualifier only to be run if a condition is met', () => {
 		const rule = new Rule('when');
-		const willValidate = { value: 0, validate: true };
-		const wontValidate = { value: 0, validate: false };
-		rule.min(1).when((_parentValue) => _parentValue.validate);
+		const parent = { value: 0 };
+		const willValidate = { validate: true };
+		const wontValidate = { validate: false };
+		const qualifierSpy = jasmine.createSpy('qualifierSpy').and.returnValue(true);
 
-		const didValidate = rule.validate(willValidate.value, willValidate);
-		const didntValidate = rule.validate(wontValidate.value, wontValidate);
-		expect(didValidate.isValid).toBeFalse();
-		expect(didntValidate.isValid).toBeTrue();
+		rule.must(qualifierSpy).when((p, c) => c.validate);
+
+		rule.validate(parent.value, parent, willValidate);
+		expect(qualifierSpy).toHaveBeenCalled();
+
+		qualifierSpy.calls.reset();
+
+		rule.validate(parent.value, parent, wontValidate);
+		expect(qualifierSpy).not.toHaveBeenCalled();
 	});
 });
 
