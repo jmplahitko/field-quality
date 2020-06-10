@@ -34,7 +34,7 @@ describe('Validator#ruleForEach', () => {
 });
 
 describe('Validator#validateProperty', () => {
-	it('should return a validation result for the given property', () => {
+	xit('should return a validation result for the given property', () => {
 
 	});
 
@@ -59,11 +59,38 @@ describe('Validator#validateProperty', () => {
 		expect(spy).toHaveBeenCalledWith(val.test, val, customOptions);
 	});
 
-	it('should return an accurate ValidationResultList', () => {
+	xit('should return an accurate ValidationResultList', () => {
 
 	});
 });
 
 describe('Validator#validate', () => {
+	xit('should return an accurate ValidationResultList', () => {
 
+	});
+
+	it('should pass the correct parameters for value, parentValue, and customOptions to rules', () => {
+		let spy;
+
+		class MyValidator extends Validator {
+			constructor() {
+				super();
+
+				let observedRule = this.ruleFor('test');
+				spy = spyOn(observedRule, 'validate')
+					.and.returnValue(new ValidationResultList());
+			}
+		}
+
+		const validator = new MyValidator();
+		const val = { test: 'test' };
+		const customOptions = { someOption: true };
+		validator.validate(val, customOptions);
+
+		expect(spy).toHaveBeenCalledWith(val.test, val, customOptions);
+	});
+
+	xit('should properly append its propertyName to it\'s returned ValidationResultList\'s propertyNames', () => {
+
+	});
 });

@@ -5,9 +5,9 @@ export default function normalizeValidateArgs<TParentValue, TCustomOptions>(valu
 	const _parentValue = value;
 	let _customOptions;
 
-	if (arguments.length === 3) {
+	if (arguments[3] !== undefined) {
 		_customOptions = customOptions;
-	} else if (arguments.length === 2) {
+	} else {
 		_customOptions = parentValue;
 	}
 
