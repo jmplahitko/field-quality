@@ -2,7 +2,7 @@ import 'jasmine';
 import { CollectionRule, rx, ValidationResult, ValidationResultList } from '../src';
 import PositiveNumberRule from './support/validators/rules/PositiveNumberRule';
 import PhoneValidator from './support/validators/PhoneValidator';
-import { invalidPhoneCustomer1 } from './support/instances/customer';
+import { invalidPhoneContactCustomer } from './support/instances/customer';
 import { quality as q } from '../src';
 
 describe('CollectionRule#using', () => {
@@ -16,7 +16,7 @@ describe('CollectionRule#using', () => {
 	phoneRule.using(new PhoneValidator());
 
 	const singlePhoneResult = phoneRule.validate([{}]);
-	const multiplePhoneResult = phoneRule.validate(invalidPhoneCustomer1.contact.phone);
+	const multiplePhoneResult = phoneRule.validate(invalidPhoneContactCustomer.contact.phone);
 
 	const tupleArrayRule = new CollectionRule('using');
 	tupleArrayRule.using(positiveNumbersRule);
@@ -32,7 +32,7 @@ describe('CollectionRule#using', () => {
 		.where(x => q.isObject(x), rule => rule.using(new PhoneValidator()))
 		.where(x => Array.isArray(x), rule => rule.using(mixedArrayTupleRule));
 
-	const mixedArrayResult = mixedArrayRule.validate([1, invalidPhoneCustomer1.contact.phone[0], [-1, 0]]);
+	const mixedArrayResult = mixedArrayRule.validate([1, invalidPhoneContactCustomer.contact.phone[0], [-1, 0]]);
 
 	it('should return the correct propertyNames in validation results for primative collections', () => {
 		expect(Object.keys(multipleNumberResult.toObject())).toEqual(jasmine.arrayWithExactContents([
