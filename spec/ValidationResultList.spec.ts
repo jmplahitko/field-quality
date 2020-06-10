@@ -233,35 +233,78 @@ describe('ValidationResultList#remove', () => {
 });
 
 describe('ValidationResultList#removeWithRelatedResults', () => {
+	const arr = [0, 1, 2];
+	const obj = { zero: 0, one: 1, two: 2 };
+
+	const arrResult = new ValidationResult('arr', arr);
+	const arr0Result = new ValidationResult('arr[0]', arr[0]);
+	const arr1Result = new ValidationResult('arr[1]', arr[1]);
+	const arr2Result = new ValidationResult('arr[2]', arr[2]);
+
+	const objResult = new ValidationResult('obj', obj);
+	const obj0Result = new ValidationResult('obj.0', obj.zero);
+	const obj1Result = new ValidationResult('obj.1', obj.one);
+	const obj2Result = new ValidationResult('obj.2', obj.two);
+
+	const arrResults = new ValidationResultList([
+		arrResult, arr0Result, arr1Result, arr2Result
+	]);
+
+	const arrRemoved = arrResults.removeWithRelatedResults('arr');
+
+	const objResults = new ValidationResultList([
+		objResult, obj0Result, obj1Result, obj2Result
+	]);
+
+	const objRemoved = objResults.removeWithRelatedResults('obj');
+
 	it('should return a new ValidationResultList', () => {
-
+		expect(arrRemoved).toBeInstanceOf(ValidationResultList);
 	});
 
-	it('should remove the ValidationResult for an array property and each of its contained elements', () => {
-
-	});
-
-	it('should return a ValidationResultList containing the removed ValidationResult for an array property and for each of its contained elements', () => {
-
+	it('should remove the ValidationResult for an array and each of its contained elements', () => {
+		expect(arrResults.entries).toEqual([]);
+		expect(arrRemoved.entries).toEqual(jasmine.arrayWithExactContents([
+			arrResult, arr0Result, arr1Result, arr2Result
+		]));
 	});
 
 	it('should remove the ValidationResult for an object property and each of its contained elements', () => {
-
-	});
-
-	it('should return a ValidationResultList containing the removed ValidationResult for an object property and for each of its own keys', () => {
-
+		expect(objResults.entries).toEqual([]);
+		expect(objRemoved.entries).toEqual(jasmine.arrayWithExactContents([
+			objResult, obj0Result, obj1Result, obj2Result
+		]));
 	});
 });
 
 describe('ValidationResultList#toArray', () => {
 	it('should return a new array that accurately represents the ValidationResultList\'s entries', () => {
+		const results = new ValidationResultList([
+			new ValidationResult('test1', 1),
+			new ValidationResult('test2', 1),
+			new ValidationResult('test3', 1),
+		]);
 
+		const resultsArr = results.toArray();
+
+		expect(resultsArr).toEqual(jasmine.arrayWithExactContents(results.entries));
 	});
 });
 
 describe('ValidationResultList#toObject', () => {
 	it('should return a key/value pair where each value is a ValidationResult and each key is it\'s value\'s propertyName', () => {
+		const results = new ValidationResultList([
+			new ValidationResult('test1', 1),
+			new ValidationResult('test2', 1),
+			new ValidationResult('test3', 1),
+		]);
 
+		const resultsObj = results.toObject();
+
+		const expectedKeys = results.entries.map(result => result.propertyName);
+		const expectedValues = results.entries;
+
+		expect(Object.keys(resultsObj)).toEqual(jasmine.arrayWithExactContents(expectedKeys));
+		expect(Object.values(resultsObj)).toEqual(jasmine.arrayWithExactContents(expectedValues));
 	});
 });
