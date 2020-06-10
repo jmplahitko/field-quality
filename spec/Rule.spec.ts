@@ -331,48 +331,40 @@ describe('Rule#validate', () => {
 		const rule = new Rule('must');
 		const parentValue = { value: 'test' };
 		const customOptions = { someProp: true };
-		rule.must((val, parent, customOpts) => {
-			expect(val).toEqual(parentValue.value);
-			expect(parent).toEqual(parentValue);
-			expect(customOpts).toEqual(customOptions);
-			return true;
-		})
+		const spy = jasmine.createSpy('receiveArgs').and.returnValue(true);
+
+		rule.must(spy);
 
 		rule.validate(parentValue.value, parentValue, customOptions);
+
+		expect(spy).toHaveBeenCalledWith(parentValue.value, parentValue, customOptions);
 	});
 
 	it('should pass the correct parameters for parentValue and customOptions to preconditions', () => {
 		const rule = new Rule('if');
 		const parentValue = { value: 'parentValue' };
 		const customOptions = { value: 'customOptions' };
+		const whenSpy = jasmine.createSpy('whenSpy').and.returnValue(true);
+		const ifSpy = jasmine.createSpy('ifSpy').and.returnValue(true);
 
 		rule
-			.must(() => false)
-			.when((_parentValue, _customOptions) => {
-				expect(_parentValue).toEqual(parentValue);
-				expect(_customOptions).toEqual(customOptions);
-				return true;
-			})
-			.if((_parentValue, _customOptions) => {
-				expect(_parentValue).toEqual(parentValue);
-				expect(_customOptions).toEqual(customOptions);
-				return true;
-			}, () => {});
+			.must(() => true)
+			.when(whenSpy)
+			.if(ifSpy, () => {});
 
 		rule.validate(parentValue.value, parentValue, customOptions);
+
+		expect(whenSpy).toHaveBeenCalledWith(parentValue, customOptions);
+		expect(ifSpy).toHaveBeenCalledWith(parentValue, customOptions);
 	});
 
 	it('should pass the correct parameters for value, parentValue, and customOptions to message factories', () => {
 		const rule = new Rule('withMessage');
 		const parentValue = { value: 0 };
 		const customOptions = { value: 'customOptions' };
+		const messageSpy = jasmine.createSpy('messageSpy').and.returnValue('');
 
-		rule.min(0).withMessage((value, _parentValue, _customOptions) => {
-			expect(value).toEqual(parentValue.value);
-			expect(_parentValue).toEqual(parentValue);
-			expect(_customOptions).toEqual(customOptions);
-			return '';
-		});
+		rule.min(0).withMessage(messageSpy);
 
 		rule.validate(parentValue.value, parentValue, customOptions);
 	});
