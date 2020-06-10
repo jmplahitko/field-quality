@@ -1,5 +1,7 @@
 import 'jasmine';
 import { Validator, Rule, CollectionRule, ValidationResultList } from '../src';
+import CustomerValidator from './support/validators/CustomerValidator';
+import { validCustomer, invalidPhoneContactCustomer } from './support/instances/customer';
 
 describe('Validator#ruleFor', () => {
 	it('should return a Rule', () => {
@@ -65,8 +67,13 @@ describe('Validator#validateProperty', () => {
 });
 
 describe('Validator#validate', () => {
-	xit('should return an accurate ValidationResultList', () => {
+	it('should return an accurate ValidationResultList', () => {
+		const validator = new CustomerValidator();
+		const validResult = validator.validate(validCustomer);
+		const invalidResult = validator.validate(invalidPhoneContactCustomer);
 
+		expect(validResult.isValid).toBe(true);
+		expect(invalidResult.isValid).toBe(false);
 	});
 
 	it('should pass the correct parameters for value, parentValue, and customOptions to rules', () => {
