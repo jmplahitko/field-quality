@@ -5,6 +5,5 @@ import Order from './Order';
 export default class Customer {
 	public companyName: string;
 	public contact: Contact;
-	public address: Address;
 	public orders: Order[];
 }

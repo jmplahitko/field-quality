@@ -1,4 +1,5 @@
 import Phone from './Phone';
+import Address from './Address';
 
 export default class Contact {
 	firstName: string;
@@ -6,4 +7,5 @@ export default class Contact {
 	lastName: string;
 	title: string;
 	phone: Phone[];
+	address: Address;
 }

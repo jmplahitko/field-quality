@@ -16,9 +16,6 @@ export default class CustomerValidator extends Validator<Customer> {
 		this.ruleFor('contact')
 			.using(new ContactValidator());
 
-		this.ruleFor('address')
-			.using(new AddressValidator());
-
 		this.ruleForEach('orders')
 			.using(new OrderValidator());
 	}

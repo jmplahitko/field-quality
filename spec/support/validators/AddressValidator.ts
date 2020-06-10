@@ -23,7 +23,7 @@ export default class AddressValidator extends Validator<Address> {
 
 		this.ruleFor('region')
 			.notEmpty()
-			.when((x) => x.country === 'USA' || x.country === 'Canada')
+			.when((x) => x?.country === 'USA' || x?.country === 'Canada')
 			.withMessage(() => 'Region is required when country is USA or Canada.');
 
 		this.ruleFor('postalCode')
