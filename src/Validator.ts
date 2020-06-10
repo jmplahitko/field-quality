@@ -71,9 +71,11 @@ export default class Validator<TParentValue = any, TCustomOptions = any> impleme
 		return resultList;
 	}
 
-	// The overload is used internally in order to allow for Validator and Rule instances to be grouped together in
-	// a TValidatorCollection. Note that if used externally, parentValue will be ignored and the third argument supplied
-	// will be used as customOptions.
+	/**
+	 * The overload is used internally in order to allow for Validator and Rule instances to be grouped together in
+	 * a TValidatorCollection. Note that if used externally, parentValue will be ignored and the third argument supplied
+	 * will be used as customOptions.
+	 */
 	public validate(value: any, parentValue?: TParentValue | TCustomOptions, customOptions?: TCustomOptions): ValidationResultList;
 	public validate(value: any, customOptions?: TCustomOptions): ValidationResultList {
 		let [_value, _parentValue, _customOptions] = normalizeValidateArgs<TParentValue, TCustomOptions>(value, arguments[1], arguments[2]);
