@@ -21,7 +21,6 @@
 		"@babel/preset-typescript": "^7.1.0",
 		"@types/jasmine": "^3.5.6",
 		"@types/node": "^11.9.0",
-		"benchmark": "^2.1.4",
 		"eslint": "^5.16.0",
 		"jasmine": "^3.3.1",
 		"jasmine-ts": "^0.3.0",
@@ -31,6 +30,7 @@
 		"typescript": "^3.8.2"
 	},
 	"scripts": {
+		"bench": "ts-node --script-mode ./benchmark/index.ts",
 		"build": "rimraf dist/* && npm run build:types && npm run build:js",
 		"build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
 		"build:types": "tsc --emitDeclarationOnly",
