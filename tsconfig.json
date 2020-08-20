@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "ES5",
 		"lib": ["ESNext", "DOM"],
-		"types": ["@types/jasmine", "@types/node", "@types/benchmark"],
+		"types": ["@types/jasmine", "@types/node"],
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"esModuleInterop": true,
@@ -16,5 +16,5 @@
 		"baseUrl": "./",
 		"paths": {}
 	},
-	"include": ["src/**/*", "benchmark/**/*"]
+	"include": ["src/**/*"]
 }

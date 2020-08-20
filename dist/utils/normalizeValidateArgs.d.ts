@@ -1,1 +1,1 @@
-export default function normalizeValidateArgs(value: any, parentValue?: any, customOptions?: any): any[];
+export default function normalizeValidateArgs<TParentValue, TCustomOptions>(value: any, parentValue?: any, customOptions?: any): [any, TParentValue, TCustomOptions];

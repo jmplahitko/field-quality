@@ -1,25 +1,25 @@
 import Rule from './Rule';
-import { IValidatable, TMeta, TPrecondition, TQualifier } from './types';
-export default class RuleApi {
-    protected __rule: Rule;
-    protected __meta: TMeta;
-    constructor(validatable: Rule, meta: TMeta);
-    enum(allowedValues: Array<string | number>): RuleApi;
-    length(min: number, max: number): RuleApi;
-    lengthOrEmpty(min: number, max: number): RuleApi;
-    matches(rx: RegExp): RuleApi;
-    max(num: number): RuleApi;
-    maxExclusiveOf(num: number): RuleApi;
-    min(num: number): RuleApi;
-    minExclusiveOf(num: number): RuleApi;
-    must(qualifier: TQualifier): RuleApi;
-    notNull(): RuleApi;
-    notEmpty(): RuleApi;
-    stopOnFirstFailure(): void;
+import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TQualifier } from './types';
+export default class RuleApi<TParentValue, TCustomOptions> {
+    protected __rule: Rule<TParentValue, TCustomOptions>;
+    protected __meta: TValidatableMetadata<TParentValue, TCustomOptions>;
+    constructor(validatable: Rule<TParentValue, TCustomOptions>, meta: TValidatableMetadata<TParentValue, TCustomOptions>);
+    enum(allowedValues: Array<string | number>): RuleApi<TParentValue, TCustomOptions>;
+    if(precondition: TPrecondition<TParentValue, TCustomOptions>, define: (rule: Rule<TParentValue, TCustomOptions>) => void): Rule<TParentValue, TCustomOptions>;
+    length(min: number, max: number): RuleApi<TParentValue, TCustomOptions>;
+    lengthOrEmpty(min: number, max: number): RuleApi<TParentValue, TCustomOptions>;
+    matches(rx: RegExp): RuleApi<TParentValue, TCustomOptions>;
+    max(num: number): RuleApi<TParentValue, TCustomOptions>;
+    maxExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions>;
+    min(num: number): RuleApi<TParentValue, TCustomOptions>;
+    minExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions>;
+    must(qualifier: TQualifier<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;
+    notNull(): RuleApi<TParentValue, TCustomOptions>;
+    notEmpty(): RuleApi<TParentValue, TCustomOptions>;
     cascade(): void;
-    using(validatable: IValidatable): any;
-    as(qualifierName: string): this;
-    asWarning(): void;
-    when(precondition: TPrecondition): this;
-    withMessage(message: string): this;
+    using(validatable: IValidatable): Rule<any, any>;
+    as(qualifierName: string): RuleApi<TParentValue, TCustomOptions>;
+    asWarning(): RuleApi<TParentValue, TCustomOptions>;
+    when(precondition: TPrecondition<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;
+    withMessage(message: TMessageFactory<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;
 }
