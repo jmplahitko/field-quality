@@ -11,9 +11,9 @@ import { isEmpty, isNull } from './utils/quality';
 
 export default class Rule<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
 	public propertyName: string;
-	protected _qualifiers: TQualifierCollection<TParentValue, TCustomOptions> = new Map();
-	protected _validators: TValidatorCollection<TParentValue, TCustomOptions> = new Map();
-	protected _stopOnFirstFailure: boolean = true;
+	protected qualifiers: TQualifierCollection<TParentValue, TCustomOptions> = new Map();
+	protected validators: TValidatorCollection<TParentValue, TCustomOptions> = new Map();
+	protected stopOnFirstFailure: boolean = true;
 
 	constructor(propertyName?: string) {
 		this.propertyName = propertyName || '';
@@ -30,7 +30,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beEnumeratedValue, meta);
+		this.qualifiers.set(beEnumeratedValue, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -45,7 +45,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beBetween, meta);
+		this.qualifiers.set(beBetween, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -60,7 +60,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beBetween, meta);
+		this.qualifiers.set(beBetween, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -76,7 +76,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(matchRx, meta);
+		this.qualifiers.set(matchRx, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -90,7 +90,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(notNull, meta);
+		this.qualifiers.set(notNull, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -104,7 +104,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(notEmpty, meta);
+		this.qualifiers.set(notEmpty, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -120,7 +120,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beLessThanOrEqual as TQualifier, meta);
+		this.qualifiers.set(beLessThanOrEqual as TQualifier, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -136,7 +136,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beLessThan as TQualifier, meta);
+		this.qualifiers.set(beLessThan as TQualifier, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -152,7 +152,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beGreaterThanOrEqual as TQualifier, meta);
+		this.qualifiers.set(beGreaterThanOrEqual as TQualifier, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -168,7 +168,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(beGreaterThan as TQualifier, meta);
+		this.qualifiers.set(beGreaterThan as TQualifier, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -182,13 +182,13 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._qualifiers.set(qualifier, meta);
+		this.qualifiers.set(qualifier, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
 	public cascade(): void {
-		this._stopOnFirstFailure = false;
+		this.stopOnFirstFailure = false;
 	}
 
 	public using(validatable: IValidatable<TParentValue, TCustomOptions>): Rule {
@@ -202,7 +202,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._validators.set(validatable, meta);
+		this.validators.set(validatable, meta);
 		return this;
 	}
 
@@ -216,16 +216,16 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this._validators.set(rule, meta);
+		this.validators.set(rule, meta);
 		define(rule);
 
 		return this;
 	}
 
-	protected __runQualifiers(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
+	protected runQualifiers(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
 		const result = new ValidationResult(this.propertyName, propValue);
 
-		for (let [qualifier, meta] of this._qualifiers) {
+		for (let [qualifier, meta] of this.qualifiers) {
 			// We check if we should run the validator based on whether the property has a value
 			if (isEmpty(propValue) && meta.isValidIfEmpty) {
 				continue;
@@ -240,7 +240,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 						result.errors[meta.name] = meta.message(propValue, parentValue, customOptions);
 
 						// Short-circuit if we have to stopOnFirstFailure
-						if (this._stopOnFirstFailure) {
+						if (this.stopOnFirstFailure) {
 							break;
 						}
 					} else {
@@ -255,13 +255,13 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 		return results;
 	}
 
-	protected __runValidators(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
-		for (let [validator, meta] of this._validators) {
+	protected runValidators(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
+		for (let [validator, meta] of this.validators) {
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
 				let _resultList: ValidationResultList = validator.validate(propValue, parentValue, customOptions);
 				results = results.merge(_resultList);
 
-				if (!results.isValid && this._stopOnFirstFailure) {
+				if (!results.isValid && this.stopOnFirstFailure) {
 					break;
 				}
 			}
@@ -270,11 +270,11 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 		return results;
 	}
 
-	protected __getPropertyResults(value: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
-		results = this.__runQualifiers(value, parentValue, customOptions, results);
+	protected getPropertyResults(value: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
+		results = this.runQualifiers(value, parentValue, customOptions, results);
 
-		if (results.isValid || !this._stopOnFirstFailure) {
-			results = this.__runValidators(value, parentValue, customOptions, results);
+		if (results.isValid || !this.stopOnFirstFailure) {
+			results = this.runValidators(value, parentValue, customOptions, results);
 		}
 
 		return results;
@@ -286,7 +286,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 
 		let results = new ValidationResultList([], this.propertyName, value);
 
-		return this.__getPropertyResults(value, parentValue, customOptions, results);
+		return this.getPropertyResults(value, parentValue, customOptions, results);
 
 	}
 }
