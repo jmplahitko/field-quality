@@ -87,4 +87,18 @@ export default class Validator<TParentValue = any, TCustomOptions = any> impleme
 
 		return resultList;
 	}
+
+	public validateAsync(value: any, parentValue?: TParentValue | TCustomOptions, customOptions?: TCustomOptions): Promise<ValidationResultList>;
+	public validateAsync(value: any, customOptions?: TCustomOptions): Promise<ValidationResultList> {
+		const args: [any, TParentValue | TCustomOptions, TCustomOptions?] = [value, arguments[1], arguments[2]];
+
+		return new Promise((resolve, reject) => {
+			try {
+				const result = this.validate(...args);
+				resolve(result);
+			} catch (e) {
+				reject(e);
+			}
+		});
+	}
 }
