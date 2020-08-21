@@ -1,8 +1,8 @@
 import Rule from './Rule';
 import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TQualifier } from './types';
 export default class RuleApi<TParentValue, TCustomOptions> {
-    protected __rule: Rule<TParentValue, TCustomOptions>;
-    protected __meta: TValidatableMetadata<TParentValue, TCustomOptions>;
+    protected rule: Rule<TParentValue, TCustomOptions>;
+    protected meta: TValidatableMetadata<TParentValue, TCustomOptions>;
     constructor(validatable: Rule<TParentValue, TCustomOptions>, meta: TValidatableMetadata<TParentValue, TCustomOptions>);
     enum(allowedValues: Array<string | number>): RuleApi<TParentValue, TCustomOptions>;
     if(precondition: TPrecondition<TParentValue, TCustomOptions>, define: (rule: Rule<TParentValue, TCustomOptions>) => void): Rule<TParentValue, TCustomOptions>;
