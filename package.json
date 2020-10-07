@@ -1,7 +1,7 @@
 {
 	"name": "field-quality",
 	"version": "2.0.0",
-	"description": "Validation Library",
+	"description": "Fluent JSON Validation Library",
 	"repository": {
 		"type": "git",
 		"url": "ssh://git@code.ai.org:7999/~jplahitko/fieldquality.git"
@@ -24,13 +24,18 @@
 		"jasmine-ts-console-reporter": "^3.1.1",
 		"prettier": "1.9.2",
 		"ts-node": "^8.6.2",
-		"typescript": "^3.8.2"
+		"typescript": "^3.8.2",
+		"vuepress": "^1.5.3",
+		"vuepress-plugin-typescript": "^0.3.0",
+		"vuepress-theme-default-prefers-color-scheme": "^1.1.0"
 	},
 	"scripts": {
 		"bench": "ts-node --script-mode ./benchmark/index.ts",
 		"build": "rimraf dist/* && npm run build:types && npm run build:js",
 		"build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
 		"build:types": "tsc --emitDeclarationOnly",
+		"docs:dev": "vuepress dev docs",
+		"docs:build": "vuepress build docs",
 		"review": "npm run type-check && npm run test",
 		"test": "jasmine-ts \"spec/index.spec.js\"",
 		"type-check": "tsc --noEmit",
