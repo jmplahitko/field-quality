@@ -5,6 +5,7 @@ export interface IValidatable<TParentValue = any, TCustomOptions = any> {
     propertyName?: string;
     validate(value: any, parentValue?: TParentValue, customOptions?: TCustomOptions): ValidationResultList;
 }
+export declare type TSelector<T> = (src: T) => any;
 export declare type TCollectionFilter<TParentValue, TCustomOptions> = (value: any, index: number, collection: Array<any>, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 export declare type TErrorCollection = {
     [ruleName: string]: string;

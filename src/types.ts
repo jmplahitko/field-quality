@@ -8,6 +8,8 @@ export interface IValidatable<TParentValue = any, TCustomOptions = any> {
 	validate(value: any, parentValue?: TParentValue, customOptions?: TCustomOptions): ValidationResultList;
 }
 
+export type TSelector<T> = (src: T) => any;
+
 export type TCollectionFilter<TParentValue, TCustomOptions> = (value: any, index: number, collection: Array<any>, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 
 export type TErrorCollection = {

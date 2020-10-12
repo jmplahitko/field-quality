@@ -1,11 +1,11 @@
 import CollectionRule from './CollectionRule';
 import Rule from './Rule';
 import ValidationResultList from './ValidationResultList';
-import { IValidatable, TRuleCollection } from './types';
+import { IValidatable, TRuleCollection, TSelector } from './types';
 
 import getProperty from './utils/getProperty';
-import { isEqual } from './utils/quality';
 import normalizeValidateArgs from './utils/normalizeValidateArgs';
+import getMemberPath from './utils/getMemberPath';
 
 export default class Validator<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
 	private _propertyName!: string | undefined;
@@ -19,7 +19,8 @@ export default class Validator<TParentValue = any, TCustomOptions = any> impleme
 		this._propertyName = propertyName;
 	}
 
-	protected ruleFor(propertyName: string): Rule<TParentValue, TCustomOptions> {
+	protected ruleFor(selector: TSelector<TParentValue>): Rule<TParentValue, TCustomOptions> {
+		const propertyName = getMemberPath<TParentValue>(selector);
 		let rule = new Rule<TParentValue, TCustomOptions>(propertyName);
 
 		if (!this._rules[propertyName]) {
@@ -31,7 +32,8 @@ export default class Validator<TParentValue = any, TCustomOptions = any> impleme
 		return rule;
 	}
 
-	protected ruleForEach(propertyName: string): CollectionRule<TParentValue, TCustomOptions> {
+	protected ruleForEach(selector: TSelector<TParentValue>): CollectionRule<TParentValue, TCustomOptions> {
+		const propertyName = getMemberPath<TParentValue>(selector);
 		let rule = new CollectionRule<TParentValue, TCustomOptions>(propertyName);
 
 		if (!this._rules[propertyName]) {

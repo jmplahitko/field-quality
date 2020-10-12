@@ -9,13 +9,13 @@ export default class DomesticPhoneValidator extends Validator<Phone> {
 	constructor() {
 		super();
 
-		this.ruleFor('value')
+		this.ruleFor(x => x.value)
 			.notEmpty()
 			.withMessage(() => 'Value is required.')
 			.matches(rx.domesticphone)
 			.withMessage(() => 'Invalid domestic phone number.');
 
-		this.ruleFor('isInternational')
+		this.ruleFor(x => x.isInternational)
 			.must(beFalse)
 			.withMessage(() => 'isInternational must be false.');
 	}

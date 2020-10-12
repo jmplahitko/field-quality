@@ -14,37 +14,37 @@ export default class OrderValidator extends Validator<Order> {
 	constructor() {
 		super();
 
-		this.ruleFor('orderDate')
+		this.ruleFor(x => x.orderDate)
 			.notEmpty()
 			.withMessage(() => 'Order date is required.')
 			.using(new DateRule());
 
-			this.ruleFor('requiredDate')
+			this.ruleFor(x => x.requiredDate)
 				.notEmpty()
 				.withMessage(() => 'Required date is required.')
 				.using(new DateRule());
 
-			this.ruleFor('shippedDate')
+			this.ruleFor(x => x.shippedDate)
 				.notEmpty()
 				.withMessage(() => 'Shipped date is required.')
 				.using(new DateRule());
 
-			this.ruleFor('freight')
+			this.ruleFor(x => x.freight)
 				.notEmpty()
 				.withMessage(() => 'Freight is required.')
 				.using(new PositiveNumberRule('freight', 'Freight'));
 
-			this.ruleFor('shipAddress')
+			this.ruleFor(x => x.shipAddress)
 				.using(new AddressValidator());
 
-			this.ruleFor('products')
+			this.ruleFor(x => x.products)
 				.notEmpty()
 				.withMessage(() => 'Orders must have at least one product.');
 
-			this.ruleForEach('products')
+			this.ruleForEach(x => x.products)
 				.using(new OrderProductValidator());
 
-			this.ruleFor('totalPrice')
+			this.ruleFor(x => x.totalPrice)
 				.must(beSumOfAllProductPricesPlusFreight)
 				.withMessage(() => 'Total price must equal all product prices times quantities');
 	}

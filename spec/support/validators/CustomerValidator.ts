@@ -8,15 +8,15 @@ export default class CustomerValidator extends Validator<Customer> {
 	constructor() {
 		super();
 
-		this.ruleFor('companyName')
+		this.ruleFor(x => x.companyName)
 			.notEmpty()
 			.withMessage(() => 'Company name is required')
 			.matches(rx.fullname);
 
-		this.ruleFor('contact')
+		this.ruleFor(x => x.contact)
 			.using(new ContactValidator());
 
-		this.ruleForEach('orders')
+		this.ruleForEach(x => x.orders)
 			.using(new OrderValidator());
 	}
 }

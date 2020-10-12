@@ -7,29 +7,29 @@ export default class ContactValidator extends Validator<Contact> {
 	constructor() {
 		super();
 
-		this.ruleFor('firstName')
+		this.ruleFor(x => x.firstName)
 			.notEmpty()
 			.withMessage(() => 'First Name is required.')
 			.matches(rx.name)
 			.withMessage(() => 'Invalid first name.');
 
-		this.ruleFor('middleName')
+		this.ruleFor(x => x.middleName)
 			.matches(rx.name)
 			.length(2, 50)
 			.asWarning()
 			.withMessage((value) => `Are you sure ${value} is your full middle name?`);
 
-		this.ruleFor('lastName')
+		this.ruleFor(x => x.lastName)
 			.notEmpty()
 			.withMessage(() => 'Last Name is required.')
 			.matches(rx.lastname)
 			.withMessage(() => 'Invalid last name.');
 
-		this.ruleFor('title')
+		this.ruleFor(x => x.title)
 			.matches(rx.title)
 			.withMessage(() => 'Invalid title.');
 
-		this.ruleFor('phone')
+		this.ruleFor(x => x.phone)
 			.length(1, 2)
 			.withMessage((value) => {
 				let message;
@@ -41,10 +41,10 @@ export default class ContactValidator extends Validator<Contact> {
 				return message;
 			});
 
-		this.ruleForEach('phone')
+		this.ruleForEach(x => x.phone)
 			.using(new PhoneValidator());
 
-		this.ruleFor('address')
+		this.ruleFor(x => x.address)
 			.using(new AddressValidator());
 	}
 }

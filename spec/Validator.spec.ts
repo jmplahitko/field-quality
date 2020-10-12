@@ -9,7 +9,7 @@ describe('Validator#ruleFor', () => {
 			constructor() {
 				super();
 
-				const returnedValue = this.ruleFor('test');
+				const returnedValue = this.ruleFor(x => x.test);
 
 				expect(returnedValue).toBeInstanceOf(Rule);
 			}
@@ -25,7 +25,7 @@ describe('Validator#ruleForEach', () => {
 			constructor() {
 				super();
 
-				const returnedValue = this.ruleForEach('test');
+				const returnedValue = this.ruleForEach(x => x.test);
 
 				expect(returnedValue).toBeInstanceOf(CollectionRule);
 			}
@@ -47,7 +47,7 @@ describe('Validator#validateProperty', () => {
 			constructor() {
 				super();
 
-				let observedRule = this.ruleFor('test');
+				let observedRule = this.ruleFor(x => x.test);
 				spy = spyOn(observedRule, 'validate')
 					.and.returnValue(new ValidationResultList());
 			}
@@ -83,7 +83,7 @@ describe('Validator#validate', () => {
 			constructor() {
 				super();
 
-				let observedRule = this.ruleFor('test');
+				let observedRule = this.ruleFor(x  => x.test);
 				spy = spyOn(observedRule, 'validate')
 					.and.returnValue(new ValidationResultList());
 			}
