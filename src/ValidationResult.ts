@@ -10,7 +10,7 @@ export default class ValidationResult {
 
 	constructor(propertyName: string, value?: any) {
 		this.propertyName = propertyName;
-		this.value = value ?? null;
+		this.value = value;
 	}
 
 	public get isValid(): boolean {
