@@ -3,7 +3,7 @@ export default class ValidationResultList {
     protected _entries: ValidationResult[];
     propertyName: string | undefined;
     value: any;
-    constructor(args?: ValidationResult[], properytName?: string, value?: any);
+    constructor(args?: ValidationResult[], propertyName?: string, value?: any);
     get isValid(): boolean;
     get length(): number;
     forEach(cb: (value: ValidationResult, index: number, array: ValidationResult[]) => void): void;
