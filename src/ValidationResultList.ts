@@ -5,8 +5,8 @@ export default class ValidationResultList {
 	public propertyName: string|undefined;
 	public value: any;
 
-	constructor(args: ValidationResult[] = [], properytName?: string, value?: any) {
-		this.propertyName = properytName;
+	constructor(args: ValidationResult[] = [], propertyName?: string, value?: any) {
+		this.propertyName = propertyName;
 		this.value = value;
 		this._entries = this._entries.concat(args);
 	}
