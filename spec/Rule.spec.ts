@@ -4,7 +4,7 @@ import PositiveNumberRule from './support/validators/rules/PositiveNumberRule';
 import PhoneValidator from './support/validators/PhoneValidator';
 
 describe('Rule#cascade', () => {
-	it('should run all qualifiers and contained rules regardless of validity', () => {
+	it('should run all predicates and contained rules regardless of validity', () => {
 		const rule = new Rule('cascade');
 
 		rule
@@ -255,7 +255,7 @@ describe('Rule#maxExclusiveOf', () => {
 });
 
 describe('Rule#must', () => {
-	it('should describe a custom qualifier to be executed when calling Rule#validate', () => {
+	it('should describe a custom predicate to be executed when calling Rule#validate', () => {
 		const rule = new Rule('must');
 		function returnFalse() {
 			return false;
@@ -327,7 +327,7 @@ describe('Rule#validate', () => {
 		expect((<ValidationResult>numberResult).errors.beGreaterThanOrEqual).toBeDefined();
 	});
 
-	it('should pass the correct parameters for value, parentValue, and customOptions to qualifiers', () => {
+	it('should pass the correct parameters for value, parentValue, and customOptions to predicates', () => {
 		const rule = new Rule('must');
 		const parentValue = { value: 'test' };
 		const customOptions = { someProp: true };
@@ -371,7 +371,7 @@ describe('Rule#validate', () => {
 });
 
 describe('RuleApi#as', () => {
-	it('should rename a qualifier', () => {
+	it('should rename a predicate', () => {
 		const rule = new Rule('as');
 		rule.min(1).as('min');
 		const result = rule.validate(0);
@@ -381,7 +381,7 @@ describe('RuleApi#as', () => {
 		expect((<ValidationResult>minResult).errors.beGreaterThanOrEqual).toBeUndefined();
 	});
 
-	it('should name custom qualifiers defined with arrow functions', () => {
+	it('should name custom predicates defined with arrow functions', () => {
 		const rule = new Rule('as');
 		rule.must(() => false).as('returnFalse');
 
@@ -393,7 +393,7 @@ describe('RuleApi#as', () => {
 });
 
 describe('RuleApi#asWarning', () => {
-	it('should mark the severity of a qualifier as a warning', () => {
+	it('should mark the severity of a predicate as a warning', () => {
 		const rule = new Rule('warning');
 		rule.min(1).asWarning();
 
@@ -405,35 +405,35 @@ describe('RuleApi#asWarning', () => {
 });
 
 describe('RuleApi#when', () => {
-	it('should mark an individual qualifier only to be run if a condition is met', () => {
+	it('should mark an individual predicate only to be run if a condition is met', () => {
 		const rule = new Rule('when');
 		const parent = { value: 0 };
 		const willValidate = { validate: true };
 		const wontValidate = { validate: false };
-		const qualifierSpy = jasmine.createSpy('qualifierSpy').and.returnValue(true);
+		const predicateSpy = jasmine.createSpy('predicateSpy').and.returnValue(true);
 
-		rule.must(qualifierSpy).when((p, c) => c.validate);
+		rule.must(predicateSpy).when((p, c) => c.validate);
 
 		rule.validate(parent.value, parent, willValidate);
-		expect(qualifierSpy).toHaveBeenCalled();
+		expect(predicateSpy).toHaveBeenCalled();
 
 		// we are being explicit with our test here, so not enough to check how many times the spy was called,
 		// we want to know that it was called in the right circumstance
-		qualifierSpy.calls.reset();
+		predicateSpy.calls.reset();
 
 		rule.validate(parent.value, parent, wontValidate);
-		expect(qualifierSpy).not.toHaveBeenCalled();
+		expect(predicateSpy).not.toHaveBeenCalled();
 	});
 });
 
 describe('RuleApi#withMessage', () => {
-	it('should define a custom message for a qualifier', () => {
+	it('should define a custom message for a predicate', () => {
 		const rule = new Rule('withMessage');
-		const invalidQualifierMessage = 'Pirates be passin bad numberrrrrrsss';
-		rule.min(1).withMessage(() => invalidQualifierMessage);
+		const invalidPredicateMessage = 'Pirates be passin bad numberrrrrrsss';
+		rule.min(1).withMessage(() => invalidPredicateMessage);
 
 		const result = rule.validate(0).get('withMessage');
 
-		expect((<ValidationResult>result).errors.beGreaterThanOrEqual).toBe(invalidQualifierMessage);
+		expect((<ValidationResult>result).errors.beGreaterThanOrEqual).toBe(invalidPredicateMessage);
 	});
 })

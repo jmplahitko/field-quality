@@ -19,8 +19,8 @@ export declare type TValidatableMetadata<TParentValue = any, TCustomOptions = an
     severity: Severity;
 };
 export declare type TPrecondition<TParentValue = any, TCustomOptions = any> = (parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
-export declare type TQualifier<TParentValue = any, TCustomOptions = any> = (value: any, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
-export declare type TQualifierCollection<TParentValue, TCustomOptions> = Map<TQualifier<TParentValue, TCustomOptions>, TValidatableMetadata<TParentValue, TCustomOptions>>;
+export declare type TPredicate<TParentValue = any, TCustomOptions = any> = (value: any, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
+export declare type TPredicateCollection<TParentValue, TCustomOptions> = Map<TPredicate<TParentValue, TCustomOptions>, TValidatableMetadata<TParentValue, TCustomOptions>>;
 export declare type TRuleCollection<TParentValue, TCustomOptions> = {
     [ruleName: string]: Array<Rule<TParentValue, TCustomOptions>>;
 };

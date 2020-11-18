@@ -3,15 +3,15 @@ import Severity from './Severity';
 import ValidationResult from './ValidationResult';
 import ValidationResultList from './ValidationResultList';
 
-import { IValidatable, TPrecondition, TQualifier, TQualifierCollection, TValidatorCollection } from './types';
+import { IValidatable, TPrecondition, TPredicate, TPredicateCollection, TValidatorCollection } from './types';
 
 import copy from './utils/copy';
-import { length, match, max, min, notEmpty, notNull, beValidEnum } from './utils/qualifiers';
+import { length, match, max, min, notEmpty, notNull, beValidEnum } from './utils/predicates';
 import { isEmpty, isNull } from './utils/quality';
 
 export default class Rule<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
 	public propertyName: string;
-	protected qualifiers: TQualifierCollection<TParentValue, TCustomOptions> = new Map();
+	protected predicates: TPredicateCollection<TParentValue, TCustomOptions> = new Map();
 	protected validators: TValidatorCollection<TParentValue, TCustomOptions> = new Map();
 	protected stopOnFirstFailure: boolean = true;
 
@@ -30,7 +30,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(beEnumeratedValue, meta);
+		this.predicates.set(beEnumeratedValue, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -45,7 +45,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(beBetween, meta);
+		this.predicates.set(beBetween, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -60,7 +60,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(beBetween, meta);
+		this.predicates.set(beBetween, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -76,7 +76,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(matchRx, meta);
+		this.predicates.set(matchRx, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -90,7 +90,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(notNull, meta);
+		this.predicates.set(notNull, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -104,7 +104,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(notEmpty, meta);
+		this.predicates.set(notEmpty, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -120,7 +120,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(beLessThanOrEqual as TQualifier, meta);
+		this.predicates.set(beLessThanOrEqual as TPredicate, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -136,7 +136,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(beLessThan as TQualifier, meta);
+		this.predicates.set(beLessThan as TPredicate, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -152,7 +152,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(beGreaterThanOrEqual as TQualifier, meta);
+		this.predicates.set(beGreaterThanOrEqual as TPredicate, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -168,21 +168,21 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(beGreaterThan as TQualifier, meta);
+		this.predicates.set(beGreaterThan as TPredicate, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
 
-	public must(qualifier: TQualifier<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions> {
+	public must(predicate: TPredicate<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions> {
 		let meta = {
-			name: qualifier.name,
+			name: predicate.name,
 			message: () =>  `${this.propertyName} is invalid.`,
 			precondition: null,
 			isValidIfEmpty: false,
 			severity: Severity.default
 		};
 
-		this.qualifiers.set(qualifier, meta);
+		this.predicates.set(predicate, meta);
 
 		return new RuleApi<TParentValue, TCustomOptions>(this, meta);
 	}
@@ -222,18 +222,18 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 		return this;
 	}
 
-	protected runQualifiers(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
+	protected runPredicates(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
 		const result = new ValidationResult(this.propertyName, propValue);
 
-		for (let [qualifier, meta] of this.qualifiers) {
+		for (let [predicate, meta] of this.predicates) {
 			// We check if we should run the validator based on whether the property has a value
 			if (isEmpty(propValue) && meta.isValidIfEmpty) {
 				continue;
 			}
 
-			// We check for a precondition to exist for a qualifier before calling it
+			// We check for a precondition to exist for a predicate before calling it
 			if (!meta.precondition || meta.precondition(parentValue, customOptions)) {
-				let isValid = qualifier(propValue, parentValue, customOptions);
+				let isValid = predicate(propValue, parentValue, customOptions);
 
 				if (!isValid) {
 					if (meta.severity === Severity.error) {
@@ -271,7 +271,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 	}
 
 	protected getPropertyResults(value: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList {
-		results = this.runQualifiers(value, parentValue, customOptions, results);
+		results = this.runPredicates(value, parentValue, customOptions, results);
 
 		if (results.isValid || !this.stopOnFirstFailure) {
 			results = this.runValidators(value, parentValue, customOptions, results);

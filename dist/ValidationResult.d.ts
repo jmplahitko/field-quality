@@ -1,10 +1,10 @@
 import ValidationResultList from './ValidationResultList';
 export default class ValidationResult {
     errors: {
-        [qualifierName: string]: string;
+        [predicateName: string]: string;
     };
     warnings: {
-        [qualifierName: string]: string;
+        [predicateName: string]: string;
     };
     propertyName: string;
     value: any;

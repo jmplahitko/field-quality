@@ -1,5 +1,5 @@
 import Rule from './Rule';
-import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TQualifier } from './types';
+import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TPredicate } from './types';
 export default class RuleApi<TParentValue, TCustomOptions> {
     protected rule: Rule<TParentValue, TCustomOptions>;
     protected meta: TValidatableMetadata<TParentValue, TCustomOptions>;
@@ -13,12 +13,12 @@ export default class RuleApi<TParentValue, TCustomOptions> {
     maxExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions>;
     min(num: number): RuleApi<TParentValue, TCustomOptions>;
     minExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions>;
-    must(qualifier: TQualifier<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;
+    must(predicate: TPredicate<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;
     notNull(): RuleApi<TParentValue, TCustomOptions>;
     notEmpty(): RuleApi<TParentValue, TCustomOptions>;
     cascade(): void;
     using(validatable: IValidatable): Rule<any, any>;
-    as(qualifierName: string): RuleApi<TParentValue, TCustomOptions>;
+    as(predicateName: string): RuleApi<TParentValue, TCustomOptions>;
     asWarning(): RuleApi<TParentValue, TCustomOptions>;
     when(precondition: TPrecondition<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;
     withMessage(message: TMessageFactory<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;

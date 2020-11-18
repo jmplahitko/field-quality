@@ -92,16 +92,16 @@ describe('CollectionRule#where', () => {
 		const rule = new CollectionRule('where');
 		const usingRule = new PositiveNumberRule();
 		const ruleSpy = spyOn(usingRule, 'validate').and.returnValue(new ValidationResultList());
-		const qualifierSpy = jasmine.createSpy('qualifierSpy').and.returnValue(true);
+		const predicateSpy = jasmine.createSpy('predicateSpy').and.returnValue(true);
 
 		rule
 			.where(x => Number.isInteger(x), _rule => _rule.using(usingRule))
-			.where(x => q.isString(x), rule => rule.must(qualifierSpy));
+			.where(x => q.isString(x), rule => rule.must(predicateSpy));
 
 		rule.validate(collection);
 
 		expect(ruleSpy).toHaveBeenCalledTimes(3);
-		expect(qualifierSpy).toHaveBeenCalledTimes(2);
+		expect(predicateSpy).toHaveBeenCalledTimes(2);
 	});
 });
 
@@ -110,7 +110,7 @@ describe('CollectionRule#validate', () => {
 		// TODO:
 	});
 
-	it('should pass the correct parameters for value, parentValue, and customOptions to qualifiers', () => {
+	it('should pass the correct parameters for value, parentValue, and customOptions to predicates', () => {
 		const rule = new CollectionRule('must');
 		const parentValue = { value: [1, 2, 3, 4, 5] };
 		const customOptions = { someProp: true };

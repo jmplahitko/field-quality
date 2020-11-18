@@ -28,9 +28,9 @@ export type TValidatableMetadata<TParentValue = any, TCustomOptions = any> = {
 
 export type TPrecondition<TParentValue = any, TCustomOptions = any> = (parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 
-export type TQualifier<TParentValue = any, TCustomOptions = any> = (value: any, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
+export type TPredicate<TParentValue = any, TCustomOptions = any> = (value: any, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 
-export type TQualifierCollection<TParentValue, TCustomOptions> = Map<TQualifier<TParentValue, TCustomOptions>, TValidatableMetadata<TParentValue, TCustomOptions>>;
+export type TPredicateCollection<TParentValue, TCustomOptions> = Map<TPredicate<TParentValue, TCustomOptions>, TValidatableMetadata<TParentValue, TCustomOptions>>;
 
 export type TRuleCollection<TParentValue, TCustomOptions> = { [ruleName: string]: Array<Rule<TParentValue, TCustomOptions>> };
 

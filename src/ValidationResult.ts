@@ -3,8 +3,8 @@ import ValidationResultList from './ValidationResultList';
 import { isEmpty } from './utils/quality';
 
 export default class ValidationResult {
-	public errors: { [qualifierName: string]: string } = {};
-	public warnings: { [qualifierName: string]: string } = {};
+	public errors: { [predicateName: string]: string } = {};
+	public warnings: { [predicateName: string]: string } = {};
 	public propertyName: string;
 	public value: any;
 

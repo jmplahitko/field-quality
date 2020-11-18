@@ -1,7 +1,7 @@
 import { Validator, rx } from '../../../src';
 import Phone from '../model/Phone';
 import PhoneType from '../model/PhoneType';
-import { beBoolean } from '../../../src/utils/qualifiers';
+import { beBoolean } from '../../../src/utils/predicates';
 
 export default class PhoneValidator extends Validator<Phone> {
 	constructor() {

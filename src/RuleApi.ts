@@ -1,7 +1,7 @@
 import Rule from './Rule';
 import Severity from './Severity';
 
-import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TQualifier } from './types';
+import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TPredicate } from './types';
 
 export default class RuleApi<TParentValue, TCustomOptions> {
 	protected rule: Rule<TParentValue, TCustomOptions>;
@@ -48,8 +48,8 @@ export default class RuleApi<TParentValue, TCustomOptions> {
 		return this.rule.minExclusiveOf(num);
 	}
 
-	public must(qualifier: TQualifier<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions> {
-		return this.rule.must(qualifier);
+	public must(predicate: TPredicate<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions> {
+		return this.rule.must(predicate);
 	}
 
 	public notNull(): RuleApi<TParentValue, TCustomOptions> {
@@ -68,8 +68,8 @@ export default class RuleApi<TParentValue, TCustomOptions> {
 		return this.rule.using(validatable);
 	}
 
-	public as(qualifierName: string): RuleApi<TParentValue, TCustomOptions> {
-		this.meta.name = qualifierName;
+	public as(predicateName: string): RuleApi<TParentValue, TCustomOptions> {
+		this.meta.name = predicateName;
 		return this;
 	}
 

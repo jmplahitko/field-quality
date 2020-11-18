@@ -1,9 +1,9 @@
 import RuleApi from './RuleApi';
 import ValidationResultList from './ValidationResultList';
-import { IValidatable, TPrecondition, TQualifier, TQualifierCollection, TValidatorCollection } from './types';
+import { IValidatable, TPrecondition, TPredicate, TPredicateCollection, TValidatorCollection } from './types';
 export default class Rule<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
     propertyName: string;
-    protected qualifiers: TQualifierCollection<TParentValue, TCustomOptions>;
+    protected predicates: TPredicateCollection<TParentValue, TCustomOptions>;
     protected validators: TValidatorCollection<TParentValue, TCustomOptions>;
     protected stopOnFirstFailure: boolean;
     constructor(propertyName?: string);
@@ -17,11 +17,11 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
     maxExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions>;
     min(num: number): RuleApi<TParentValue, TCustomOptions>;
     minExclusiveOf(num: number): RuleApi<TParentValue, TCustomOptions>;
-    must(qualifier: TQualifier<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;
+    must(predicate: TPredicate<TParentValue, TCustomOptions>): RuleApi<TParentValue, TCustomOptions>;
     cascade(): void;
     using(validatable: IValidatable<TParentValue, TCustomOptions>): Rule;
     if(precondition: TPrecondition<TParentValue, TCustomOptions>, define: (rule: Rule<TParentValue, TCustomOptions>) => void): Rule;
-    protected runQualifiers(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList;
+    protected runPredicates(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList;
     protected runValidators(propValue: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList;
     protected getPropertyResults(value: any, parentValue: any, customOptions: any, results: ValidationResultList): ValidationResultList;
     validate(value: any, parentValue?: TParentValue, customOptions?: TCustomOptions): ValidationResultList;

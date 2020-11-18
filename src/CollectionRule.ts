@@ -55,7 +55,7 @@ export default class CollectionRule<TParentValue = any, TCustomOptions = any> ex
 				const index = collection.indexOf(value);
 				const propertyName = `${this.propertyName}[${index}]`;
 				let resultList = new ValidationResultList([], propertyName);
-				this.runQualifiers(value, parentValue, customOptions, resultList);
+				this.runPredicates(value, parentValue, customOptions, resultList);
 
 				if (resultList.isValid || !this.stopOnFirstFailure) {
 					this.runValidators(value, parentValue, customOptions, resultList);
