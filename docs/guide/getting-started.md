@@ -1,9 +1,15 @@
 # Getting Started
 
+## Predicates
+
 ## Creating Rules
 
-## Creating Rules for Collections
+## Validation Results
 
 ## Creating Validators
+
+## Validation Result Lists
+
+## Creating Rules for Collections
 
 ## Reusing Rules and Validators
