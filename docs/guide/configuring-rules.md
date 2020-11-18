@@ -1,10 +1,10 @@
 # Configuring Rules
 
-## Overriding Messages
+## Custom Messages
 
 ## Conditional Validation
 
-## Cascading
+## Cascade Mode
 
 ## Severity
 

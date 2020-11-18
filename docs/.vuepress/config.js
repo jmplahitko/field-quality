@@ -56,7 +56,7 @@ module.exports = {
 					children: [
 						'getting-started',
 						'configuring-rules',
-						'built-in-qualifiers',
+						'built-ins',
 						'advanced-techniques'
 					],
 				},
