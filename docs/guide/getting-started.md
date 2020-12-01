@@ -60,7 +60,7 @@ class DomesticPhoneRule extends Rule {
 const rule = new DomesticPhoneRule();
 ```
 
-Both ways will validate the the same way by calling `validate`.
+Both ways will validate the same way by calling `validate`.
 
 ```ts
 let result = rule.validate(null);
