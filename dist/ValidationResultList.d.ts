@@ -1,3 +1,4 @@
+import { TValidationResultMergeOptions } from './types';
 import ValidationResult from './ValidationResult';
 export default class ValidationResultList {
     protected _entries: ValidationResult[];
@@ -21,5 +22,5 @@ export default class ValidationResultList {
     toObject(): {
         [propertyName: string]: ValidationResult;
     };
-    static merge(dest: ValidationResultList, src: ValidationResultList): ValidationResultList;
+    static merge(dest: ValidationResultList, src: ValidationResultList, options?: TValidationResultMergeOptions): ValidationResultList;
 }

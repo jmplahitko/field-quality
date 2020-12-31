@@ -1,3 +1,6 @@
+import { TValidationResultMergeOptions } from './types';
+import copy from './utils/copy';
+import { isEqual } from './utils/quality';
 import ValidationResult from './ValidationResult';
 
 export default class ValidationResultList {
@@ -117,11 +120,15 @@ export default class ValidationResultList {
 		return obj;
 	}
 
-	static merge(dest: ValidationResultList, src: ValidationResultList): ValidationResultList {
+	static merge(dest: ValidationResultList, src: ValidationResultList, options: TValidationResultMergeOptions = { useSourceValue: false }): ValidationResultList {
 		if (dest !== src) {
 			src.forEach((result) => {
 				dest.push(result);
 			});
+		}
+
+		if (!isEqual(dest.value, src.value) && options.useSourceValue) {
+			dest.value = copy(src.value);
 		}
 
 		return dest;

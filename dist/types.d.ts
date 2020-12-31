@@ -18,6 +18,9 @@ export declare type TValidatableMetadata<TParentValue = any, TCustomOptions = an
     isValidIfEmpty: boolean;
     severity: Severity;
 };
+export declare type TValidationResultMergeOptions = {
+    useSourceValue: boolean;
+};
 export declare type TPrecondition<TParentValue = any, TCustomOptions = any> = (parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 export declare type TPredicate<TParentValue = any, TCustomOptions = any> = (value: any, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 export declare type TPredicateCollection<TParentValue, TCustomOptions> = Map<TPredicate<TParentValue, TCustomOptions>, TValidatableMetadata<TParentValue, TCustomOptions>>;

@@ -26,6 +26,10 @@ export type TValidatableMetadata<TParentValue = any, TCustomOptions = any> = {
 	severity: Severity;
 };
 
+export type TValidationResultMergeOptions = {
+	useSourceValue: boolean;
+}
+
 export type TPrecondition<TParentValue = any, TCustomOptions = any> = (parentValue: TParentValue, customOptions: TCustomOptions) => boolean;
 
 export type TPredicate<TParentValue = any, TCustomOptions = any> = (value: any, parentValue: TParentValue, customOptions: TCustomOptions) => boolean;

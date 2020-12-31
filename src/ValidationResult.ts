@@ -1,6 +1,8 @@
 import ValidationResultList from './ValidationResultList';
 
-import { isEmpty } from './utils/quality';
+import { isEmpty, isEqual } from './utils/quality';
+import { TValidationResultMergeOptions } from './types';
+import copy from './utils/copy';
 
 export default class ValidationResult {
 	public errors: { [predicateName: string]: string } = {};
@@ -33,10 +35,14 @@ export default class ValidationResult {
 		return new ValidationResultList([this], this.propertyName, this.value);
 	}
 
-	static merge(dest: ValidationResult, src: ValidationResult): ValidationResult {
+	static merge(dest: ValidationResult, src: ValidationResult, options: TValidationResultMergeOptions = { useSourceValue: false }): ValidationResult {
 		if (dest !== src) {
 			dest.errors = { ...dest.errors, ...src.errors };
 			dest.warnings = { ...dest.warnings, ...src.warnings };
+		}
+
+		if (!isEqual(dest.value, src.value) && options.useSourceValue) {
+			dest.value = copy(src.value);
 		}
 
 		return dest;

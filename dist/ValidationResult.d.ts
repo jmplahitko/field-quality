@@ -1,4 +1,5 @@
 import ValidationResultList from './ValidationResultList';
+import { TValidationResultMergeOptions } from './types';
 export default class ValidationResult {
     errors: {
         [predicateName: string]: string;
@@ -14,5 +15,5 @@ export default class ValidationResult {
     get warningCount(): number;
     merge(result: ValidationResult): ValidationResult;
     toValidationResultList(): ValidationResultList;
-    static merge(dest: ValidationResult, src: ValidationResult): ValidationResult;
+    static merge(dest: ValidationResult, src: ValidationResult, options?: TValidationResultMergeOptions): ValidationResult;
 }
