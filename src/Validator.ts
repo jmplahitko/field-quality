@@ -45,18 +45,10 @@ export default class Validator<TParentValue = any, TCustomOptions = any> impleme
 		return rule;
 	}
 
-	public validateProperty(propertyName: string, parentValue: TParentValue, customOptions?: TCustomOptions, outResultList?: ValidationResultList): ValidationResultList {
+	public validateProperty(propertyName: string, parentValue: TParentValue, customOptions?: TCustomOptions): ValidationResultList {
 		const value = getProperty(parentValue, propertyName);
-		let resultList;
-
-		if (outResultList) {
-			resultList = outResultList;
-			resultList.removeWithRelatedResults(propertyName);
-		} else {
-			resultList = new ValidationResultList([], propertyName, value);
-		}
-
 		const rules = this._rules[propertyName];
+		let resultList = new ValidationResultList([], propertyName, value);
 
 		for (let rule of rules) {
 			let _results = rule.validate(value, parentValue, customOptions);
