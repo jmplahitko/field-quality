@@ -1,6 +1,6 @@
 {
 	"name": "field-quality",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "Fluent JSON Validation Library",
 	"repository": {
 		"type": "git",
@@ -43,5 +43,6 @@
 	},
 	"publishConfig": {
 		"registry": "https://registry.ai.org/repository/npm-hosted/"
-	}
+	},
+	"dependencies": {}
 }
