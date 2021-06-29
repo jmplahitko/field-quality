@@ -19,6 +19,10 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 		this.propertyName = propertyName || '';
 	}
 
+	get isEmpty() {
+		return this.predicates.size === 0 && this.validators.size === 0;
+	}
+
 	public enum(allowedValues: Array<string|number>): RuleApi<TParentValue, TCustomOptions> {
 		let beEnumeratedValue = beValidEnum(allowedValues);
 

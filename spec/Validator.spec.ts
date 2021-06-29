@@ -35,6 +35,26 @@ describe('Validator#ruleForEach', () => {
 	});
 });
 
+describe('Validator#hasRuleFor', () => {
+	it('should accurately report rule existence', () => {
+		class MyValidator extends Validator {
+			constructor() {
+				super();
+
+				this.ruleFor(x => x.test);
+				this.ruleFor(x => x.test1)
+					.must(() => false);
+			}
+		}
+
+		const validator = new MyValidator();
+
+		expect(validator.hasRuleFor('test')).toBeFalse();
+		expect(validator.hasRuleFor('test1')).toBeTrue();
+		expect(validator.hasRuleFor('test3')).toBeFalse();
+	});
+});
+
 describe('Validator#validateProperty', () => {
 	xit('should return a validation result for the given property', () => {
 

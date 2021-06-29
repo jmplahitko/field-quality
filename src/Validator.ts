@@ -6,6 +6,7 @@ import { IValidatable, TRuleCollection, TSelector } from './types';
 import getProperty from './utils/getProperty';
 import normalizeValidateArgs from './utils/normalizeValidateArgs';
 import getMemberPath from './utils/getMemberPath';
+import { isEmpty } from './utils/quality';
 
 export default class Validator<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
 	private _propertyName!: string | undefined;
@@ -43,6 +44,12 @@ export default class Validator<TParentValue = any, TCustomOptions = any> impleme
 		}
 
 		return rule;
+	}
+
+	public hasRuleFor(propertyName: string): boolean {
+		const rules = this._rules[propertyName]?.find(x => !x.isEmpty);
+
+		return !isEmpty(rules);
 	}
 
 	public validateProperty(propertyName: string, parentValue: TParentValue, customOptions?: TCustomOptions): ValidationResultList {

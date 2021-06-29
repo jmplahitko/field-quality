@@ -9,6 +9,7 @@ export default class Validator<TParentValue = any, TCustomOptions = any> impleme
     set propertyName(propertyName: string | undefined);
     protected ruleFor(selector: TSelector<TParentValue>): Rule<TParentValue, TCustomOptions>;
     protected ruleForEach(selector: TSelector<TParentValue>): CollectionRule<TParentValue, TCustomOptions>;
+    hasRuleFor(propertyName: string): boolean;
     validateProperty(propertyName: string, parentValue: TParentValue, customOptions?: TCustomOptions): ValidationResultList;
     /**
      * The overload is used internally in order to allow for Validator and Rule instances to be grouped together in

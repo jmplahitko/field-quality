@@ -7,6 +7,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
     protected validators: TValidatorCollection<TParentValue, TCustomOptions>;
     protected stopOnFirstFailure: boolean;
     constructor(propertyName?: string);
+    get isEmpty(): boolean;
     enum(allowedValues: Array<string | number>): RuleApi<TParentValue, TCustomOptions>;
     length(min: number, max: number): RuleApi<TParentValue, TCustomOptions>;
     lengthOrEmpty(min: number, max: number): RuleApi<TParentValue, TCustomOptions>;
