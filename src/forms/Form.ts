@@ -60,8 +60,10 @@ export default class Form<T> {
 						self._properties[key].value = value;
 						if (!self._propertyDebounces[key]) {
 							self._propertyDebounces[key] = setTimeout(() => {
-								const results = self.validator.validateProperty(key, self.data, self.customValidationOptions);
-								self._mergeValidationResults(results);
+								if (self.validator.hasRuleFor(key)) {
+									const results = self.validator.validateProperty(key, self.data, self.customValidationOptions);
+									self._mergeValidationResults(results);
+								}
 								delete self._propertyDebounces[key];
 							}, self.debounce);
 						}
