@@ -3,10 +3,7 @@ module.exports = function(api) {
 
 	return {
 		presets: ["@babel/env", "@babel/typescript"],
-		plugins: [
-			"@babel/proposal-class-properties",
-			"@babel/proposal-object-rest-spread"
-		],
+		plugins: [],
 		ignore: ["src/types.ts"],
 	};
 };
