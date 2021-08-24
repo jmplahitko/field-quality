@@ -33,7 +33,7 @@ export default class ContactValidator extends Validator<Contact> {
 			.length(1, 2)
 			.withMessage((value) => {
 				let message;
-				if (!value.length) {
+				if (!value?.length) {
 					message = 'You must supply at least one phone contact.';
 				} else {
 					message = 'You cannot have more than two phone contacts.';

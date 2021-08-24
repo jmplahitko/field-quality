@@ -1,17 +1,10 @@
-import { Validator, rx } from '../../../src';
-import Customer from '../model/Customer';
 import ContactValidator from './ContactValidator';
-import AddressValidator from './AddressValidator';
 import OrderValidator from './OrderValidator';
+import PartialCustomerValidator from './PartialCustomerValidator';
 
-export default class CustomerValidator extends Validator<Customer> {
+export default class CustomerValidator extends PartialCustomerValidator {
 	constructor() {
 		super();
-
-		this.ruleFor(x => x.companyName)
-			.notEmpty()
-			.withMessage(() => 'Company name is required')
-			.matches(rx.fullname);
 
 		this.ruleFor(x => x.contact)
 			.using(new ContactValidator());
