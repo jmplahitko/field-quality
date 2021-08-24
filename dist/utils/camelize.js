@@ -1,0 +1,11 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = camelize;
+
+function camelize(str) {
+  return "".concat(str[0].toLowerCase()).concat(str.substr(1)).replace(/\s/g, '');
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy91dGlscy9jYW1lbGl6ZS50cyJdLCJuYW1lcyI6WyJjYW1lbGl6ZSIsInN0ciIsInRvTG93ZXJDYXNlIiwic3Vic3RyIiwicmVwbGFjZSJdLCJtYXBwaW5ncyI6Ijs7Ozs7OztBQUFlLFNBQVNBLFFBQVQsQ0FBa0JDLEdBQWxCLEVBQXVDO0FBQ3JELFNBQU8sVUFBR0EsR0FBRyxDQUFDLENBQUQsQ0FBSCxDQUFPQyxXQUFQLEVBQUgsU0FBMEJELEdBQUcsQ0FBQ0UsTUFBSixDQUFXLENBQVgsQ0FBMUIsRUFBMENDLE9BQTFDLENBQWtELEtBQWxELEVBQXlELEVBQXpELENBQVA7QUFDQSIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIGNhbWVsaXplKHN0cjogc3RyaW5nKTogc3RyaW5nIHtcblx0cmV0dXJuIGAke3N0clswXS50b0xvd2VyQ2FzZSgpfSR7c3RyLnN1YnN0cigxKX1gLnJlcGxhY2UoL1xccy9nLCAnJyk7XG59Il19

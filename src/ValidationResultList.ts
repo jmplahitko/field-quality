@@ -81,12 +81,9 @@ export default class ValidationResultList {
 
 	public remove(propertyName: string): ValidationResult | null {
 		const index = this._entries.findIndex((entry) => entry.propertyName === propertyName);
-		let removed = null;
-
-		if (index > -1) {
-			removed = this._entries.splice(index, 1);
-			return removed[0];
-		}
+		let removed = index > -1
+			? this._entries.splice(index, 1)[0]
+			: null;
 
 		return removed;
 	}
