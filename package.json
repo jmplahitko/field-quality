@@ -1,6 +1,6 @@
 {
 	"name": "field-quality",
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"description": "Fluent JSON Validation Library",
 	"repository": {
 		"type": "git",
