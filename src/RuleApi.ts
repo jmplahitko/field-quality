@@ -1,13 +1,13 @@
 import Rule from './Rule';
 import Severity from './Severity';
 
-import { IValidatable, TMessageFactory, TValidatableMetadata, TPrecondition, TPredicate } from './types';
+import { IValidatable, TMessageFactory, Requirement, TPrecondition, TPredicate } from './types';
 
 export default class RuleApi<TParentValue, TCustomOptions> {
 	protected rule: Rule<TParentValue, TCustomOptions>;
-	protected meta: TValidatableMetadata<TParentValue, TCustomOptions>;
+	protected meta: Requirement<TParentValue, TCustomOptions>;
 
-	constructor(validatable: Rule<TParentValue, TCustomOptions>, meta: TValidatableMetadata<TParentValue, TCustomOptions>) {
+	constructor(validatable: Rule<TParentValue, TCustomOptions>, meta: Requirement<TParentValue, TCustomOptions>) {
 		this.rule = validatable;
 		this.meta = meta;
 	}

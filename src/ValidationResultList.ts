@@ -1,9 +1,9 @@
-import { TValidationResultMergeOptions } from './types';
+import { IValidated, TValidationResultMergeOptions } from './types';
 import copy from './utils/copy';
 import { isEqual } from './utils/quality';
 import ValidationResult from './ValidationResult';
 
-export default class ValidationResultList {
+export default class ValidationResultList implements IValidated {
 	protected _entries: ValidationResult[] = [];
 	public propertyName: string|undefined;
 	public value: any;

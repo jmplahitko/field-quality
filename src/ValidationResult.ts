@@ -1,10 +1,10 @@
 import ValidationResultList from './ValidationResultList';
 
 import { isEmpty, isEqual } from './utils/quality';
-import { TValidationResultMergeOptions } from './types';
+import { IValidated, TValidationResultMergeOptions } from './types';
 import copy from './utils/copy';
 
-export default class ValidationResult {
+export default class ValidationResult implements IValidated {
 	public errors: { [predicateName: string]: string } = {};
 	public warnings: { [predicateName: string]: string } = {};
 	public propertyName: string;

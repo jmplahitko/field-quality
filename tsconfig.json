@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "es5",
 		"lib": ["ESNext", "DOM"],
-		"types": ["@types/jasmine", "@types/node"],
+		"types": ["@types/jasmine", "@types/node", "@types/ramda"],
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"esModuleInterop": true,

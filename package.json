@@ -16,6 +16,7 @@
 		"@babel/preset-typescript": "^7.15.0",
 		"@types/jasmine": "^3.8.2",
 		"@types/node": "^16.7.1",
+		"@types/ramda": "^0.28.23",
 		"eslint": "^5.16.0",
 		"jasmine": "^3.9.0",
 		"jasmine-ts": "^0.4.0",
@@ -42,5 +43,7 @@
 	"publishConfig": {
 		"registry": "https://registry.ai.org/repository/npm-hosted/"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"ramda": "^0.29.0"
+	}
 }

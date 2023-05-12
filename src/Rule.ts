@@ -6,7 +6,7 @@ import ValidationResultList from './ValidationResultList';
 import { IValidatable, TPrecondition, TPredicate, TPredicateCollection, TValidatorCollection } from './types';
 
 import copy from './utils/copy';
-import { length, match, max, min, notEmpty, notNull, beValidEnum } from './utils/predicates';
+import { length, match, max, min, notEmpty, notNull, beValidEnum, lengthOrEmpty } from './utils/predicates';
 import { isEmpty, isNull } from './utils/quality';
 
 export default class Rule<TParentValue = any, TCustomOptions = any> implements IValidatable<TParentValue, TCustomOptions> {
@@ -55,7 +55,7 @@ export default class Rule<TParentValue = any, TCustomOptions = any> implements I
 	}
 
 	public lengthOrEmpty(min: number, max: number): RuleApi<TParentValue, TCustomOptions> {
-		let beBetween = length(min, max);
+		let beBetween = lengthOrEmpty(min, max);
 		let meta = {
 			name: `beBetween${min}and${max}OrEmpty`,
 			message: () =>  `${this.propertyName} must be between ${min} and ${max}.`,

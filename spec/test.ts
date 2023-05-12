@@ -1,28 +1,19 @@
-import AddressValidator from './support/validators/AddressValidator';
-import { Validator } from '../src';
-import { invalidLine1Address } from './support/instances/address';
-import Address from './support/model/Address';
+import { as, asWarning, when, withMessage } from '../src/functional/behaviorFns';
+import { enumerable, length, notNull } from '../src/functional/validationFns';
+import { ruleFor } from '../src/functional/rules/ruleFor';
+import Contact from './support/model/Contact';
+import { validContact, invalidPhoneContact } from './support/instances/contact';
 
-// const validator = new AddressValidator();
-// const result = validator.validate(invalidLine1Address);
+const rule = ruleFor<Contact>(x => x.firstName,
+	notNull(
+		// when(x => !!x.address),
+		withMessage((val, parent) => 'First Name is null!'),
+		// asWarning(),
+		as('FirstName'),
+	)
+);
 
-// console.log(result);
+const result = rule.validate?.(validContact.firstName, validContact);
+const result2 = rule.validate?.(null, validContact);
 
-
-class MyValidator extends Validator<Address> {
-	constructor() {
-		super();
-
-		this.ruleFor(x => x.line1)
-			.notEmpty();
-
-		this.ruleFor(x => x.country.toString)
-			.notEmpty();
-	}
-}
-
-const validator = new MyValidator();
-
-const result = validator.validate({});
-
-console.log(result);
+console.log(rule, result, result2);
