@@ -9,23 +9,20 @@
 	"license": "MIT",
 	"types": "dist/index.d.ts",
 	"main": "dist/index.js",
+	"dependencies": {
+		"ramda": "^0.30.1",
+		"pipeline-utility": "^1.0.0"
+	},
 	"devDependencies": {
-		"@babel/cli": "^7.14.8",
-		"@babel/core": "^7.15.0",
-		"@babel/preset-env": "^7.15.0",
-		"@babel/preset-typescript": "^7.15.0",
-		"@types/jasmine": "^3.8.2",
-		"@types/node": "^16.7.1",
-		"eslint": "^5.16.0",
-		"jasmine": "^3.9.0",
-		"jasmine-ts": "^0.4.0",
-		"jasmine-ts-console-reporter": "^3.1.1",
-		"prettier": "1.9.2",
-		"ts-node": "^10.2.1",
-		"typescript": "^4.3.5",
-		"vuepress": "^1.5.3",
-		"vuepress-plugin-typescript": "^0.3.0",
-		"vuepress-theme-default-prefers-color-scheme": "^1.1.0"
+		"@types/jasmine": "^4.6.4",
+		"@types/node": "^18.19.65",
+		"@types/ramda": "^0.28.25",
+		"jasmine": "^3.99.0",
+		"jshint": "^2.13.6",
+		"ramda": "^0.30.1",
+		"rimraf": "^6.0.1",
+		"tsx": "^4.7.1",
+		"typescript": "^5.7.2"
 	},
 	"scripts": {
 		"bench": "ts-node --script-mode ./benchmark/index.ts",
@@ -41,6 +38,5 @@
 	},
 	"publishConfig": {
 		"registry": "https://registry.ai.org/repository/npm-hosted/"
-	},
-	"dependencies": {}
+	}
 }
