@@ -87,23 +87,28 @@ export function createObservable<T extends object>(initialState: T): Observable<
 					return Reflect.set(target, property, value, receiver);
 				}
 
-				propertyKey = key;
-
-				oldValue = Array.from((recompose(initialState, propertyKey)));
+				oldValue = Array.from((recompose(initialState, key)));
 				result = Reflect.set(target, property, value, receiver);
 
 				if (result) {
 					newValue = target;
+
+					if (property) {
+						propertyKey = constructPropertyKey(property, key, true);
+						notifyObservers(propertyKey, newValue[property], oldValue[property]);
+					}
+
+					notifyObservers(key, newValue, oldValue);
 				}
 			} else {
 				propertyKey = constructPropertyKey(property, key);
 				oldValue = recompose(initialState, propertyKey);
 				newValue = value;
 				result = Reflect.set(target, property, value, receiver);
-			}
 
-			if (result) {
-				notifyObservers(propertyKey, newValue, oldValue);
+				if (result) {
+					notifyObservers(propertyKey, newValue, oldValue);
+				}
 			}
 
 			return result;

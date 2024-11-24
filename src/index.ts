@@ -23,6 +23,10 @@ observe('test3.test4')((newValue, oldValue) => {
 	console.log('test3.test4', newValue, oldValue);
 });
 
+observe('test5')((newValue, oldValue) => {
+	console.log('test5', newValue, oldValue);
+});
+
 observe('test5[0]')((newValue, oldValue) => {
 	console.log('test5[0]', newValue, oldValue);
 });
