@@ -7,11 +7,12 @@
 		"url": "ssh://git@code.ai.org:7999/~jplahitko/fieldquality.git"
 	},
 	"license": "MIT",
+	"type": "module",
 	"types": "dist/index.d.ts",
 	"main": "dist/index.js",
 	"dependencies": {
 		"ramda": "^0.30.1",
-		"pipeline-utility": "^1.0.0"
+		"pipeline-utility": "^1.0.2"
 	},
 	"devDependencies": {
 		"@types/jasmine": "^4.6.4",
