@@ -25,11 +25,7 @@ export function createObservable<T extends object>(initialState: T): Observable<
 	// Construct the next property key in a dot-notation
 	const constructPropertyKey = (property: string | symbol, key?: string, isArray = false): string =>
 	(key
-		?
-		isArray
-			? `${key.toString()}[${property.toString()}]`
-			:
-			`${key.toString()}.${property.toString()}`
+		? `${key.toString()}.${property.toString()}`
 		: property.toString());
 
 	const notifyObservers = (propertyKey: string, newValue: any, oldValue: any) => {
@@ -81,6 +77,7 @@ export function createObservable<T extends object>(initialState: T): Observable<
 			let propertyKey: string;
 			let newValue: any;
 			let oldValue: any;
+			let oldTarget: any;
 
 			if (Array.isArray(target)) {
 				if (property === 'length') {
@@ -104,11 +101,14 @@ export function createObservable<T extends object>(initialState: T): Observable<
 				propertyKey = constructPropertyKey(property, key);
 				oldValue = recompose(initialState, propertyKey);
 				newValue = value;
+				oldTarget = { ...target };
 				result = Reflect.set(target, property, value, receiver);
 
 				if (result) {
 					notifyObservers(propertyKey, newValue, oldValue);
+					notifyObservers(key, target, oldTarget);
 				}
+
 			}
 
 			return result;

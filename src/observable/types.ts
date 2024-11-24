@@ -1,10 +1,8 @@
-export type NestedPaths<T> = T extends (infer U)[]
-	? `${number}` | `[${number}].${NestedPaths<U>}`
-	: T extends object
+export type NestedPaths<T> = T extends object
 	? {
 		[K in keyof T]: K extends string
-		? T[K] extends (infer U)[] | object
-		? K | `${K}[${number}]` | `${K}.${NestedPaths<T[K]>}`
+		? T[K] extends object
+		? K | `${K}.${NestedPaths<T[K]>}`
 		: K
 		: never;
 	}[keyof T]
@@ -13,20 +11,6 @@ export type NestedPaths<T> = T extends (infer U)[]
 export type PathValue<T, P extends string> =
 	P extends keyof T
 	? T[P]
-	: P extends `${infer K}[${infer I}]${infer R}`
-	? K extends keyof T
-	? T[K] extends (infer U)[]
-	? R extends `.${infer Rest}`
-	? PathValue<U, Rest>
-	: U
-	: never
-	: K extends ""
-	? T extends (infer U)[]
-	? R extends `.${infer Rest}`
-	? PathValue<U, Rest>
-	: U
-	: never
-	: never
 	: P extends `${infer K}.${infer R}`
 	? K extends keyof T
 	? PathValue<T[K], R>
