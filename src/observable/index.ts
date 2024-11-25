@@ -59,77 +59,61 @@ export function createObservable<T extends object>(initialState: T): Observable<
 
 	const handler = <K extends {} | []>(key: string = ''): ProxyHandler<K> => ({
 		get(target, property, receiver) {
-			const value = Reflect.get(target, property, receiver) as object;
+			const value = Reflect.get(target, property, receiver);
 			const propertyKey = constructPropertyKey(property, key);
 
-			// Track dependency when property is accessed
+			// Track dependency
 			trackDependency(propertyKey);
 
-			if (target.hasOwnProperty(property)) {
-				const newValue = (typeof value === 'object' && Object.keys(value).length > 0)
-					? new Proxy(value, handler(propertyKey))
-					: Array.isArray(value)
-						? new Proxy(value, handler(propertyKey))
-						: value;
-
-				return newValue;
-			} else if (Array.isArray(target) && nonTrappableMutationMethods.includes(property as string)) {
+			if (Array.isArray(target) && nonTrappableMutationMethods.includes(property as string)) {
 				return function (...args: any[]) {
-					const propertyKey = key;
 					const oldValue = Array.from(target);
 					const result = (value as Function).apply(target, args);
 					const newValue = target;
 
-					notifyObservers(propertyKey, newValue, oldValue);
+					notifyObservers(key, newValue, oldValue);
 
 					return result;
 				};
+			}
+
+			if (value && typeof value === 'object') {
+				return new Proxy(value, handler(propertyKey));
 			}
 
 			return value;
 		},
 
 		set(target, property, value, receiver) {
-			let result: boolean = true;
-			let propertyKey: string;
-			let newValue: any;
-			let oldValue: any;
-			let oldTarget: any;
-
-			if (Array.isArray(target)) {
-				if (property === 'length') {
-					return Reflect.set(target, property, value, receiver);
-				}
-
-				oldValue = Array.from((recompose(initialState, key)));
-				result = Reflect.set(target, property, value, receiver);
-
-				if (result) {
-					newValue = target;
-
-					if (property) {
-						propertyKey = constructPropertyKey(property, key);
-						notifyObservers(propertyKey, newValue[property], oldValue[property]);
-					}
-
-					notifyObservers(key, newValue, oldValue);
-				}
-			} else {
-				propertyKey = constructPropertyKey(property, key);
-				oldValue = recompose(initialState, propertyKey);
-				newValue = value;
-				oldTarget = { ...target };
-				result = Reflect.set(target, property, value, receiver);
-
-				if (result) {
-					notifyObservers(propertyKey, newValue, oldValue);
-					notifyObservers(key, target, oldTarget);
-				}
-
+			if (Array.isArray(target) && property === 'length') {
+				return Reflect.set(target, property, value, receiver);
 			}
 
-			return result;
-		},
+			const propertyKey = constructPropertyKey(property, key);
+			const oldValue = Reflect.get(target, property, receiver);
+
+			if (Array.isArray(target)) {
+				const oldArrayValue = Array.from(target);
+				const result = Reflect.set(target, property, value, receiver);
+
+				if (oldValue !== value) {
+					notifyObservers(propertyKey, value, oldValue);
+					notifyObservers(key, target, oldArrayValue);
+				}
+
+				return result;
+			} else {
+				const oldObjectValue = { ...target };
+				const result = Reflect.set(target, property, value, receiver);
+
+				if (oldValue !== value) {
+					notifyObservers(propertyKey, value, oldValue);
+					notifyObservers(key, target, oldObjectValue);
+				}
+
+				return result;
+			}
+		}
 	});
 
 	const { proxy, revoke } = Proxy.revocable(initialState, handler());
@@ -175,7 +159,7 @@ export function createObservable<T extends object>(initialState: T): Observable<
 			deps: new Set<string>(),
 			observers: new Set<ObserverCallback<R>>(),
 			derive: () => {
-				if (derivation.dirty) {
+				if (derivation.dirty || !derivation.value) {
 					// Detect circular dependencies
 					if (isDeriving) {
 						throw new Error('Circular dependency detected in computed value');
@@ -196,6 +180,7 @@ export function createObservable<T extends object>(initialState: T): Observable<
 						derivation.observers.forEach(observer => observer(derivation.value, oldValue));
 					}
 				}
+
 				return derivation.value;
 			},
 			observe: (callback: ObserverCallback<R>) => {
@@ -216,39 +201,13 @@ export function createObservable<T extends object>(initialState: T): Observable<
 			const id = `derivation_${++idpool}`;
 			derivationCache.set(id, derivation);
 
+			derivation.derive();
 			const derived = () => derivation.derive();
 
 			// Add observation capability to computed values
-			derived.observe = (callback: ObserverCallback<R>) => {
-				derivation.observers.add(callback);
-				return () => {
-					derivation.observers.delete(callback)
-				};
-			};
+			derived.observe = derivation.observe;
 
 			return derived;
 		}
 	} as Observable<T>;
 }
-
-// // Example usage:
-// const observable = createObservable({
-// 	x: 1,
-// 	y: 2
-// });
-
-// const sum = observable.computed({
-// 	get: () => observable.state.x + observable.state.y
-// });
-
-// const doubled = observable.computed({
-// 	get: () => sum() * 2  // Nested computed
-// });
-
-// // Observe computed values
-// doubled.observe((newValue, oldValue) => {
-// 	console.log(`Doubled changed from ${oldValue} to ${newValue}`);
-// });
-
-// // Changes will propagate through computations
-// observable.state.x = 2;  // Will trigger both sum and doubled computations
