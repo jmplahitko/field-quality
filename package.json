@@ -31,7 +31,7 @@
 		"build:esm": "tsc -p tsconfig.esm.json",
 		"build:types": "tsc -p tsconfig.types.json",
 		"review": "npm run type-check && npm run test",
-		"test": "jasmine --config=jasmine.json",
+		"test": "vitest",
 		"test:watch": "tsx watch --test spec/**/*.spec.ts",
 		"type-check": "tsc --noEmit",
 		"watch": "tsc -p . --watch",

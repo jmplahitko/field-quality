@@ -2,7 +2,7 @@ export type NestedPaths<T> = T extends object
 	? {
 		[K in keyof T]: K extends string
 		? T[K] extends object
-		? K | `${K}.${NestedPaths<T[K]>}`
+		? K | `${K}.${NestedPaths<T[K]>}`  // Handle nested objects
 		: K
 		: never;
 	}[keyof T]

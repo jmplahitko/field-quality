@@ -26,9 +26,9 @@ export function createObservable<T extends object>(initialState: T): Observable<
 
 	// Construct the next property key in a dot-notation
 	const constructPropertyKey = (property: string | symbol, key?: string): string =>
-	(key
-		? `${key.toString()}.${property.toString()}`
-		: property.toString());
+		key
+			? `${key}.${property.toString()}`
+			: property.toString();
 
 	const notifyObservers = (propertyKey: string, newValue: any, oldValue: any) => {
 		// First notify direct observers
@@ -162,7 +162,7 @@ export function createObservable<T extends object>(initialState: T): Observable<
 	function trackDependency(path: string) {
 		if (derivationStack.length > 0) {
 			derivationStack[derivationStack.length - 1].deps.add(path);
-			console.log(derivationStack)
+			// console.log(derivationStack)
 		}
 	}
 
