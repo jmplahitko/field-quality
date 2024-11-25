@@ -17,7 +17,15 @@ const test = {
 	],
 };
 
-const { observe, state } = createObservable(test);
+const { observe, state, derive } = createObservable(test);
+
+const sum = derive((_state) => _state.test + _state.test2);
+
+sum.observe((newValue, oldValue) => {
+	console.log('sum', newValue, oldValue);
+});
+
+console.log(sum())
 
 observe('test')((newValue, oldValue) => {
 	console.log('test', newValue, oldValue);
@@ -52,3 +60,5 @@ state.test2 = 4;
 state.test3.test4 = 5;
 state.test5[0] = 6;
 state.test6[0].test7 = 7;
+
+

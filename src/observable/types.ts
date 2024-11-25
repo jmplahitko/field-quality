@@ -30,9 +30,26 @@ export type Observer<P> = {
 
 export type ObserverCallback<V> = (newValue: V, oldValue: V) => void;
 
-export type Observable<T extends object> = {
-	state: T,
+export type Derive<T, S extends object> = (state: S) => T;
+
+export interface Derivation<T> {
+	value: T;
+	dirty: boolean;
+	deps: Set<string>;
+	observers: Set<ObserverCallback<T>>;
+	derive: () => T;
+	observe: (callback: ObserverCallback<T>) => () => void;
+}
+
+export interface Derived<T> extends Derivation<T> {
+	(): T;
+	observe: (callback: ObserverCallback<T>) => () => void;
+}
+
+export interface Observable<T extends object> {
+	state: T;
+	derive: <R>(derive: Derive<R, T>) => Derived<R>;
 	observe: <P extends NestedPaths<T>>(selector: NestedPaths<T>) => (onChange: ObserverCallback<PathValue<T, P>>) => () => void;
 	observeOnce: <P extends NestedPaths<T>>(selector: NestedPaths<T>) => (onChange: ObserverCallback<PathValue<T, P>>) => () => void;
 	conceal: () => void;
-};
+}
