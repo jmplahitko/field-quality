@@ -1,3 +1,5 @@
+import { NestedPaths } from '../types';
+
 /**
  * Recompose a value from the given keys in the given object.
  *
@@ -12,14 +14,13 @@
  *
  * @returns
  */
-export default function recompose<T extends object>(object: T, key: string): any {
+export default function recompose<T extends object>(key: NestedPaths<T>, object: T): any {
 	const parts = key.split('.');
-	// @ts-ignore
 	const newObj = object[parts[0]];
 
 	if (parts[1]) {
 		parts.splice(0, 1);
-		return recompose(newObj, parts.join('.'));
+		return recompose(parts.join('.'), newObj);
 	}
 
 	return newObj;

@@ -51,5 +51,16 @@ export interface Observable<T extends object> {
 	derive: <R>(derive: Derive<R, T>) => Derived<R>;
 	observe: <P extends NestedPaths<T>>(selector: NestedPaths<T>) => (onChange: ObserverCallback<PathValue<T, P>>) => () => void;
 	observeOnce: <P extends NestedPaths<T>>(selector: NestedPaths<T>) => (onChange: ObserverCallback<PathValue<T, P>>) => () => void;
+	transaction: <R>(callback: () => R) => R;
 	conceal: () => void;
+}
+
+export interface Transaction<T> {
+	changes: Set<string>;
+	ensureSnapshot: (key: NestedPaths<T>, target: any) => void;
+	begin: <R>(
+		callback: () => R,
+		onCommit?: (snapshots: Map<NestedPaths<T>, any>) => void,
+		onRollback?: () => void
+	) => R;
 }

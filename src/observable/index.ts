@@ -8,27 +8,29 @@
  *  4. 	Proxy is revokable to allow for forcibly ending observation (Observable.conceal)
  */
 
-import { ObservablesCache, Observable, Derive, Derived, ObserverCallback, Derivation } from './types';
+import { ObservablesCache, Observable, Derive, ObserverCallback, Derivation, Transaction, NestedPaths } from './types';
+import { createTransaction } from './transaction';
 import recompose from './utils/recompose';
 
 // These array methods do not detected by set or deleteProperty proxy handler traps, so we have to account for them ourselves.
 const nonTrappableMutationMethods = ['pop', 'shift'];
 
 export function createObservable<T extends object>(initialState: T): Observable<T> {
-	let idpool: number = 0;
+	let idPool: number = 0;
 	const cache: ObservablesCache = {};
 	const derivationCache = new Map<string, Derivation<any>>();
 	let derivationStack: Derivation<any>[] = []; // Add stack for nested derivations
+	let currentTransaction: Transaction<T> | null = null;
 
 	const createIgnore = (key: string, id: number) => () => {
 		cache[key] = cache[key]?.filter(x => x.id !== id);
 	};
 
 	// Construct the next property key in a dot-notation
-	const constructPropertyKey = (property: string | symbol, key?: string): string =>
+	const constructPropertyKey = <T>(property: string | symbol, key: string): NestedPaths<T> =>
 		key
-			? `${key}.${property.toString()}`
-			: property.toString();
+			? `${key}.${property.toString()}` as NestedPaths<T>
+			: property.toString() as NestedPaths<T>;
 
 	const notifyObservers = (propertyKey: string, newValue: any, oldValue: any) => {
 		// First notify direct observers
@@ -45,24 +47,18 @@ export function createObservable<T extends object>(initialState: T): Observable<
 		derivationCache.forEach(derivation => {
 			if (derivation.deps.has(propertyKey)) {
 				derivation.dirty = true;
-				// Recompute and notify observers if there are any
 				if (derivation.observers.size > 0) {
-					const oldValue = derivation.value;
-					const newValue = derivation.derive();
-					derivation.observers.forEach(observer =>
-						observer(newValue, oldValue)
-					);
+					derivation.derive();
 				}
 			}
 		});
 	};
 
-	const handler = <K extends {} | []>(key: string = ''): ProxyHandler<K> => ({
+	const handler = <K extends {} | []>(key = ''): ProxyHandler<K> => ({
 		get(target, property, receiver) {
 			const value = Reflect.get(target, property, receiver);
 			const propertyKey = constructPropertyKey(property, key);
 
-			// Track dependency
 			trackDependency(propertyKey);
 
 			if (Array.isArray(target) && nonTrappableMutationMethods.includes(property as string)) {
@@ -71,7 +67,11 @@ export function createObservable<T extends object>(initialState: T): Observable<
 					const result = (value as Function).apply(target, args);
 					const newValue = target;
 
-					notifyObservers(key, newValue, oldValue);
+					if (currentTransaction) {
+						currentTransaction.ensureSnapshot(key as NestedPaths<T>, oldValue);
+					} else {
+						notifyObservers(key, newValue, oldValue);
+					}
 
 					return result;
 				};
@@ -92,31 +92,47 @@ export function createObservable<T extends object>(initialState: T): Observable<
 			const propertyKey = constructPropertyKey(property, key);
 			const oldValue = Reflect.get(target, property, receiver);
 
-			if (Array.isArray(target)) {
-				const oldArrayValue = Array.from(target);
-				const result = Reflect.set(target, property, value, receiver);
-
-				if (oldValue !== value) {
-					notifyObservers(propertyKey, value, oldValue);
-					notifyObservers(key, target, oldArrayValue);
-				}
-
-				return result;
-			} else {
-				const oldObjectValue = { ...target };
-				const result = Reflect.set(target, property, value, receiver);
-
-				if (oldValue !== value) {
-					notifyObservers(propertyKey, value, oldValue);
-					notifyObservers(key, target, oldObjectValue);
-				}
-
-				return result;
+			if (currentTransaction) {
+				currentTransaction.ensureSnapshot(key as NestedPaths<T>, target);
+				currentTransaction.ensureSnapshot(propertyKey, oldValue);
 			}
+
+			const result = Reflect.set(target, property, value, receiver);
+
+			if (!currentTransaction && (oldValue !== value)) {
+				notifyObservers(key as NestedPaths<T>, target, target);
+				notifyObservers(propertyKey, value, oldValue);
+			}
+
+			return result;
+
 		}
 	});
 
 	const { proxy, revoke } = Proxy.revocable(initialState, handler());
+
+	const transaction = <R>(callback: () => R): R => {
+		// Don't allow nested transactions
+		if (currentTransaction) {
+			throw new Error('Nested transactions are not supported');
+		}
+
+		currentTransaction = createTransaction(proxy);
+
+		const result = currentTransaction.begin(callback,
+			(snapshots) => {
+				snapshots.forEach((target, path) => {
+					const newValue = recompose(path, proxy);
+					notifyObservers(path, newValue, target);
+				});
+			}
+		);
+
+		currentTransaction = null;
+
+		return result;
+	};
+
 	/**
 	 * @param {boolean} once - If the property should be ignored after the first call.
 	 * @returns A function that takes a selector for a nested value to be observed, which returns a function that takes a callback to be called when the nested value changes.
@@ -126,7 +142,7 @@ export function createObservable<T extends object>(initialState: T): Observable<
 			const key = selector;
 
 			return (onChange) => {
-				const id = ++idpool;
+				const id = ++idPool;
 				const ignore = createIgnore(key, id);
 
 				cache[key] = cache[key] ?? [];
@@ -142,6 +158,19 @@ export function createObservable<T extends object>(initialState: T): Observable<
 				return () => ignore();
 			};
 		};
+
+	const derive = <R>(derive: Derive<R, T>) => {
+		const derivation = createDerivation(derive);
+		const id = `derivation_${++idPool}`;
+		derivationCache.set(id, derivation);
+
+		derivation.derive();
+		const derived = () => derivation.derive();
+
+		derived.observe = derivation.observe;
+
+		return derived;
+	}
 
 	function trackDependency(path: string) {
 		if (derivationStack.length > 0) {
@@ -193,21 +222,10 @@ export function createObservable<T extends object>(initialState: T): Observable<
 
 	return {
 		state: proxy,
+		derive,
 		observe: observe(false),
 		observeOnce: observe(true),
+		transaction,
 		conceal: () => revoke(),
-		derive: <R>(derive: Derive<R, T>) => {
-			const derivation = createDerivation(derive);
-			const id = `derivation_${++idpool}`;
-			derivationCache.set(id, derivation);
-
-			derivation.derive();
-			const derived = () => derivation.derive();
-
-			// Add observation capability to computed values
-			derived.observe = derivation.observe;
-
-			return derived;
-		}
 	} as Observable<T>;
 }

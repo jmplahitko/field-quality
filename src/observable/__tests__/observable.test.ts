@@ -94,10 +94,7 @@ describe('Observable', () => {
 			);
 			const mock = vi.fn();
 
-			total.observe((newValue, oldValue) => {
-				console.log(newValue, oldValue);
-				mock(newValue, oldValue);
-			});
+			total.observe(mock);
 			observable.state.price = 20;
 
 			expect(mock).toHaveBeenCalledWith(40, 20);
