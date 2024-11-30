@@ -57,7 +57,7 @@ export interface Observable<T extends object> {
 
 export interface Transaction<T> {
 	changes: Set<string>;
-	ensureSnapshot: (key: NestedPaths<T>, target: any) => void;
+	ensureSnapshot: (key: NestedPaths<T>, target: any) => any;
 	begin: <R>(
 		callback: () => R,
 		onCommit?: (snapshots: Map<NestedPaths<T>, any>) => void,

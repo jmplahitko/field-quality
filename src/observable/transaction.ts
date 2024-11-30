@@ -2,9 +2,19 @@ import { NestedPaths, Transaction } from './types';
 import { setDeepValue } from './utils/setDeepValue';
 
 export function createSnapshot(target: any): any {
-	return target !== undefined
-		? JSON.parse(JSON.stringify(target))
-		: target
+	if (target === undefined) return target;
+
+	// For arrays
+	if (Array.isArray(target)) {
+		return [...target];
+	}
+
+	// For objects
+	if (typeof target === 'object' && target !== null) {
+		return { ...target };
+	}
+
+	return target;
 }
 
 export const createTransaction = <T extends object>(target: T): Transaction<T> => {
@@ -13,7 +23,9 @@ export const createTransaction = <T extends object>(target: T): Transaction<T> =
 		changes: new Set<string>(),
 		ensureSnapshot: (propertyKey: NestedPaths<T>, value: any) => {
 			if (!snapshots.has(propertyKey)) {
-				snapshots.set(propertyKey, createSnapshot(value));
+				const snapshot = createSnapshot(value);
+				snapshots.set(propertyKey, snapshot);
+				return snapshot;
 			}
 		},
 		begin: <R>(

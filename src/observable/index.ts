@@ -9,7 +9,7 @@
  */
 
 import { ObservablesCache, Observable, Derive, ObserverCallback, Derivation, Transaction, NestedPaths } from './types';
-import { createTransaction } from './transaction';
+import { createSnapshot, createTransaction } from './transaction';
 import recompose from './utils/recompose';
 
 // These array methods do not detected by set or deleteProperty proxy handler traps, so we have to account for them ourselves.
@@ -18,6 +18,7 @@ const nonTrappableMutationMethods = ['pop', 'shift'];
 export function createObservable<T extends object>(initialState: T): Observable<T> {
 	let idPool: number = 0;
 	const cache: ObservablesCache = {};
+	const proxyCache = new WeakMap<object, any>();
 	const derivationCache = new Map<string, Derivation<any>>();
 	let derivationStack: Derivation<any>[] = []; // Add stack for nested derivations
 	let currentTransaction: Transaction<T> | null = null;
@@ -78,7 +79,10 @@ export function createObservable<T extends object>(initialState: T): Observable<
 			}
 
 			if (value && typeof value === 'object') {
-				return new Proxy(value, handler(propertyKey));
+				if (!proxyCache.has(value)) {
+					proxyCache.set(value, new Proxy(value, handler(propertyKey)));
+				}
+				return proxyCache.get(value);
 			}
 
 			return value;
@@ -91,16 +95,21 @@ export function createObservable<T extends object>(initialState: T): Observable<
 
 			const propertyKey = constructPropertyKey(property, key);
 			const oldValue = Reflect.get(target, property, receiver);
+			let oldTarget;
 
 			if (currentTransaction) {
-				currentTransaction.ensureSnapshot(key as NestedPaths<T>, target);
+				oldTarget = currentTransaction.ensureSnapshot(key as NestedPaths<T>, target);
 				currentTransaction.ensureSnapshot(propertyKey, oldValue);
+			}
+
+			if (!oldTarget) {
+				oldTarget = createSnapshot(target);
 			}
 
 			const result = Reflect.set(target, property, value, receiver);
 
 			if (!currentTransaction && (oldValue !== value)) {
-				notifyObservers(key as NestedPaths<T>, target, target);
+				notifyObservers(key as NestedPaths<T>, target, oldTarget);
 				notifyObservers(propertyKey, value, oldValue);
 			}
 
